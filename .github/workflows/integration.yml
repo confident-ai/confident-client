@@ -1,0 +1,45 @@
+name: Integration
+
+# Live tests against the real Confident AI API, run on every push and PR
+# (same as deepeval). Uses the CONFIDENT_ORG_API_KEY repo secret; when it's
+# absent (e.g. fork PRs, which don't receive secrets) the tests skip
+# themselves, so the job stays green and never blocks external contributors.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  python-integration:
+    name: Python integration (real API)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python
+    env:
+      CONFIDENT_ORG_API_KEY: ${{ secrets.CONFIDENT_ORG_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: poetry
+          cache-dependency-path: python/poetry.lock
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Integration tests (real API)
+        run: poetry run pytest -m integration -v
