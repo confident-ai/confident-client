@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Node / TypeScript
+node_modules/
+typescript/dist/
+coverage/
+*.tsbuildinfo
+*.log
+
+# Env / secrets
+.env
+.env.local
+
+# Editor / OS
+.DS_Store
+.idea/
+*.swp
+
+# Local scratch files
+a.py
+a.ts
+scratch/

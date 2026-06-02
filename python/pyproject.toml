@@ -1,0 +1,59 @@
+[tool.poetry]
+name = "confidentai"
+version = "0.1.0"
+description = "The official Python SDK for the Confident AI platform management API."
+authors = ["Jeffrey Ip <jeffreyip@confident-ai.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://www.confident-ai.com"
+repository = "https://github.com/confident-ai/confident-client"
+documentation = "https://www.confident-ai.com/docs/api-reference"
+keywords = ["confident-ai", "confident", "llm", "sdk", "management-api"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+packages = [{ include = "confidentai" }]
+include = ["confidentai/py.typed", "LICENSE"]
+exclude = ["tests/*"]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/confident-ai/confident-client/issues"
+
+[tool.poetry.dependencies]
+python = ">=3.9, <4.0"
+requests = "^2.31.0"
+pydantic = "^2.11.7"
+tenacity = ">=8.0.0"
+aiohttp = "^3.9.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+ruff = "^0.13.0"
+black = "^25.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: hits the real Confident AI API; requires CONFIDENT_ORG_API_KEY (excluded from the default unit gate)",
+]
+
+[tool.black]
+line-length = 80
+
+[tool.ruff]
+line-length = 80
