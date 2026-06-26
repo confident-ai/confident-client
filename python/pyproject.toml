@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "confidentai"
-version = "0.1.0"
+version = "0.2.0"
 description = "The official Python SDK for the Confident AI platform management API."
 authors = ["Jeffrey Ip <jeffreyip@confident-ai.com>"]
 license = "Apache-2.0"

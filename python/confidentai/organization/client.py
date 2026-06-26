@@ -1,11 +1,10 @@
 from ..api import Api, Endpoints, HttpMethods
 from ..types import Organization
 from .api_keys import AsyncOrganizationApiKeys, OrganizationApiKeys
+from .governance import AsyncOrganizationGovernance, OrganizationGovernance
+from .iam import AsyncOrganizationIam, OrganizationIam
 from .invitations import AsyncOrganizationInvitations, OrganizationInvitations
 from .members import AsyncOrganizationMembers, OrganizationMembers
-from .permissions import AsyncOrganizationPermissions, OrganizationPermissions
-from .policies import AsyncOrganizationPolicies, OrganizationPolicies
-from .roles import AsyncOrganizationRoles, OrganizationRoles
 from .types import OrganizationHttpResponse, UpdateOrganizationRequest
 
 
@@ -15,9 +14,8 @@ class OrganizationClient:
         self.api_keys = OrganizationApiKeys(api)
         self.members = OrganizationMembers(api)
         self.invitations = OrganizationInvitations(api)
-        self.roles = OrganizationRoles(api)
-        self.policies = OrganizationPolicies(api)
-        self.permissions = OrganizationPermissions(api)
+        self.iam = OrganizationIam(api)
+        self.governance = OrganizationGovernance(api)
 
     def get(self) -> Organization:
         data, _ = self._api.send_request(
@@ -43,9 +41,8 @@ class AsyncOrganizationClient:
         self.api_keys = AsyncOrganizationApiKeys(api)
         self.members = AsyncOrganizationMembers(api)
         self.invitations = AsyncOrganizationInvitations(api)
-        self.roles = AsyncOrganizationRoles(api)
-        self.policies = AsyncOrganizationPolicies(api)
-        self.permissions = AsyncOrganizationPermissions(api)
+        self.iam = AsyncOrganizationIam(api)
+        self.governance = AsyncOrganizationGovernance(api)
 
     async def get(self) -> Organization:
         data, _ = await self._api.a_send_request(

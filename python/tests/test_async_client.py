@@ -128,7 +128,9 @@ def test_org_invitations_create(async_client, http):
 def test_org_roles_create(async_client, http):
     http.enqueue_data({"role": {"id": "r1", "name": "Analyst", "policies": []}})
     role = run(
-        async_client.organization().roles.create("Analyst", policy_ids=["p1"])
+        async_client.organization().iam.roles.create(
+            "Analyst", policy_ids=["p1"]
+        )
     )
     assert role.name == "Analyst"
     assert http.last["json"] == {"name": "Analyst", "policyIds": ["p1"]}
@@ -138,9 +140,72 @@ def test_org_permissions_list(async_client, http):
     http.enqueue_data(
         {"permissions": [{"id": "perm1", "name": "billing:read"}]}
     )
-    perms = run(async_client.organization().permissions.list())
+    perms = run(async_client.organization().iam.permissions.list())
     assert perms[0].name == "billing:read"
     assert http.last["url"].endswith("/v1/organization/permissions")
+
+
+def test_org_governance_policies_list(async_client, http):
+    http.enqueue_data(
+        {
+            "governancePolicies": [
+                {
+                    "id": "gp1",
+                    "name": "Production Gate",
+                    "projects": [{"id": "p1", "name": "Prod"}],
+                    "controls": [
+                        {
+                            "id": "c1",
+                            "name": "Logs traces",
+                            "type": "PRE_DEPLOYMENT_EVALS",
+                        }
+                    ],
+                }
+            ]
+        }
+    )
+    policies = run(async_client.organization().governance.policies.list())
+    assert policies[0].id == "gp1"
+    assert policies[0].controls[0].type == "PRE_DEPLOYMENT_EVALS"
+    assert http.last["url"].endswith("/v1/organization/governance-policies")
+
+
+def test_org_governance_policies_assign(async_client, http):
+    http.enqueue_data(
+        {
+            "governancePolicy": {"id": "gp1", "name": "Production Gate"},
+            "count": 2,
+        }
+    )
+    result = run(
+        async_client.organization().governance.policies.assign(
+            "gp1", project_ids=["p1", "p2"]
+        )
+    )
+    assert result.count == 2
+    assert http.last["method"] == "POST"
+    assert http.last["json"] == {"projectIds": ["p1", "p2"]}
+    assert http.last["url"].endswith(
+        "/v1/organization/governance-policies/gp1/assign"
+    )
+
+
+def test_org_governance_policies_unassign(async_client, http):
+    http.enqueue_data(
+        {
+            "governancePolicy": {"id": "gp1", "name": "Production Gate"},
+            "count": 1,
+        }
+    )
+    result = run(
+        async_client.organization().governance.policies.unassign(
+            "gp1", project_ids=["p1"]
+        )
+    )
+    assert result.count == 1
+    assert http.last["url"].endswith(
+        "/v1/organization/governance-policies/gp1/unassign"
+    )
 
 
 def test_projects_list(async_client, http):

@@ -31,8 +31,13 @@ def test_projects_list_is_iterable(live_client):
 
 
 def test_organization_permissions_list(live_client):
-    permissions = live_client.organization().permissions.list()
+    permissions = live_client.organization().iam.permissions.list()
     assert isinstance(permissions, list)
+
+
+def test_governance_policies_list_is_iterable(live_client):
+    policies = live_client.organization().governance.policies.list()
+    assert isinstance(policies, list)
 
 
 def test_project_create_get_delete_round_trip(live_client):

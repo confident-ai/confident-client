@@ -68,7 +68,7 @@ describe("OrganizationClient", () => {
     mockData({ role: { id: "r1", name: "Analyst", policies: [] } });
     await makeClient()
       .organization()
-      .roles.create({ name: "Analyst", policyIds: ["p1"] });
+      .iam.roles.create({ name: "Analyst", policyIds: ["p1"] });
     expect(lastCall().data).toEqual({
       name: "Analyst",
       description: undefined,
@@ -78,8 +78,62 @@ describe("OrganizationClient", () => {
 
   it("lists permissions", async () => {
     mockData({ permissions: [{ id: "perm1", name: "billing:read" }] });
-    const perms = await makeClient().organization().permissions.list();
+    const perms = await makeClient().organization().iam.permissions.list();
     expect(perms[0].name).toBe("billing:read");
     expect(lastCall().url).toContain("/v1/organization/permissions");
+  });
+
+  it("lists governance policies with projects and controls", async () => {
+    mockData({
+      governancePolicies: [
+        {
+          id: "gp1",
+          name: "Production Gate",
+          projects: [{ id: "p1", name: "Prod" }],
+          controls: [
+            { id: "c1", name: "Logs traces", type: "PRE_DEPLOYMENT_EVALS" },
+          ],
+        },
+      ],
+    });
+    const policies = await makeClient()
+      .organization()
+      .governance.policies.list();
+    expect(policies[0].id).toBe("gp1");
+    expect(policies[0].controls[0].type).toBe("PRE_DEPLOYMENT_EVALS");
+    expect(lastCall().url).toContain("/v1/organization/governance-policies");
+  });
+
+  it("assigns projects to a governance policy", async () => {
+    mockData({
+      governancePolicy: { id: "gp1", name: "Production Gate" },
+      count: 2,
+    });
+    const result = await makeClient()
+      .organization()
+      .governance.policies.assign("gp1", { projectIds: ["p1", "p2"] });
+    expect(result.count).toBe(2);
+    expect(result.governancePolicy.id).toBe("gp1");
+    expect(lastCall().method).toBe("POST");
+    expect(lastCall().data).toEqual({ projectIds: ["p1", "p2"] });
+    expect(lastCall().url).toContain(
+      "/v1/organization/governance-policies/gp1/assign",
+    );
+  });
+
+  it("unassigns projects from a governance policy", async () => {
+    mockData({
+      governancePolicy: { id: "gp1", name: "Production Gate" },
+      count: 1,
+    });
+    const result = await makeClient()
+      .organization()
+      .governance.policies.unassign("gp1", { projectIds: ["p1"] });
+    expect(result.count).toBe(1);
+    expect(lastCall().method).toBe("POST");
+    expect(lastCall().data).toEqual({ projectIds: ["p1"] });
+    expect(lastCall().url).toContain(
+      "/v1/organization/governance-policies/gp1/unassign",
+    );
   });
 });

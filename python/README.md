@@ -122,12 +122,19 @@ members = org_client.members.list(page=1, page_size=25)
 org_client.members.update_role(members[0].id, role_id="role_id")
 org_client.invitations.create(["teammate@acme.com"], role_id="role_id")
 
-# Roles, policies & permissions
-permissions = org_client.permissions.list()
-policy = org_client.policies.create(
+# IAM: roles, policies & permissions
+permissions = org_client.iam.permissions.list()
+policy = org_client.iam.policies.create(
     "Billing", permission_ids=[permissions[0].id]
 )
-org_client.roles.create("Billing Manager", policy_ids=[policy.id])
+org_client.iam.roles.create("Billing Manager", policy_ids=[policy.id])
+
+# Governance: list policies and assign projects to one (great for CI/CD)
+governance_policies = org_client.governance.policies.list()
+if governance_policies:
+    org_client.governance.policies.assign(
+        governance_policies[0].id, project_ids=["project_id"]
+    )
 ```
 
 ## Project example
@@ -142,13 +149,15 @@ projects = client.projects.list()
 project = client.project(created.project.id)
 project.update(name="Production")
 
-# Project-scoped IAM
+# Project-scoped resources
 project.api_keys.create(name="Production agent key")
 project.members.list()
 project.invitations.create(["analyst@acme.com"], role_id="project_role_id")
-project.roles.list()
-project.policies.list()
-project.permissions.list()
+
+# Project-scoped IAM (roles, policies, permissions)
+project.iam.roles.list()
+project.iam.policies.list()
+project.iam.permissions.list()
 
 # Delete
 project.delete()

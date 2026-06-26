@@ -16,6 +16,7 @@ export interface Project {
   description?: string | null;
   organizationId?: string;
   created_at?: string;
+  governancePolicy?: NamedRef | null;
 }
 
 export interface ApiKey {
@@ -78,4 +79,23 @@ export interface DeletionResult {
   id?: string | number;
   deleted?: boolean;
   removed?: boolean;
+}
+
+export interface GovernanceControl {
+  id: string;
+  name: string;
+  type: string;
+}
+
+export interface GovernancePolicy {
+  id: string;
+  name: string;
+  description?: string | null;
+  projects: NamedRef[];
+  controls: GovernanceControl[];
+}
+
+export interface GovernancePolicyAssignmentResult {
+  governancePolicy: NamedRef;
+  count: number;
 }

@@ -6,8 +6,9 @@ which asserts each method calls the right HTTP method and path.
 
 ## Scope & source of truth
 
-This SDK wraps the **management API** — organizations, projects, and their IAM
-sub-resources (API keys, members, invitations, roles, policies, permissions).
+This SDK wraps the **management API** — organizations, projects, their IAM
+sub-resources (API keys, members, invitations, roles, policies, permissions),
+and governance policies.
 
 * **Source:** `confident-docs/fern/openapi.yaml` (the published OpenAPI 3.1
   spec that drives the API reference at
@@ -49,15 +50,26 @@ Legend: **Implemented** = exposed by this SDK. Source = `Docs` (OpenAPI spec).
 | Org Invitations | POST | `/v1/organization/invitations` | `client.organization().invitations.create(emails, role_id=...)` | Yes | Docs |
 | Org Invitations | PUT | `/v1/organization/invitations/{invitationId}` | `client.organization().invitations.resend(invitation_id)` | Yes | Docs |
 | Org Invitations | DELETE | `/v1/organization/invitations/{invitationId}` | `client.organization().invitations.revoke(invitation_id)` | Yes | Docs |
-| Org Roles | GET | `/v1/organization/roles` | `client.organization().roles.list()` | Yes | Docs |
-| Org Roles | POST | `/v1/organization/roles` | `client.organization().roles.create(name, policy_ids=...)` | Yes | Docs |
-| Org Roles | PUT | `/v1/organization/roles/{roleId}` | `client.organization().roles.update(role_id, name=, policy_ids=)` | Yes | Docs |
-| Org Roles | DELETE | `/v1/organization/roles/{roleId}` | `client.organization().roles.delete(role_id)` | Yes | Docs |
-| Org Policies | GET | `/v1/organization/policies` | `client.organization().policies.list()` | Yes | Docs |
-| Org Policies | POST | `/v1/organization/policies` | `client.organization().policies.create(name, permission_ids=...)` | Yes | Docs |
-| Org Policies | PUT | `/v1/organization/policies/{policyId}` | `client.organization().policies.update(policy_id, name=, permission_ids=)` | Yes | Docs |
-| Org Policies | DELETE | `/v1/organization/policies/{policyId}` | `client.organization().policies.delete(policy_id)` | Yes | Docs |
-| Org Permissions | GET | `/v1/organization/permissions` | `client.organization().permissions.list()` | Yes | Docs |
+| Org Roles | GET | `/v1/organization/roles` | `client.organization().iam.roles.list()` | Yes | Docs |
+| Org Roles | POST | `/v1/organization/roles` | `client.organization().iam.roles.create(name, policy_ids=...)` | Yes | Docs |
+| Org Roles | PUT | `/v1/organization/roles/{roleId}` | `client.organization().iam.roles.update(role_id, name=, policy_ids=)` | Yes | Docs |
+| Org Roles | DELETE | `/v1/organization/roles/{roleId}` | `client.organization().iam.roles.delete(role_id)` | Yes | Docs |
+| Org Policies | GET | `/v1/organization/policies` | `client.organization().iam.policies.list()` | Yes | Docs |
+| Org Policies | POST | `/v1/organization/policies` | `client.organization().iam.policies.create(name, permission_ids=...)` | Yes | Docs |
+| Org Policies | PUT | `/v1/organization/policies/{policyId}` | `client.organization().iam.policies.update(policy_id, name=, permission_ids=)` | Yes | Docs |
+| Org Policies | DELETE | `/v1/organization/policies/{policyId}` | `client.organization().iam.policies.delete(policy_id)` | Yes | Docs |
+| Org Permissions | GET | `/v1/organization/permissions` | `client.organization().iam.permissions.list()` | Yes | Docs |
+
+## Governance
+
+Governance policies are **organization-scoped** (controls + projects), distinct
+from IAM `Policy` (permissions). Projects belong to at most one policy.
+
+| Resource | Method | Path | SDK Method | Implemented | Source |
+| --- | --- | --- | --- | --- | --- |
+| Governance Policies | GET | `/v1/organization/governance-policies` | `client.organization().governance.policies.list()` | Yes | Docs |
+| Governance Policies | POST | `/v1/organization/governance-policies/{policyId}/assign` | `client.organization().governance.policies.assign(policy_id, project_ids=...)` | Yes | Docs |
+| Governance Policies | POST | `/v1/organization/governance-policies/{policyId}/unassign` | `client.organization().governance.policies.unassign(policy_id, project_ids=...)` | Yes | Docs |
 
 ## Projects
 
@@ -80,15 +92,15 @@ Legend: **Implemented** = exposed by this SDK. Source = `Docs` (OpenAPI spec).
 | Project Invitations | POST | `/v1/projects/{projectId}/invitations` | `client.project(id).invitations.create(emails, role_id=...)` | Yes | Docs |
 | Project Invitations | PUT | `/v1/projects/{projectId}/invitations/{invitationId}` | `client.project(id).invitations.resend(invitation_id)` | Yes | Docs |
 | Project Invitations | DELETE | `/v1/projects/{projectId}/invitations/{invitationId}` | `client.project(id).invitations.revoke(invitation_id)` | Yes | Docs |
-| Project Roles | GET | `/v1/projects/{projectId}/roles` | `client.project(id).roles.list()` | Yes | Docs |
-| Project Roles | POST | `/v1/projects/{projectId}/roles` | `client.project(id).roles.create(name, policy_ids=...)` | Yes | Docs |
-| Project Roles | PUT | `/v1/projects/{projectId}/roles/{roleId}` | `client.project(id).roles.update(role_id, name=, policy_ids=)` | Yes | Docs |
-| Project Roles | DELETE | `/v1/projects/{projectId}/roles/{roleId}` | `client.project(id).roles.delete(role_id)` | Yes | Docs |
-| Project Policies | GET | `/v1/projects/{projectId}/policies` | `client.project(id).policies.list()` | Yes | Docs |
-| Project Policies | POST | `/v1/projects/{projectId}/policies` | `client.project(id).policies.create(name, permission_ids=...)` | Yes | Docs |
-| Project Policies | PUT | `/v1/projects/{projectId}/policies/{policyId}` | `client.project(id).policies.update(policy_id, name=, permission_ids=)` | Yes | Docs |
-| Project Policies | DELETE | `/v1/projects/{projectId}/policies/{policyId}` | `client.project(id).policies.delete(policy_id)` | Yes | Docs |
-| Project Permissions | GET | `/v1/projects/{projectId}/permissions` | `client.project(id).permissions.list()` | Yes | Docs |
+| Project Roles | GET | `/v1/projects/{projectId}/roles` | `client.project(id).iam.roles.list()` | Yes | Docs |
+| Project Roles | POST | `/v1/projects/{projectId}/roles` | `client.project(id).iam.roles.create(name, policy_ids=...)` | Yes | Docs |
+| Project Roles | PUT | `/v1/projects/{projectId}/roles/{roleId}` | `client.project(id).iam.roles.update(role_id, name=, policy_ids=)` | Yes | Docs |
+| Project Roles | DELETE | `/v1/projects/{projectId}/roles/{roleId}` | `client.project(id).iam.roles.delete(role_id)` | Yes | Docs |
+| Project Policies | GET | `/v1/projects/{projectId}/policies` | `client.project(id).iam.policies.list()` | Yes | Docs |
+| Project Policies | POST | `/v1/projects/{projectId}/policies` | `client.project(id).iam.policies.create(name, permission_ids=...)` | Yes | Docs |
+| Project Policies | PUT | `/v1/projects/{projectId}/policies/{policyId}` | `client.project(id).iam.policies.update(policy_id, name=, permission_ids=)` | Yes | Docs |
+| Project Policies | DELETE | `/v1/projects/{projectId}/policies/{policyId}` | `client.project(id).iam.policies.delete(policy_id)` | Yes | Docs |
+| Project Permissions | GET | `/v1/projects/{projectId}/permissions` | `client.project(id).iam.permissions.list()` | Yes | Docs |
 
 ## Notes
 
@@ -99,3 +111,9 @@ Legend: **Implemented** = exposed by this SDK. Source = `Docs` (OpenAPI spec).
   matching the real API.
 * Role/policy `update` requires `name` and `policy_ids`/`permission_ids` because
   the API uses the same `CreateOrUpdate*` schema for create and update.
+* `governance.policies.assign(...)` is additive: it moves the listed projects onto
+  the policy (leaving the policy's other projects untouched) and returns the
+  `count` of projects **actually moved** (re-assigning an already-enrolled project
+  yields `count: 0`). `unassign(...)` only clears projects currently on the policy.
+* `client.projects.list()` and `client.project(id).get()` include each project's
+  `governance_policy` (`{id, name}` or `None`) so you can read its enrollment.

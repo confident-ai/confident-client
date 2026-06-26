@@ -95,7 +95,7 @@ def test_invitations_create_uses_organization_role_id(client, http):
 
 def test_roles_create_sends_policy_ids(client, http):
     http.enqueue_data({"role": {"id": "r1", "name": "Analyst", "policies": []}})
-    role = client.organization().roles.create(
+    role = client.organization().iam.roles.create(
         "Analyst", policy_ids=["p1"], description="read only"
     )
     assert role.name == "Analyst"
@@ -110,7 +110,7 @@ def test_policies_create_sends_permission_ids(client, http):
     http.enqueue_data(
         {"policy": {"id": "p1", "name": "Billing", "permissions": []}}
     )
-    client.organization().policies.create("Billing", permission_ids=["perm1"])
+    client.organization().iam.policies.create("Billing", permission_ids=["perm1"])
     assert http.last["json"] == {
         "name": "Billing",
         "permissionIds": ["perm1"],
@@ -121,6 +121,71 @@ def test_permissions_list(client, http):
     http.enqueue_data(
         {"permissions": [{"id": "perm1", "name": "billing:read"}]}
     )
-    perms = client.organization().permissions.list()
+    perms = client.organization().iam.permissions.list()
     assert perms[0].name == "billing:read"
     assert http.last["url"].endswith("/v1/organization/permissions")
+
+
+def test_governance_policies_list(client, http):
+    http.enqueue_data(
+        {
+            "governancePolicies": [
+                {
+                    "id": "gp1",
+                    "name": "Production Gate",
+                    "description": None,
+                    "projects": [{"id": "p1", "name": "Prod"}],
+                    "controls": [
+                        {
+                            "id": "c1",
+                            "name": "Logs traces",
+                            "type": "PRE_DEPLOYMENT_EVALS",
+                        }
+                    ],
+                }
+            ]
+        }
+    )
+    policies = client.organization().governance.policies.list()
+    assert policies[0].id == "gp1"
+    assert policies[0].projects[0].id == "p1"
+    assert policies[0].controls[0].type == "PRE_DEPLOYMENT_EVALS"
+    assert http.last["method"] == "GET"
+    assert http.last["url"].endswith("/v1/organization/governance-policies")
+
+
+def test_governance_policies_assign(client, http):
+    http.enqueue_data(
+        {
+            "governancePolicy": {"id": "gp1", "name": "Production Gate"},
+            "count": 2,
+        }
+    )
+    result = client.organization().governance.policies.assign(
+        "gp1", project_ids=["p1", "p2"]
+    )
+    assert result.governance_policy.id == "gp1"
+    assert result.count == 2
+    assert http.last["method"] == "POST"
+    assert http.last["json"] == {"projectIds": ["p1", "p2"]}
+    assert http.last["url"].endswith(
+        "/v1/organization/governance-policies/gp1/assign"
+    )
+
+
+def test_governance_policies_unassign(client, http):
+    http.enqueue_data(
+        {
+            "governancePolicy": {"id": "gp1", "name": "Production Gate"},
+            "count": 1,
+        }
+    )
+    result = client.organization().governance.policies.unassign(
+        "gp1", project_ids=["p1"]
+    )
+    assert result.count == 1
+    assert http.last["method"] == "POST"
+    assert http.last["json"] == {"projectIds": ["p1"]}
+    assert http.last["url"].endswith(
+        "/v1/organization/governance-policies/gp1/unassign"
+    )

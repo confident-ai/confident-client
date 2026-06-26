@@ -104,6 +104,15 @@ class Endpoints(Enum):
     ORGANIZATION_PERMISSIONS_ENDPOINT = "/v1/organization/permissions"
     ORGANIZATION_API_KEYS_ENDPOINT = "/v1/organization/api-keys"
     ORGANIZATION_API_KEY_ENDPOINT = "/v1/organization/api-keys/:apiKeyId"
+    ORGANIZATION_GOVERNANCE_POLICIES_ENDPOINT = (
+        "/v1/organization/governance-policies"
+    )
+    ORGANIZATION_GOVERNANCE_POLICY_ASSIGN_ENDPOINT = (
+        "/v1/organization/governance-policies/:policyId/assign"
+    )
+    ORGANIZATION_GOVERNANCE_POLICY_UNASSIGN_ENDPOINT = (
+        "/v1/organization/governance-policies/:policyId/unassign"
+    )
 
     # Project management
     PROJECTS_ENDPOINT = "/v1/projects"

@@ -4,11 +4,9 @@ from ..api import Api, Endpoints, HttpMethods
 from ..types import CreatedProject, DeletionResult, Project
 from ..utils.validation import require
 from .api_keys import AsyncProjectApiKeys, ProjectApiKeys
+from .iam import AsyncProjectIam, ProjectIam
 from .invitations import AsyncProjectInvitations, ProjectInvitations
 from .members import AsyncProjectMembers, ProjectMembers
-from .permissions import AsyncProjectPermissions, ProjectPermissions
-from .policies import AsyncProjectPolicies, ProjectPolicies
-from .roles import AsyncProjectRoles, ProjectRoles
 from .types import (
     CreateProjectRequest,
     ProjectHttpResponse,
@@ -54,9 +52,7 @@ class ProjectClient:
         self.api_keys = ProjectApiKeys(api, project_id)
         self.members = ProjectMembers(api, project_id)
         self.invitations = ProjectInvitations(api, project_id)
-        self.roles = ProjectRoles(api, project_id)
-        self.policies = ProjectPolicies(api, project_id)
-        self.permissions = ProjectPermissions(api, project_id)
+        self.iam = ProjectIam(api, project_id)
 
     def get(self) -> Project:
         data, _ = self._api.send_request(
@@ -129,9 +125,7 @@ class AsyncProjectClient:
         self.api_keys = AsyncProjectApiKeys(api, project_id)
         self.members = AsyncProjectMembers(api, project_id)
         self.invitations = AsyncProjectInvitations(api, project_id)
-        self.roles = AsyncProjectRoles(api, project_id)
-        self.policies = AsyncProjectPolicies(api, project_id)
-        self.permissions = AsyncProjectPermissions(api, project_id)
+        self.iam = AsyncProjectIam(api, project_id)
 
     async def get(self) -> Project:
         data, _ = await self._api.a_send_request(
