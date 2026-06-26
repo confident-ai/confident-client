@@ -113,6 +113,9 @@ class Endpoints(Enum):
     ORGANIZATION_GOVERNANCE_POLICY_UNASSIGN_ENDPOINT = (
         "/v1/organization/governance-policies/:policyId/unassign"
     )
+    ORGANIZATION_GOVERNANCE_POLICY_PROJECTS_ENDPOINT = (
+        "/v1/organization/governance-policies/:policyId/projects"
+    )
 
     # Project management
     PROJECTS_ENDPOINT = "/v1/projects"

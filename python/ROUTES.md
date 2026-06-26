@@ -68,6 +68,7 @@ from IAM `Policy` (permissions). Projects belong to at most one policy.
 | Resource | Method | Path | SDK Method | Implemented | Source |
 | --- | --- | --- | --- | --- | --- |
 | Governance Policies | GET | `/v1/organization/governance-policies` | `client.organization().governance.policies.list()` | Yes | Docs |
+| Governance Policies | GET | `/v1/organization/governance-policies/{policyId}/projects` | `client.organization().governance.policies.list_projects(policy_id, page=, page_size=)` | Yes | Docs |
 | Governance Policies | POST | `/v1/organization/governance-policies/{policyId}/assign` | `client.organization().governance.policies.assign(policy_id, project_ids=...)` | Yes | Docs |
 | Governance Policies | POST | `/v1/organization/governance-policies/{policyId}/unassign` | `client.organization().governance.policies.unassign(policy_id, project_ids=...)` | Yes | Docs |
 
@@ -115,5 +116,8 @@ from IAM `Policy` (permissions). Projects belong to at most one policy.
   the policy (leaving the policy's other projects untouched) and returns the
   `count` of projects **actually moved** (re-assigning an already-enrolled project
   yields `count: 0`). `unassign(...)` only clears projects currently on the policy.
+* `governance.policies.list()` returns each policy with a `projects_count`; page
+  through a policy's projects with
+  `governance.policies.list_projects(policy_id, page=, page_size=)`.
 * `client.projects.list()` and `client.project(id).get()` include each project's
   `governance_policy` (`{id, name}` or `None`) so you can read its enrollment.

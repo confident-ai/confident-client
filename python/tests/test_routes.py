@@ -84,6 +84,12 @@ ROUTE_CASES = [
         "/v1/organization/governance-policies/gp1/unassign",
     ),
     (
+        "list governance policy projects",
+        lambda c: c.organization().governance.policies.list_projects("gp1"),
+        "GET",
+        "/v1/organization/governance-policies/gp1/projects",
+    ),
+    (
         "list projects",
         lambda c: c.projects.list(),
         "GET",

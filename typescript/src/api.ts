@@ -60,6 +60,7 @@ export enum Endpoints {
   ORGANIZATION_GOVERNANCE_POLICIES_ENDPOINT = "/v1/organization/governance-policies",
   ORGANIZATION_GOVERNANCE_POLICY_ASSIGN_ENDPOINT = "/v1/organization/governance-policies/:policyId/assign",
   ORGANIZATION_GOVERNANCE_POLICY_UNASSIGN_ENDPOINT = "/v1/organization/governance-policies/:policyId/unassign",
+  ORGANIZATION_GOVERNANCE_POLICY_PROJECTS_ENDPOINT = "/v1/organization/governance-policies/:policyId/projects",
 
   // Project management
   PROJECTS_ENDPOINT = "/v1/projects",

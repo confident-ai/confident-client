@@ -1,8 +1,16 @@
-from typing import List
+from typing import List, Optional
 
 from ....api import Api, Endpoints, HttpMethods
-from ....types import GovernancePolicy, GovernancePolicyAssignmentResult
-from .types import AssignProjectsRequest, GovernancePoliciesHttpResponse
+from ....types import (
+    GovernancePolicy,
+    GovernancePolicyAssignmentResult,
+    NamedRef,
+)
+from .types import (
+    AssignProjectsRequest,
+    GovernancePoliciesHttpResponse,
+    GovernancePolicyProjectsHttpResponse,
+)
 
 
 class GovernancePolicies:
@@ -15,6 +23,21 @@ class GovernancePolicies:
             Endpoints.ORGANIZATION_GOVERNANCE_POLICIES_ENDPOINT,
         )
         return GovernancePoliciesHttpResponse(**data).governance_policies
+
+    def list_projects(
+        self,
+        policy_id: str,
+        *,
+        page: Optional[int] = None,
+        page_size: Optional[int] = None,
+    ) -> List[NamedRef]:
+        data, _ = self._api.send_request(
+            HttpMethods.GET,
+            Endpoints.ORGANIZATION_GOVERNANCE_POLICY_PROJECTS_ENDPOINT,
+            params={"page": page, "pageSize": page_size},
+            url_params={"policyId": policy_id},
+        )
+        return GovernancePolicyProjectsHttpResponse(**data).projects
 
     def assign(
         self, policy_id: str, *, project_ids: List[str]
@@ -55,6 +78,21 @@ class AsyncGovernancePolicies:
             Endpoints.ORGANIZATION_GOVERNANCE_POLICIES_ENDPOINT,
         )
         return GovernancePoliciesHttpResponse(**data).governance_policies
+
+    async def list_projects(
+        self,
+        policy_id: str,
+        *,
+        page: Optional[int] = None,
+        page_size: Optional[int] = None,
+    ) -> List[NamedRef]:
+        data, _ = await self._api.a_send_request(
+            HttpMethods.GET,
+            Endpoints.ORGANIZATION_GOVERNANCE_POLICY_PROJECTS_ENDPOINT,
+            params={"page": page, "pageSize": page_size},
+            url_params={"policyId": policy_id},
+        )
+        return GovernancePolicyProjectsHttpResponse(**data).projects
 
     async def assign(
         self, policy_id: str, *, project_ids: List[str]

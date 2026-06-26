@@ -152,7 +152,7 @@ def test_org_governance_policies_list(async_client, http):
                 {
                     "id": "gp1",
                     "name": "Production Gate",
-                    "projects": [{"id": "p1", "name": "Prod"}],
+                    "projectsCount": 5,
                     "controls": [
                         {
                             "id": "c1",
@@ -166,8 +166,23 @@ def test_org_governance_policies_list(async_client, http):
     )
     policies = run(async_client.organization().governance.policies.list())
     assert policies[0].id == "gp1"
+    assert policies[0].projects_count == 5
     assert policies[0].controls[0].type == "PRE_DEPLOYMENT_EVALS"
     assert http.last["url"].endswith("/v1/organization/governance-policies")
+
+
+def test_org_governance_policies_list_projects(async_client, http):
+    http.enqueue_data({"projects": [{"id": "p1", "name": "Prod"}], "total": 1})
+    projects = run(
+        async_client.organization().governance.policies.list_projects(
+            "gp1", page=2, page_size=50
+        )
+    )
+    assert projects[0].id == "p1"
+    assert http.last["params"] == {"page": 2, "pageSize": 50}
+    assert http.last["url"].endswith(
+        "/v1/organization/governance-policies/gp1/projects"
+    )
 
 
 def test_org_governance_policies_assign(async_client, http):

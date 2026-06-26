@@ -12,6 +12,7 @@ export type {
   CreatedProject,
   DeletionResult,
   GovernanceControl,
+  GovernanceControlType,
   GovernancePolicy,
   GovernancePolicyAssignmentResult,
   Invitation,

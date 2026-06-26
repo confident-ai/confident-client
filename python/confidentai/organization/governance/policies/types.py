@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import Field
 
-from ....types import ConfidentBaseModel, GovernancePolicy
+from ....types import ConfidentBaseModel, GovernancePolicy, NamedRef
 
 
 class AssignProjectsRequest(ConfidentBaseModel):
@@ -13,3 +13,7 @@ class GovernancePoliciesHttpResponse(ConfidentBaseModel):
     governance_policies: List[GovernancePolicy] = Field(
         default_factory=list, alias="governancePolicies"
     )
+
+
+class GovernancePolicyProjectsHttpResponse(ConfidentBaseModel):
+    projects: List[NamedRef] = Field(default_factory=list)

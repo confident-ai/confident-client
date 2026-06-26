@@ -81,17 +81,23 @@ export interface DeletionResult {
   removed?: boolean;
 }
 
+export type GovernanceControlType =
+  | "RUNTIME"
+  | "PRE_DEPLOYMENT_EVALS"
+  | "PRE_DEPLOYMENT_RED_TEAMING"
+  | "OPERATIONAL";
+
 export interface GovernanceControl {
   id: string;
   name: string;
-  type: string;
+  type: GovernanceControlType;
 }
 
 export interface GovernancePolicy {
   id: string;
   name: string;
   description?: string | null;
-  projects: NamedRef[];
+  projectsCount: number;
   controls: GovernanceControl[];
 }
 

@@ -2,10 +2,12 @@ import { Api, Endpoints, HttpMethods } from "../../../api";
 import {
   GovernancePolicy,
   GovernancePolicyAssignmentResult,
+  NamedRef,
 } from "../../../types";
 import {
   AssignProjectsRequest,
   GovernancePoliciesHttpResponse,
+  GovernancePolicyProjectsHttpResponse,
 } from "./types";
 
 export class GovernancePolicies {
@@ -17,6 +19,22 @@ export class GovernancePolicies {
       Endpoints.ORGANIZATION_GOVERNANCE_POLICIES_ENDPOINT,
     );
     return data.governancePolicies ?? [];
+  }
+
+  async listProjects(
+    policyId: string,
+    params: { page?: number; pageSize?: number } = {},
+  ): Promise<NamedRef[]> {
+    const data =
+      await this.api.sendRequest<GovernancePolicyProjectsHttpResponse>(
+        HttpMethods.GET,
+        Endpoints.ORGANIZATION_GOVERNANCE_POLICY_PROJECTS_ENDPOINT,
+        {
+          params: { page: params.page, pageSize: params.pageSize },
+          urlParams: { policyId },
+        },
+      );
+    return data.projects ?? [];
   }
 
   async assign(

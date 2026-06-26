@@ -83,13 +83,13 @@ describe("OrganizationClient", () => {
     expect(lastCall().url).toContain("/v1/organization/permissions");
   });
 
-  it("lists governance policies with projects and controls", async () => {
+  it("lists governance policies with projectsCount and controls", async () => {
     mockData({
       governancePolicies: [
         {
           id: "gp1",
           name: "Production Gate",
-          projects: [{ id: "p1", name: "Prod" }],
+          projectsCount: 5,
           controls: [
             { id: "c1", name: "Logs traces", type: "PRE_DEPLOYMENT_EVALS" },
           ],
@@ -100,8 +100,21 @@ describe("OrganizationClient", () => {
       .organization()
       .governance.policies.list();
     expect(policies[0].id).toBe("gp1");
+    expect(policies[0].projectsCount).toBe(5);
     expect(policies[0].controls[0].type).toBe("PRE_DEPLOYMENT_EVALS");
     expect(lastCall().url).toContain("/v1/organization/governance-policies");
+  });
+
+  it("lists a governance policy's projects (paginated)", async () => {
+    mockData({ projects: [{ id: "p1", name: "Prod" }], total: 1 });
+    const projects = await makeClient()
+      .organization()
+      .governance.policies.listProjects("gp1", { page: 2, pageSize: 50 });
+    expect(projects[0].id).toBe("p1");
+    expect(lastCall().params).toEqual({ page: 2, pageSize: 50 });
+    expect(lastCall().url).toContain(
+      "/v1/organization/governance-policies/gp1/projects",
+    );
   });
 
   it("assigns projects to a governance policy", async () => {
