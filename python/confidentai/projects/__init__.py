@@ -1,13 +1,3 @@
-from .client import (
-    AsyncProjectClient,
-    AsyncProjectsClient,
-    ProjectClient,
-    ProjectsClient,
-)
+from .client import ProjectClient, ProjectsClient
 
-__all__ = [
-    "ProjectClient",
-    "ProjectsClient",
-    "AsyncProjectClient",
-    "AsyncProjectsClient",
-]
+__all__ = ["ProjectClient", "ProjectsClient"]

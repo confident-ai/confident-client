@@ -68,39 +68,39 @@ client = ConfidentAI()  # reads CONFIDENT_ORG_API_KEY
 Regional defaults: `https://api.confident-ai.com` (US),
 `https://eu.api.confident-ai.com` (EU).
 
-## Async client
+## Async
 
-`ConfidentAI` is synchronous. For `asyncio` code, use `AsyncConfidentAI`, which
-mirrors the sync client exactly — same constructor, same resource tree
-(`organization()`, `project(id)`, `projects`) — except every request method is a
-coroutine you `await`:
+Every method that hits the API has an `a_`-prefixed async counterpart on the
+same client (`list` / `a_list`, `assign` / `a_assign`, …) — the same style as
+`deepeval`'s `measure` / `a_measure`. There is no separate async client; use one
+`ConfidentAI` and `await` the `a_` methods in `asyncio` code:
 
 ```python
 import asyncio
 
-from confidentai import AsyncConfidentAI
+from confidentai import ConfidentAI
 
 
 async def main():
-    client = AsyncConfidentAI(api_key="confident_org_...")
+    client = ConfidentAI(api_key="confident_org_...")
 
-    organization = await client.whoami()
-    projects = await client.projects.list()
+    organization = await client.a_whoami()
+    projects = await client.projects.a_list()
 
     project = client.project("project_id")          # no I/O, no await
-    members = await project.members.list()            # awaited
+    members = await project.members.a_list()          # awaited
 
-    created = await client.projects.create("Async App")
-    await client.project(created.project.id).delete()
+    created = await client.projects.a_create("Async App")
+    await client.project(created.project.id).a_delete()
 
 
 asyncio.run(main())
 ```
 
 `organization()` and `project(id)` just build scoped clients (no network), so
-they are not awaited; only the methods that actually hit the API are coroutines.
-Configuration, regions, and `ConfidentApiError` behave identically to the sync
-client.
+they are not awaited; only the `a_`-prefixed methods that actually hit the API
+are coroutines. Configuration, regions, and `ConfidentApiError` behave
+identically to the sync methods.
 
 ## Organization example
 

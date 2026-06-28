@@ -1,10 +1,10 @@
 from ..api import Api, Endpoints, HttpMethods
 from ..types import Organization
-from .api_keys import AsyncOrganizationApiKeys, OrganizationApiKeys
-from .governance import AsyncOrganizationGovernance, OrganizationGovernance
-from .iam import AsyncOrganizationIam, OrganizationIam
-from .invitations import AsyncOrganizationInvitations, OrganizationInvitations
-from .members import AsyncOrganizationMembers, OrganizationMembers
+from .api_keys import OrganizationApiKeys
+from .governance import OrganizationGovernance
+from .iam import OrganizationIam
+from .invitations import OrganizationInvitations
+from .members import OrganizationMembers
 from .types import OrganizationHttpResponse, UpdateOrganizationRequest
 
 
@@ -34,23 +34,13 @@ class OrganizationClient:
         )
         return OrganizationHttpResponse(**data).organization
 
-
-class AsyncOrganizationClient:
-    def __init__(self, api: Api) -> None:
-        self._api = api
-        self.api_keys = AsyncOrganizationApiKeys(api)
-        self.members = AsyncOrganizationMembers(api)
-        self.invitations = AsyncOrganizationInvitations(api)
-        self.iam = AsyncOrganizationIam(api)
-        self.governance = AsyncOrganizationGovernance(api)
-
-    async def get(self) -> Organization:
+    async def a_get(self) -> Organization:
         data, _ = await self._api.a_send_request(
             HttpMethods.GET, Endpoints.ORGANIZATION_ENDPOINT
         )
         return OrganizationHttpResponse(**data).organization
 
-    async def update(self, *, name: str) -> Organization:
+    async def a_update(self, *, name: str) -> Organization:
         body = UpdateOrganizationRequest(name=name).model_dump(
             by_alias=True, exclude_none=True
         )

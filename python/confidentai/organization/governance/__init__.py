@@ -1,3 +1,3 @@
-from .client import AsyncOrganizationGovernance, OrganizationGovernance
+from .client import OrganizationGovernance
 
-__all__ = ["OrganizationGovernance", "AsyncOrganizationGovernance"]
+__all__ = ["OrganizationGovernance"]

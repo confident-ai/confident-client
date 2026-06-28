@@ -1,4 +1,4 @@
-from .resource import AsyncOrganizationApiKeys, OrganizationApiKeys
+from .resource import OrganizationApiKeys
 from .types import (
     ApiKeyHttpResponse,
     ApiKeysHttpResponse,
@@ -8,7 +8,6 @@ from .types import (
 
 __all__ = [
     "OrganizationApiKeys",
-    "AsyncOrganizationApiKeys",
     "CreateApiKeyRequest",
     "UpdateApiKeyRequest",
     "ApiKeyHttpResponse",

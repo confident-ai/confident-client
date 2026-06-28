@@ -1,4 +1,4 @@
-from .resource import AsyncOrganizationInvitations, OrganizationInvitations
+from .resource import OrganizationInvitations
 from .types import (
     CreateOrganizationInvitationsRequest,
     InvitationHttpResponse,
@@ -7,7 +7,6 @@ from .types import (
 
 __all__ = [
     "OrganizationInvitations",
-    "AsyncOrganizationInvitations",
     "CreateOrganizationInvitationsRequest",
     "InvitationHttpResponse",
     "InvitationsHttpResponse",

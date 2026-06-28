@@ -1,13 +1,8 @@
 from ._version import __version__
 from .api import Api, Endpoints, HttpMethods
-from .client import AsyncConfidentAI, ConfidentAI
-from .organization import AsyncOrganizationClient, OrganizationClient
-from .projects import (
-    AsyncProjectClient,
-    AsyncProjectsClient,
-    ProjectClient,
-    ProjectsClient,
-)
+from .client import ConfidentAI
+from .organization import OrganizationClient
+from .projects import ProjectClient, ProjectsClient
 from .types import (
     ApiKey,
     ApiResponse,
@@ -34,13 +29,9 @@ __all__ = [
     "Endpoints",
     "HttpMethods",
     "ConfidentAI",
-    "AsyncConfidentAI",
     "OrganizationClient",
-    "AsyncOrganizationClient",
     "ProjectClient",
     "ProjectsClient",
-    "AsyncProjectClient",
-    "AsyncProjectsClient",
     "ConfidentApiError",
     "ApiResponse",
     "ApiKey",

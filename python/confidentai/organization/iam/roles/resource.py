@@ -59,18 +59,13 @@ class OrganizationRoles:
         )
         return DeletionResult(**data)
 
-
-class AsyncOrganizationRoles:
-    def __init__(self, api: Api) -> None:
-        self._api = api
-
-    async def list(self) -> List[Role]:
+    async def a_list(self) -> List[Role]:
         data, _ = await self._api.a_send_request(
             HttpMethods.GET, Endpoints.ORGANIZATION_ROLES_ENDPOINT
         )
         return RolesHttpResponse(**data).roles
 
-    async def create(
+    async def a_create(
         self,
         name: str,
         *,
@@ -87,7 +82,7 @@ class AsyncOrganizationRoles:
         )
         return RoleHttpResponse(**data).role
 
-    async def update(
+    async def a_update(
         self,
         role_id: str,
         *,
@@ -106,7 +101,7 @@ class AsyncOrganizationRoles:
         )
         return RoleHttpResponse(**data).role
 
-    async def delete(self, role_id: str) -> DeletionResult:
+    async def a_delete(self, role_id: str) -> DeletionResult:
         data, _ = await self._api.a_send_request(
             HttpMethods.DELETE,
             Endpoints.ORGANIZATION_ROLE_ENDPOINT,

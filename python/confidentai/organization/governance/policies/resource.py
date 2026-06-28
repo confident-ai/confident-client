@@ -68,19 +68,14 @@ class GovernancePolicies:
         )
         return GovernancePolicyUnassignmentResult(**data)
 
-
-class AsyncGovernancePolicies:
-    def __init__(self, api: Api) -> None:
-        self._api = api
-
-    async def list(self) -> List[GovernancePolicy]:
+    async def a_list(self) -> List[GovernancePolicy]:
         data, _ = await self._api.a_send_request(
             HttpMethods.GET,
             Endpoints.ORGANIZATION_GOVERNANCE_POLICIES_ENDPOINT,
         )
         return GovernancePoliciesHttpResponse(**data).governance_policies
 
-    async def list_projects(
+    async def a_list_projects(
         self,
         policy_id: str,
         *,
@@ -95,7 +90,7 @@ class AsyncGovernancePolicies:
         )
         return GovernancePolicyProjectsHttpResponse(**data).projects
 
-    async def assign(
+    async def a_assign(
         self, policy_id: str, *, project_ids: List[str]
     ) -> GovernancePolicyAssignmentResult:
         body = AssignProjectsRequest(project_ids=project_ids).model_dump(
@@ -109,7 +104,7 @@ class AsyncGovernancePolicies:
         )
         return GovernancePolicyAssignmentResult(**data)
 
-    async def unassign(
+    async def a_unassign(
         self, policy_id: str, *, project_ids: List[str]
     ) -> GovernancePolicyUnassignmentResult:
         body = AssignProjectsRequest(project_ids=project_ids).model_dump(

@@ -15,12 +15,7 @@ class OrganizationPermissions:
         )
         return PermissionsHttpResponse(**data).permissions
 
-
-class AsyncOrganizationPermissions:
-    def __init__(self, api: Api) -> None:
-        self._api = api
-
-    async def list(self) -> List[Permission]:
+    async def a_list(self) -> List[Permission]:
         data, _ = await self._api.a_send_request(
             HttpMethods.GET, Endpoints.ORGANIZATION_PERMISSIONS_ENDPOINT
         )

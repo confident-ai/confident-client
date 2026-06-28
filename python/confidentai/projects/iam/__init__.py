@@ -1,3 +1,3 @@
-from .client import AsyncProjectIam, ProjectIam
+from .client import ProjectIam
 
-__all__ = ["ProjectIam", "AsyncProjectIam"]
+__all__ = ["ProjectIam"]

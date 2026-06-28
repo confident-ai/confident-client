@@ -63,13 +63,7 @@ class ProjectPolicies:
         )
         return DeletionResult(**data)
 
-
-class AsyncProjectPolicies:
-    def __init__(self, api: Api, project_id: str) -> None:
-        self._api = api
-        self._project_id = project_id
-
-    async def list(self) -> List[Policy]:
+    async def a_list(self) -> List[Policy]:
         data, _ = await self._api.a_send_request(
             HttpMethods.GET,
             Endpoints.PROJECT_POLICIES_ENDPOINT,
@@ -77,7 +71,7 @@ class AsyncProjectPolicies:
         )
         return PoliciesHttpResponse(**data).policies
 
-    async def create(
+    async def a_create(
         self,
         name: str,
         *,
@@ -95,7 +89,7 @@ class AsyncProjectPolicies:
         )
         return PolicyHttpResponse(**data).policy
 
-    async def update(
+    async def a_update(
         self,
         policy_id: str,
         *,
@@ -114,7 +108,7 @@ class AsyncProjectPolicies:
         )
         return PolicyHttpResponse(**data).policy
 
-    async def delete(self, policy_id: str) -> DeletionResult:
+    async def a_delete(self, policy_id: str) -> DeletionResult:
         data, _ = await self._api.a_send_request(
             HttpMethods.DELETE,
             Endpoints.PROJECT_POLICY_ENDPOINT,

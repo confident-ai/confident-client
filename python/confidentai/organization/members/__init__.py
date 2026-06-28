@@ -1,4 +1,4 @@
-from .resource import AsyncOrganizationMembers, OrganizationMembers
+from .resource import OrganizationMembers
 from .types import (
     MemberHttpResponse,
     MembersHttpResponse,
@@ -7,7 +7,6 @@ from .types import (
 
 __all__ = [
     "OrganizationMembers",
-    "AsyncOrganizationMembers",
     "UpdateMemberRoleRequest",
     "MemberHttpResponse",
     "MembersHttpResponse",

@@ -59,18 +59,13 @@ class OrganizationPolicies:
         )
         return DeletionResult(**data)
 
-
-class AsyncOrganizationPolicies:
-    def __init__(self, api: Api) -> None:
-        self._api = api
-
-    async def list(self) -> List[Policy]:
+    async def a_list(self) -> List[Policy]:
         data, _ = await self._api.a_send_request(
             HttpMethods.GET, Endpoints.ORGANIZATION_POLICIES_ENDPOINT
         )
         return PoliciesHttpResponse(**data).policies
 
-    async def create(
+    async def a_create(
         self,
         name: str,
         *,
@@ -87,7 +82,7 @@ class AsyncOrganizationPolicies:
         )
         return PolicyHttpResponse(**data).policy
 
-    async def update(
+    async def a_update(
         self,
         policy_id: str,
         *,
@@ -106,7 +101,7 @@ class AsyncOrganizationPolicies:
         )
         return PolicyHttpResponse(**data).policy
 
-    async def delete(self, policy_id: str) -> DeletionResult:
+    async def a_delete(self, policy_id: str) -> DeletionResult:
         data, _ = await self._api.a_send_request(
             HttpMethods.DELETE,
             Endpoints.ORGANIZATION_POLICY_ENDPOINT,

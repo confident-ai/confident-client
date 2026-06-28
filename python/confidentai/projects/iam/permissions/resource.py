@@ -18,13 +18,7 @@ class ProjectPermissions:
         )
         return PermissionsHttpResponse(**data).permissions
 
-
-class AsyncProjectPermissions:
-    def __init__(self, api: Api, project_id: str) -> None:
-        self._api = api
-        self._project_id = project_id
-
-    async def list(self) -> List[Permission]:
+    async def a_list(self) -> List[Permission]:
         data, _ = await self._api.a_send_request(
             HttpMethods.GET,
             Endpoints.PROJECT_PERMISSIONS_ENDPOINT,
