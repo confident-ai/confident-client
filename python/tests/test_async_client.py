@@ -189,6 +189,8 @@ def test_org_governance_policies_assign(async_client, http):
     http.enqueue_data(
         {
             "governancePolicy": {"id": "gp1", "name": "Production Gate"},
+            "assignedProjectIds": ["p1", "p2"],
+            "notFoundProjectIds": [],
             "count": 2,
         }
     )
@@ -197,6 +199,8 @@ def test_org_governance_policies_assign(async_client, http):
             "gp1", project_ids=["p1", "p2"]
         )
     )
+    assert result.assigned_project_ids == ["p1", "p2"]
+    assert result.not_found_project_ids == []
     assert result.count == 2
     assert http.last["method"] == "POST"
     assert http.last["json"] == {"projectIds": ["p1", "p2"]}
@@ -209,6 +213,8 @@ def test_org_governance_policies_unassign(async_client, http):
     http.enqueue_data(
         {
             "governancePolicy": {"id": "gp1", "name": "Production Gate"},
+            "unassignedProjectIds": ["p1"],
+            "skippedProjectIds": [],
             "count": 1,
         }
     )
@@ -217,6 +223,8 @@ def test_org_governance_policies_unassign(async_client, http):
             "gp1", project_ids=["p1"]
         )
     )
+    assert result.unassigned_project_ids == ["p1"]
+    assert result.skipped_project_ids == []
     assert result.count == 1
     assert http.last["url"].endswith(
         "/v1/organization/governance-policies/gp1/unassign"

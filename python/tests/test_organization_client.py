@@ -170,6 +170,8 @@ def test_governance_policies_assign(client, http):
     http.enqueue_data(
         {
             "governancePolicy": {"id": "gp1", "name": "Production Gate"},
+            "assignedProjectIds": ["p1", "p2"],
+            "notFoundProjectIds": [],
             "count": 2,
         }
     )
@@ -177,6 +179,8 @@ def test_governance_policies_assign(client, http):
         "gp1", project_ids=["p1", "p2"]
     )
     assert result.governance_policy.id == "gp1"
+    assert result.assigned_project_ids == ["p1", "p2"]
+    assert result.not_found_project_ids == []
     assert result.count == 2
     assert http.last["method"] == "POST"
     assert http.last["json"] == {"projectIds": ["p1", "p2"]}
@@ -189,12 +193,16 @@ def test_governance_policies_unassign(client, http):
     http.enqueue_data(
         {
             "governancePolicy": {"id": "gp1", "name": "Production Gate"},
+            "unassignedProjectIds": ["p1"],
+            "skippedProjectIds": [],
             "count": 1,
         }
     )
     result = client.organization().governance.policies.unassign(
         "gp1", project_ids=["p1"]
     )
+    assert result.unassigned_project_ids == ["p1"]
+    assert result.skipped_project_ids == []
     assert result.count == 1
     assert http.last["method"] == "POST"
     assert http.last["json"] == {"projectIds": ["p1"]}

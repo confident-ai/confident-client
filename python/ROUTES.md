@@ -112,10 +112,11 @@ from IAM `Policy` (permissions). Projects belong to at most one policy.
   matching the real API.
 * Role/policy `update` requires `name` and `policy_ids`/`permission_ids` because
   the API uses the same `CreateOrUpdate*` schema for create and update.
-* `governance.policies.assign(...)` is additive: it moves the listed projects onto
-  the policy (leaving the policy's other projects untouched) and returns the
-  `count` of projects **actually moved** (re-assigning an already-enrolled project
-  yields `count: 0`). `unassign(...)` only clears projects currently on the policy.
+* `governance.policies.assign(...)` is additive and partial: it enrolls every
+  project that exists in the org and returns `assigned_project_ids` plus
+  `not_found_project_ids` (unknown ids are reported, not fatal), with `count` =
+  number now assigned. `unassign(...)` mirrors this with `unassigned_project_ids`
+  and `skipped_project_ids` (projects not on the policy are skipped, not fatal).
 * `governance.policies.list()` returns each policy with a `projects_count`; page
   through a policy's projects with
   `governance.policies.list_projects(policy_id, page=, page_size=)`.

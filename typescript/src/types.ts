@@ -103,5 +103,14 @@ export interface GovernancePolicy {
 
 export interface GovernancePolicyAssignmentResult {
   governancePolicy: NamedRef;
+  assignedProjectIds: string[];
+  notFoundProjectIds: string[];
+  count: number;
+}
+
+export interface GovernancePolicyUnassignmentResult {
+  governancePolicy: NamedRef;
+  unassignedProjectIds: string[];
+  skippedProjectIds: string[];
   count: number;
 }

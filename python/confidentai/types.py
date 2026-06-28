@@ -126,4 +126,21 @@ class GovernancePolicy(ConfidentBaseModel):
 
 class GovernancePolicyAssignmentResult(ConfidentBaseModel):
     governance_policy: NamedRef = Field(alias="governancePolicy")
+    assigned_project_ids: List[str] = Field(
+        default_factory=list, alias="assignedProjectIds"
+    )
+    not_found_project_ids: List[str] = Field(
+        default_factory=list, alias="notFoundProjectIds"
+    )
+    count: int
+
+
+class GovernancePolicyUnassignmentResult(ConfidentBaseModel):
+    governance_policy: NamedRef = Field(alias="governancePolicy")
+    unassigned_project_ids: List[str] = Field(
+        default_factory=list, alias="unassignedProjectIds"
+    )
+    skipped_project_ids: List[str] = Field(
+        default_factory=list, alias="skippedProjectIds"
+    )
     count: int

@@ -2,6 +2,7 @@ import { Api, Endpoints, HttpMethods } from "../../../api";
 import {
   GovernancePolicy,
   GovernancePolicyAssignmentResult,
+  GovernancePolicyUnassignmentResult,
   NamedRef,
 } from "../../../types";
 import {
@@ -52,9 +53,9 @@ export class GovernancePolicies {
   async unassign(
     policyId: string,
     params: AssignProjectsRequest,
-  ): Promise<GovernancePolicyAssignmentResult> {
+  ): Promise<GovernancePolicyUnassignmentResult> {
     const body: AssignProjectsRequest = { projectIds: params.projectIds };
-    return this.api.sendRequest<GovernancePolicyAssignmentResult>(
+    return this.api.sendRequest<GovernancePolicyUnassignmentResult>(
       HttpMethods.POST,
       Endpoints.ORGANIZATION_GOVERNANCE_POLICY_UNASSIGN_ENDPOINT,
       { body, urlParams: { policyId } },

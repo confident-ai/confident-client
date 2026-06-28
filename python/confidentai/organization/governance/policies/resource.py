@@ -4,6 +4,7 @@ from ....api import Api, Endpoints, HttpMethods
 from ....types import (
     GovernancePolicy,
     GovernancePolicyAssignmentResult,
+    GovernancePolicyUnassignmentResult,
     NamedRef,
 )
 from .types import (
@@ -55,7 +56,7 @@ class GovernancePolicies:
 
     def unassign(
         self, policy_id: str, *, project_ids: List[str]
-    ) -> GovernancePolicyAssignmentResult:
+    ) -> GovernancePolicyUnassignmentResult:
         body = AssignProjectsRequest(project_ids=project_ids).model_dump(
             by_alias=True, exclude_none=True
         )
@@ -65,7 +66,7 @@ class GovernancePolicies:
             body=body,
             url_params={"policyId": policy_id},
         )
-        return GovernancePolicyAssignmentResult(**data)
+        return GovernancePolicyUnassignmentResult(**data)
 
 
 class AsyncGovernancePolicies:
@@ -110,7 +111,7 @@ class AsyncGovernancePolicies:
 
     async def unassign(
         self, policy_id: str, *, project_ids: List[str]
-    ) -> GovernancePolicyAssignmentResult:
+    ) -> GovernancePolicyUnassignmentResult:
         body = AssignProjectsRequest(project_ids=project_ids).model_dump(
             by_alias=True, exclude_none=True
         )
@@ -120,4 +121,4 @@ class AsyncGovernancePolicies:
             body=body,
             url_params={"policyId": policy_id},
         )
-        return GovernancePolicyAssignmentResult(**data)
+        return GovernancePolicyUnassignmentResult(**data)

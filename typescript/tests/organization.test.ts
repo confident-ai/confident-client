@@ -120,11 +120,15 @@ describe("OrganizationClient", () => {
   it("assigns projects to a governance policy", async () => {
     mockData({
       governancePolicy: { id: "gp1", name: "Production Gate" },
+      assignedProjectIds: ["p1", "p2"],
+      notFoundProjectIds: [],
       count: 2,
     });
     const result = await makeClient()
       .organization()
       .governance.policies.assign("gp1", { projectIds: ["p1", "p2"] });
+    expect(result.assignedProjectIds).toEqual(["p1", "p2"]);
+    expect(result.notFoundProjectIds).toEqual([]);
     expect(result.count).toBe(2);
     expect(result.governancePolicy.id).toBe("gp1");
     expect(lastCall().method).toBe("POST");
@@ -137,11 +141,15 @@ describe("OrganizationClient", () => {
   it("unassigns projects from a governance policy", async () => {
     mockData({
       governancePolicy: { id: "gp1", name: "Production Gate" },
+      unassignedProjectIds: ["p1"],
+      skippedProjectIds: [],
       count: 1,
     });
     const result = await makeClient()
       .organization()
       .governance.policies.unassign("gp1", { projectIds: ["p1"] });
+    expect(result.unassignedProjectIds).toEqual(["p1"]);
+    expect(result.skippedProjectIds).toEqual([]);
     expect(result.count).toBe(1);
     expect(lastCall().method).toBe("POST");
     expect(lastCall().data).toEqual({ projectIds: ["p1"] });

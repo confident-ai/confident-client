@@ -15,6 +15,7 @@ export type {
   GovernanceControlType,
   GovernancePolicy,
   GovernancePolicyAssignmentResult,
+  GovernancePolicyUnassignmentResult,
   Invitation,
   InvitationStatus,
   Member,
