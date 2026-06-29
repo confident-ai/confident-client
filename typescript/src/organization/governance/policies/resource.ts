@@ -6,12 +6,12 @@ import {
   NamedRef,
 } from "../../../types";
 import {
-  AssignProjectsRequest,
   GovernancePoliciesHttpResponse,
   GovernancePolicyProjectsHttpResponse,
+  ProjectIdsRequest,
 } from "./types";
 
-export class GovernancePolicies {
+export class OrganizationGovernancePolicies {
   constructor(private readonly api: Api) {}
 
   async list(): Promise<GovernancePolicy[]> {
@@ -40,9 +40,9 @@ export class GovernancePolicies {
 
   async assign(
     policyId: string,
-    params: AssignProjectsRequest,
+    params: ProjectIdsRequest,
   ): Promise<GovernancePolicyAssignmentResult> {
-    const body: AssignProjectsRequest = { projectIds: params.projectIds };
+    const body: ProjectIdsRequest = { projectIds: params.projectIds };
     return this.api.sendRequest<GovernancePolicyAssignmentResult>(
       HttpMethods.POST,
       Endpoints.ORGANIZATION_GOVERNANCE_POLICY_ASSIGN_ENDPOINT,
@@ -52,9 +52,9 @@ export class GovernancePolicies {
 
   async unassign(
     policyId: string,
-    params: AssignProjectsRequest,
+    params: ProjectIdsRequest,
   ): Promise<GovernancePolicyUnassignmentResult> {
-    const body: AssignProjectsRequest = { projectIds: params.projectIds };
+    const body: ProjectIdsRequest = { projectIds: params.projectIds };
     return this.api.sendRequest<GovernancePolicyUnassignmentResult>(
       HttpMethods.POST,
       Endpoints.ORGANIZATION_GOVERNANCE_POLICY_UNASSIGN_ENDPOINT,

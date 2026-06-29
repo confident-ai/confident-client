@@ -1,6 +1,6 @@
 import { GovernancePolicy, NamedRef } from "../../../types";
 
-export interface AssignProjectsRequest {
+export interface ProjectIdsRequest {
   projectIds: string[];
 }
 

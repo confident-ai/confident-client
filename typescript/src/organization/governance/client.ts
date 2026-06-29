@@ -1,10 +1,10 @@
 import { Api } from "../../api";
-import { GovernancePolicies } from "./policies";
+import { OrganizationGovernancePolicies } from "./policies";
 
 export class OrganizationGovernance {
-  readonly policies: GovernancePolicies;
+  readonly policies: OrganizationGovernancePolicies;
 
   constructor(api: Api) {
-    this.policies = new GovernancePolicies(api);
+    this.policies = new OrganizationGovernancePolicies(api);
   }
 }

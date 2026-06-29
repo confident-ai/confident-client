@@ -5,7 +5,7 @@ from pydantic import Field
 from ....types import ConfidentBaseModel, GovernancePolicy, NamedRef
 
 
-class AssignProjectsRequest(ConfidentBaseModel):
+class ProjectIdsRequest(ConfidentBaseModel):
     project_ids: List[str] = Field(alias="projectIds")
 
 

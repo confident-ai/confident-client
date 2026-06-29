@@ -1,13 +1,13 @@
-from .resource import GovernancePolicies
+from .resource import OrganizationGovernancePolicies
 from .types import (
-    AssignProjectsRequest,
     GovernancePoliciesHttpResponse,
     GovernancePolicyProjectsHttpResponse,
+    ProjectIdsRequest,
 )
 
 __all__ = [
-    "GovernancePolicies",
-    "AssignProjectsRequest",
+    "OrganizationGovernancePolicies",
+    "ProjectIdsRequest",
     "GovernancePoliciesHttpResponse",
     "GovernancePolicyProjectsHttpResponse",
 ]

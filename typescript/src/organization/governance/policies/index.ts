@@ -1,6 +1,6 @@
-export { GovernancePolicies } from "./resource";
+export { OrganizationGovernancePolicies } from "./resource";
 export type {
-  AssignProjectsRequest,
   GovernancePoliciesHttpResponse,
   GovernancePolicyProjectsHttpResponse,
+  ProjectIdsRequest,
 } from "./types";

@@ -8,13 +8,13 @@ from ....types import (
     NamedRef,
 )
 from .types import (
-    AssignProjectsRequest,
     GovernancePoliciesHttpResponse,
     GovernancePolicyProjectsHttpResponse,
+    ProjectIdsRequest,
 )
 
 
-class GovernancePolicies:
+class OrganizationGovernancePolicies:
     def __init__(self, api: Api) -> None:
         self._api = api
 
@@ -43,7 +43,7 @@ class GovernancePolicies:
     def assign(
         self, policy_id: str, *, project_ids: List[str]
     ) -> GovernancePolicyAssignmentResult:
-        body = AssignProjectsRequest(project_ids=project_ids).model_dump(
+        body = ProjectIdsRequest(project_ids=project_ids).model_dump(
             by_alias=True, exclude_none=True
         )
         data, _ = self._api.send_request(
@@ -57,7 +57,7 @@ class GovernancePolicies:
     def unassign(
         self, policy_id: str, *, project_ids: List[str]
     ) -> GovernancePolicyUnassignmentResult:
-        body = AssignProjectsRequest(project_ids=project_ids).model_dump(
+        body = ProjectIdsRequest(project_ids=project_ids).model_dump(
             by_alias=True, exclude_none=True
         )
         data, _ = self._api.send_request(
@@ -93,7 +93,7 @@ class GovernancePolicies:
     async def a_assign(
         self, policy_id: str, *, project_ids: List[str]
     ) -> GovernancePolicyAssignmentResult:
-        body = AssignProjectsRequest(project_ids=project_ids).model_dump(
+        body = ProjectIdsRequest(project_ids=project_ids).model_dump(
             by_alias=True, exclude_none=True
         )
         data, _ = await self._api.a_send_request(
@@ -107,7 +107,7 @@ class GovernancePolicies:
     async def a_unassign(
         self, policy_id: str, *, project_ids: List[str]
     ) -> GovernancePolicyUnassignmentResult:
-        body = AssignProjectsRequest(project_ids=project_ids).model_dump(
+        body = ProjectIdsRequest(project_ids=project_ids).model_dump(
             by_alias=True, exclude_none=True
         )
         data, _ = await self._api.a_send_request(
