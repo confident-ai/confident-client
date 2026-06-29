@@ -63,13 +63,7 @@ class ProjectApiKeys:
         )
         return DeletionResult(**data)
 
-
-class AsyncProjectApiKeys:
-    def __init__(self, api: Api, project_id: str) -> None:
-        self._api = api
-        self._project_id = project_id
-
-    async def list(self) -> List[ApiKey]:
+    async def a_list(self) -> List[ApiKey]:
         data, _ = await self._api.a_send_request(
             HttpMethods.GET,
             Endpoints.PROJECT_API_KEYS_ENDPOINT,
@@ -77,7 +71,7 @@ class AsyncProjectApiKeys:
         )
         return ApiKeysHttpResponse(**data).api_keys
 
-    async def get(self, api_key_id: int) -> ApiKey:
+    async def a_get(self, api_key_id: int) -> ApiKey:
         data, _ = await self._api.a_send_request(
             HttpMethods.GET,
             Endpoints.PROJECT_API_KEY_ENDPOINT,
@@ -85,7 +79,7 @@ class AsyncProjectApiKeys:
         )
         return ApiKeyHttpResponse(**data).api_key
 
-    async def create(self, name: str) -> ApiKey:
+    async def a_create(self, name: str) -> ApiKey:
         body = CreateApiKeyRequest(name=name).model_dump(
             by_alias=True, exclude_none=True
         )
@@ -97,7 +91,7 @@ class AsyncProjectApiKeys:
         )
         return ApiKeyHttpResponse(**data).api_key
 
-    async def update(self, api_key_id: int, *, valid: bool) -> ApiKey:
+    async def a_update(self, api_key_id: int, *, valid: bool) -> ApiKey:
         body = UpdateApiKeyRequest(valid=valid).model_dump(
             by_alias=True, exclude_none=True
         )
@@ -109,7 +103,7 @@ class AsyncProjectApiKeys:
         )
         return ApiKeyHttpResponse(**data).api_key
 
-    async def delete(self, api_key_id: int) -> DeletionResult:
+    async def a_delete(self, api_key_id: int) -> DeletionResult:
         data, _ = await self._api.a_send_request(
             HttpMethods.DELETE,
             Endpoints.PROJECT_API_KEY_ENDPOINT,

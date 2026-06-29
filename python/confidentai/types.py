@@ -41,6 +41,9 @@ class Project(ConfidentBaseModel):
     description: Optional[str] = None
     organization_id: Optional[str] = Field(default=None, alias="organizationId")
     created_at: Optional[str] = None
+    governance_policy: Optional[NamedRef] = Field(
+        default=None, alias="governancePolicy"
+    )
 
 
 class ApiKey(ConfidentBaseModel):
@@ -105,3 +108,39 @@ class DeletionResult(ConfidentBaseModel):
     id: Any = None
     deleted: Optional[bool] = None
     removed: Optional[bool] = None
+
+
+class GovernanceControl(ConfidentBaseModel):
+    id: str
+    name: str
+    type: str
+
+
+class GovernancePolicy(ConfidentBaseModel):
+    id: str
+    name: str
+    description: Optional[str] = None
+    projects_count: int = Field(default=0, alias="projectsCount")
+    controls: List[GovernanceControl] = Field(default_factory=list)
+
+
+class GovernancePolicyAssignmentResult(ConfidentBaseModel):
+    governance_policy: NamedRef = Field(alias="governancePolicy")
+    assigned_project_ids: List[str] = Field(
+        default_factory=list, alias="assignedProjectIds"
+    )
+    not_found_project_ids: List[str] = Field(
+        default_factory=list, alias="notFoundProjectIds"
+    )
+    count: int
+
+
+class GovernancePolicyUnassignmentResult(ConfidentBaseModel):
+    governance_policy: NamedRef = Field(alias="governancePolicy")
+    unassigned_project_ids: List[str] = Field(
+        default_factory=list, alias="unassignedProjectIds"
+    )
+    skipped_project_ids: List[str] = Field(
+        default_factory=list, alias="skippedProjectIds"
+    )
+    count: int

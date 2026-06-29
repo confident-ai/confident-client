@@ -68,39 +68,39 @@ client = ConfidentAI()  # reads CONFIDENT_ORG_API_KEY
 Regional defaults: `https://api.confident-ai.com` (US),
 `https://eu.api.confident-ai.com` (EU).
 
-## Async client
+## Async
 
-`ConfidentAI` is synchronous. For `asyncio` code, use `AsyncConfidentAI`, which
-mirrors the sync client exactly — same constructor, same resource tree
-(`organization()`, `project(id)`, `projects`) — except every request method is a
-coroutine you `await`:
+Every method that hits the API has an `a_`-prefixed async counterpart on the
+same client (`list` / `a_list`, `assign` / `a_assign`, …) — the same style as
+`deepeval`'s `measure` / `a_measure`. There is no separate async client; use one
+`ConfidentAI` and `await` the `a_` methods in `asyncio` code:
 
 ```python
 import asyncio
 
-from confidentai import AsyncConfidentAI
+from confidentai import ConfidentAI
 
 
 async def main():
-    client = AsyncConfidentAI(api_key="confident_org_...")
+    client = ConfidentAI(api_key="confident_org_...")
 
-    organization = await client.whoami()
-    projects = await client.projects.list()
+    organization = await client.a_whoami()
+    projects = await client.projects.a_list()
 
     project = client.project("project_id")          # no I/O, no await
-    members = await project.members.list()            # awaited
+    members = await project.members.a_list()          # awaited
 
-    created = await client.projects.create("Async App")
-    await client.project(created.project.id).delete()
+    created = await client.projects.a_create("Async App")
+    await client.project(created.project.id).a_delete()
 
 
 asyncio.run(main())
 ```
 
 `organization()` and `project(id)` just build scoped clients (no network), so
-they are not awaited; only the methods that actually hit the API are coroutines.
-Configuration, regions, and `ConfidentApiError` behave identically to the sync
-client.
+they are not awaited; only the `a_`-prefixed methods that actually hit the API
+are coroutines. Configuration, regions, and `ConfidentApiError` behave
+identically to the sync methods.
 
 ## Organization example
 
@@ -122,12 +122,19 @@ members = org_client.members.list(page=1, page_size=25)
 org_client.members.update_role(members[0].id, role_id="role_id")
 org_client.invitations.create(["teammate@acme.com"], role_id="role_id")
 
-# Roles, policies & permissions
-permissions = org_client.permissions.list()
-policy = org_client.policies.create(
+# IAM: roles, policies & permissions
+permissions = org_client.iam.permissions.list()
+policy = org_client.iam.policies.create(
     "Billing", permission_ids=[permissions[0].id]
 )
-org_client.roles.create("Billing Manager", policy_ids=[policy.id])
+org_client.iam.roles.create("Billing Manager", policy_ids=[policy.id])
+
+# Governance: list policies and assign projects to one (great for CI/CD)
+governance_policies = org_client.governance.policies.list()
+if governance_policies:
+    org_client.governance.policies.assign(
+        governance_policies[0].id, project_ids=["project_id"]
+    )
 ```
 
 ## Project example
@@ -142,13 +149,15 @@ projects = client.projects.list()
 project = client.project(created.project.id)
 project.update(name="Production")
 
-# Project-scoped IAM
+# Project-scoped resources
 project.api_keys.create(name="Production agent key")
 project.members.list()
 project.invitations.create(["analyst@acme.com"], role_id="project_role_id")
-project.roles.list()
-project.policies.list()
-project.permissions.list()
+
+# Project-scoped IAM (roles, policies, permissions)
+project.iam.roles.list()
+project.iam.policies.list()
+project.iam.permissions.list()
 
 # Delete
 project.delete()

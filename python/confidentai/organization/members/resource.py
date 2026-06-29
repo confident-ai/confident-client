@@ -46,12 +46,7 @@ class OrganizationMembers:
         )
         return DeletionResult(**data)
 
-
-class AsyncOrganizationMembers:
-    def __init__(self, api: Api) -> None:
-        self._api = api
-
-    async def list(
+    async def a_list(
         self,
         *,
         page: Optional[int] = None,
@@ -64,7 +59,7 @@ class AsyncOrganizationMembers:
         )
         return MembersHttpResponse(**data).members
 
-    async def update_role(self, user_id: str, *, role_id: str) -> Member:
+    async def a_update_role(self, user_id: str, *, role_id: str) -> Member:
         body = UpdateMemberRoleRequest(role_id=role_id).model_dump(
             by_alias=True, exclude_none=True
         )
@@ -76,7 +71,7 @@ class AsyncOrganizationMembers:
         )
         return MemberHttpResponse(**data).member
 
-    async def remove(self, user_id: str) -> DeletionResult:
+    async def a_remove(self, user_id: str) -> DeletionResult:
         data, _ = await self._api.a_send_request(
             HttpMethods.DELETE,
             Endpoints.ORGANIZATION_MEMBER_ENDPOINT,

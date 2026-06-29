@@ -48,13 +48,7 @@ class ProjectMembers:
         )
         return DeletionResult(**data)
 
-
-class AsyncProjectMembers:
-    def __init__(self, api: Api, project_id: str) -> None:
-        self._api = api
-        self._project_id = project_id
-
-    async def list(
+    async def a_list(
         self,
         *,
         page: Optional[int] = None,
@@ -68,7 +62,7 @@ class AsyncProjectMembers:
         )
         return MembersHttpResponse(**data).members
 
-    async def update_role(self, user_id: str, *, role_id: str) -> Member:
+    async def a_update_role(self, user_id: str, *, role_id: str) -> Member:
         body = UpdateMemberRoleRequest(role_id=role_id).model_dump(
             by_alias=True, exclude_none=True
         )
@@ -80,7 +74,7 @@ class AsyncProjectMembers:
         )
         return MemberHttpResponse(**data).member
 
-    async def remove(self, user_id: str) -> DeletionResult:
+    async def a_remove(self, user_id: str) -> DeletionResult:
         data, _ = await self._api.a_send_request(
             HttpMethods.DELETE,
             Endpoints.PROJECT_MEMBER_ENDPOINT,

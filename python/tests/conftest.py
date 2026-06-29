@@ -103,6 +103,6 @@ def client(http):
 
 @pytest.fixture
 def async_client(http):
-    from confidentai import AsyncConfidentAI
+    from confidentai import ConfidentAI
 
-    return AsyncConfidentAI(api_key="confident_us_org_testkey")
+    return ConfidentAI(api_key="confident_us_org_testkey")

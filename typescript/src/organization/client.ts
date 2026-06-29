@@ -1,11 +1,10 @@
 import { Api, Endpoints, HttpMethods } from "../api";
 import { Organization } from "../types";
 import { OrganizationApiKeys } from "./apiKeys";
+import { OrganizationGovernance } from "./governance";
+import { OrganizationIam } from "./iam";
 import { OrganizationInvitations } from "./invitations";
 import { OrganizationMembers } from "./members";
-import { OrganizationPermissions } from "./permissions";
-import { OrganizationPolicies } from "./policies";
-import { OrganizationRoles } from "./roles";
 import {
   OrganizationHttpResponse,
   UpdateOrganizationRequest,
@@ -15,17 +14,15 @@ export class OrganizationClient {
   readonly apiKeys: OrganizationApiKeys;
   readonly members: OrganizationMembers;
   readonly invitations: OrganizationInvitations;
-  readonly roles: OrganizationRoles;
-  readonly policies: OrganizationPolicies;
-  readonly permissions: OrganizationPermissions;
+  readonly iam: OrganizationIam;
+  readonly governance: OrganizationGovernance;
 
   constructor(private readonly api: Api) {
     this.apiKeys = new OrganizationApiKeys(api);
     this.members = new OrganizationMembers(api);
     this.invitations = new OrganizationInvitations(api);
-    this.roles = new OrganizationRoles(api);
-    this.policies = new OrganizationPolicies(api);
-    this.permissions = new OrganizationPermissions(api);
+    this.iam = new OrganizationIam(api);
+    this.governance = new OrganizationGovernance(api);
   }
 
   async get(): Promise<Organization> {

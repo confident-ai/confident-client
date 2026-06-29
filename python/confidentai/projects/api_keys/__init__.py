@@ -1,4 +1,4 @@
-from .resource import AsyncProjectApiKeys, ProjectApiKeys
+from .resource import ProjectApiKeys
 from .types import (
     ApiKeyHttpResponse,
     ApiKeysHttpResponse,
@@ -8,7 +8,6 @@ from .types import (
 
 __all__ = [
     "ProjectApiKeys",
-    "AsyncProjectApiKeys",
     "CreateApiKeyRequest",
     "UpdateApiKeyRequest",
     "ApiKeyHttpResponse",

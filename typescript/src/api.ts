@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const SDK_VERSION = "0.1.0";
+export const SDK_VERSION = "0.2.0";
 
 // Organization-scoped API key env var. Named CONFIDENT_ORG_API_KEY (not
 // CONFIDENT_API_KEY) to avoid clashing with deepeval's CONFIDENT_API_KEY, which
@@ -57,6 +57,10 @@ export enum Endpoints {
   ORGANIZATION_PERMISSIONS_ENDPOINT = "/v1/organization/permissions",
   ORGANIZATION_API_KEYS_ENDPOINT = "/v1/organization/api-keys",
   ORGANIZATION_API_KEY_ENDPOINT = "/v1/organization/api-keys/:apiKeyId",
+  ORGANIZATION_GOVERNANCE_POLICIES_ENDPOINT = "/v1/organization/governance-policies",
+  ORGANIZATION_GOVERNANCE_POLICY_ASSIGN_ENDPOINT = "/v1/organization/governance-policies/:policyId/assign",
+  ORGANIZATION_GOVERNANCE_POLICY_UNASSIGN_ENDPOINT = "/v1/organization/governance-policies/:policyId/unassign",
+  ORGANIZATION_GOVERNANCE_POLICY_PROJECTS_ENDPOINT = "/v1/organization/governance-policies/:policyId/projects",
 
   // Project management
   PROJECTS_ENDPOINT = "/v1/projects",

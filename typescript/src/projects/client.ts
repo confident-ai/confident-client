@@ -1,11 +1,9 @@
 import { Api, Endpoints, HttpMethods } from "../api";
 import { CreatedProject, DeletionResult, Project } from "../types";
 import { ProjectApiKeys } from "./apiKeys";
+import { ProjectIam } from "./iam";
 import { ProjectInvitations } from "./invitations";
 import { ProjectMembers } from "./members";
-import { ProjectPermissions } from "./permissions";
-import { ProjectPolicies } from "./policies";
-import { ProjectRoles } from "./roles";
 import {
   CreateProjectRequest,
   ProjectHttpResponse,
@@ -43,9 +41,7 @@ export class ProjectClient {
   readonly apiKeys: ProjectApiKeys;
   readonly members: ProjectMembers;
   readonly invitations: ProjectInvitations;
-  readonly roles: ProjectRoles;
-  readonly policies: ProjectPolicies;
-  readonly permissions: ProjectPermissions;
+  readonly iam: ProjectIam;
   private readonly api: Api;
 
   constructor(api: Api, projectId: string) {
@@ -57,9 +53,7 @@ export class ProjectClient {
     this.apiKeys = new ProjectApiKeys(api, projectId);
     this.members = new ProjectMembers(api, projectId);
     this.invitations = new ProjectInvitations(api, projectId);
-    this.roles = new ProjectRoles(api, projectId);
-    this.policies = new ProjectPolicies(api, projectId);
-    this.permissions = new ProjectPermissions(api, projectId);
+    this.iam = new ProjectIam(api, projectId);
   }
 
   async get(): Promise<Project> {

@@ -33,19 +33,19 @@ ROUTE_CASES = [
     ),
     (
         "list org roles",
-        lambda c: c.organization().roles.list(),
+        lambda c: c.organization().iam.roles.list(),
         "GET",
         "/v1/organization/roles",
     ),
     (
         "list org policies",
-        lambda c: c.organization().policies.list(),
+        lambda c: c.organization().iam.policies.list(),
         "GET",
         "/v1/organization/policies",
     ),
     (
         "list org permissions",
-        lambda c: c.organization().permissions.list(),
+        lambda c: c.organization().iam.permissions.list(),
         "GET",
         "/v1/organization/permissions",
     ),
@@ -60,6 +60,34 @@ ROUTE_CASES = [
         lambda c: c.organization().api_keys.list(),
         "GET",
         "/v1/organization/api-keys",
+    ),
+    (
+        "list governance policies",
+        lambda c: c.organization().governance.policies.list(),
+        "GET",
+        "/v1/organization/governance-policies",
+    ),
+    (
+        "assign projects to governance policy",
+        lambda c: c.organization().governance.policies.assign(
+            "gp1", project_ids=["p1"]
+        ),
+        "POST",
+        "/v1/organization/governance-policies/gp1/assign",
+    ),
+    (
+        "unassign projects from governance policy",
+        lambda c: c.organization().governance.policies.unassign(
+            "gp1", project_ids=["p1"]
+        ),
+        "POST",
+        "/v1/organization/governance-policies/gp1/unassign",
+    ),
+    (
+        "list governance policy projects",
+        lambda c: c.organization().governance.policies.list_projects("gp1"),
+        "GET",
+        "/v1/organization/governance-policies/gp1/projects",
     ),
     (
         "list projects",
@@ -87,13 +115,13 @@ ROUTE_CASES = [
     ),
     (
         "list project roles",
-        lambda c: c.project("p1").roles.list(),
+        lambda c: c.project("p1").iam.roles.list(),
         "GET",
         "/v1/projects/p1/roles",
     ),
     (
         "list project permissions",
-        lambda c: c.project("p1").permissions.list(),
+        lambda c: c.project("p1").iam.permissions.list(),
         "GET",
         "/v1/projects/p1/permissions",
     ),
@@ -123,6 +151,9 @@ def test_routes(client, http, description, fn, method, path):
             "permissions": [],
             "invitations": [],
             "apiKeys": [],
+            "governancePolicies": [],
+            "governancePolicy": {"id": "gp1", "name": "Prod Gate"},
+            "count": 0,
             "id": "p1",
             "deleted": True,
         }

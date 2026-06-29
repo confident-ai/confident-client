@@ -16,6 +16,7 @@ export interface Project {
   description?: string | null;
   organizationId?: string;
   created_at?: string;
+  governancePolicy?: NamedRef | null;
 }
 
 export interface ApiKey {
@@ -78,4 +79,38 @@ export interface DeletionResult {
   id?: string | number;
   deleted?: boolean;
   removed?: boolean;
+}
+
+export type GovernanceControlType =
+  | "RUNTIME"
+  | "PRE_DEPLOYMENT_EVALS"
+  | "PRE_DEPLOYMENT_RED_TEAMING"
+  | "OPERATIONAL";
+
+export interface GovernanceControl {
+  id: string;
+  name: string;
+  type: GovernanceControlType;
+}
+
+export interface GovernancePolicy {
+  id: string;
+  name: string;
+  description?: string | null;
+  projectsCount: number;
+  controls: GovernanceControl[];
+}
+
+export interface GovernancePolicyAssignmentResult {
+  governancePolicy: NamedRef;
+  assignedProjectIds: string[];
+  notFoundProjectIds: string[];
+  count: number;
+}
+
+export interface GovernancePolicyUnassignmentResult {
+  governancePolicy: NamedRef;
+  unassignedProjectIds: string[];
+  skippedProjectIds: string[];
+  count: number;
 }

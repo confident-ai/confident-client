@@ -80,13 +80,21 @@ const members = await org.members.list({ page: 1, pageSize: 25 });
 await org.members.updateRole(members[0].id, { roleId: "role_id" });
 await org.invitations.create({ emails: ["teammate@acme.com"], roleId: "role_id" });
 
-// Roles, policies & permissions
-const permissions = await org.permissions.list();
-const policy = await org.policies.create({
+// IAM: roles, policies & permissions
+const permissions = await org.iam.permissions.list();
+const policy = await org.iam.policies.create({
   name: "Billing",
   permissionIds: [permissions[0].id],
 });
-await org.roles.create({ name: "Billing Manager", policyIds: [policy.id] });
+await org.iam.roles.create({ name: "Billing Manager", policyIds: [policy.id] });
+
+// Governance: list policies and assign projects to one (great for CI/CD)
+const governancePolicies = await org.governance.policies.list();
+if (governancePolicies.length > 0) {
+  await org.governance.policies.assign(governancePolicies[0].id, {
+    projectIds: ["project_id"],
+  });
+}
 ```
 
 ## Project example
@@ -101,13 +109,18 @@ const projects = await client.projects.list();
 const project = client.project(created.project.id);
 await project.update({ name: "Production" });
 
-// Project-scoped IAM
+// Project-scoped resources
 await project.apiKeys.create({ name: "Production agent key" });
 await project.members.list();
 await project.invitations.create({
   emails: ["analyst@acme.com"],
   roleId: "project_role_id",
 });
+
+// Project-scoped IAM (roles, policies, permissions)
+await project.iam.roles.list();
+await project.iam.policies.list();
+await project.iam.permissions.list();
 
 // Delete
 await project.delete();

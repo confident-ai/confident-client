@@ -51,18 +51,13 @@ class OrganizationInvitations:
         )
         return DeletionResult(**data)
 
-
-class AsyncOrganizationInvitations:
-    def __init__(self, api: Api) -> None:
-        self._api = api
-
-    async def list(self) -> List[Invitation]:
+    async def a_list(self) -> List[Invitation]:
         data, _ = await self._api.a_send_request(
             HttpMethods.GET, Endpoints.ORGANIZATION_INVITATIONS_ENDPOINT
         )
         return InvitationsHttpResponse(**data).invitations
 
-    async def create(
+    async def a_create(
         self,
         emails: List[str],
         *,
@@ -78,7 +73,7 @@ class AsyncOrganizationInvitations:
         )
         return InvitationsHttpResponse(**data).invitations
 
-    async def resend(self, invitation_id: int) -> Invitation:
+    async def a_resend(self, invitation_id: int) -> Invitation:
         data, _ = await self._api.a_send_request(
             HttpMethods.PUT,
             Endpoints.ORGANIZATION_INVITATION_ENDPOINT,
@@ -86,7 +81,7 @@ class AsyncOrganizationInvitations:
         )
         return InvitationHttpResponse(**data).invitation
 
-    async def revoke(self, invitation_id: int) -> DeletionResult:
+    async def a_revoke(self, invitation_id: int) -> DeletionResult:
         data, _ = await self._api.a_send_request(
             HttpMethods.DELETE,
             Endpoints.ORGANIZATION_INVITATION_ENDPOINT,
