@@ -1,4 +1,4 @@
-# confidentai (Python)
+# confident-ai (Python)
 
 The official Python SDK for the [Confident AI](https://www.confident-ai.com)
 platform **management API** — manage organizations, projects, API keys, members,
@@ -13,13 +13,13 @@ invitations, roles, and policies.
 ## Installation
 
 ```bash
-pip install confidentai
+pip install confident-ai
 ```
 
 ## Quickstart
 
 ```python
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI(api_key="confident_org_...")
 
@@ -52,7 +52,7 @@ export CONFIDENT_ORG_API_KEY="confident_org_..."
 > project key; the distinct name lets both SDKs run side by side.
 
 ```python
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI()  # reads CONFIDENT_ORG_API_KEY
 ```
@@ -80,7 +80,7 @@ same client (`list` / `a_list`, `assign` / `a_assign`, …) — the same style a
 ```python
 import asyncio
 
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 
 async def main():
@@ -172,7 +172,7 @@ When the API returns an unsuccessful response, the SDK raises
 relevant docs.
 
 ```python
-from confidentai import ConfidentAI, ConfidentApiError
+from confident_ai import ConfidentAI, ConfidentApiError
 
 client = ConfidentAI()
 

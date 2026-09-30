@@ -90,7 +90,7 @@ jobs:
       - name: Detect changes
         id: diff
         run: |
-          git add python/confidentai typescript/src sdk-reference.yml
+          git add python/confident_ai typescript/src sdk-reference.yml
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else

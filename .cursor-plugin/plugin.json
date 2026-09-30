@@ -2,7 +2,7 @@
   "name": "confident-client",
   "displayName": "Confident AI Client",
   "version": "1.0.0",
-  "description": "Skills for managing Confident AI organizations, projects, members, roles, governance policies, and API keys programmatically with the Confident AI Admin SDK (confidentai).",
+  "description": "Skills for managing Confident AI organizations, projects, members, roles, governance policies, and API keys programmatically with the Confident AI Admin SDK (confident-ai).",
   "author": {
     "name": "Confident AI",
     "email": "support@confident-ai.com"
@@ -12,7 +12,7 @@
   "license": "Apache-2.0",
   "keywords": [
     "confident-ai",
-    "confidentai",
+    "confident-ai",
     "admin-sdk",
     "organizations",
     "projects",

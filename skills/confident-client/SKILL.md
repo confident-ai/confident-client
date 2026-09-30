@@ -1,7 +1,7 @@
 ---
 name: confident-client
 description: >
-  Work with the Confident AI API from code using the `confidentai` package for
+  Work with the Confident AI API from code using the `confident-ai` package for
   Python and TypeScript. TRIGGER when the user wants to manage an account —
   organizations, projects, members, invitations, roles, policies, permissions,
   governance policies, API keys — or to read and write the resources a project
@@ -20,14 +20,14 @@ metadata:
   author: Confident AI
   version: "2.0.0"
   category: api
-  tags: "confident-ai, confidentai, api, organizations, projects, members, invitations, rbac, roles, governance, api-keys, prompts, datasets, traces, metrics, test-runs"
-  compatibility: "Python (`pip install confidentai`) or TypeScript (`npm install confidentai`). Account-level methods need an Organization API Key (`CONFIDENT_ORG_API_KEY`); every other resource needs a Project API Key (`CONFIDENT_PROJ_API_KEY`). Both are distinct from the `CONFIDENT_API_KEY` that deepeval uses, so they can be configured side by side."
+  tags: "confident-ai, api, organizations, projects, members, invitations, rbac, roles, governance, api-keys, prompts, datasets, traces, metrics, test-runs"
+  compatibility: "Python (`pip install confident-ai`) or TypeScript (`npm install confident-ai`). Account-level methods need an Organization API Key (`CONFIDENT_ORG_API_KEY`); every other resource needs a Project API Key (`CONFIDENT_PROJ_API_KEY`). Both are distinct from the `CONFIDENT_API_KEY` that deepeval uses, so they can be configured side by side."
 ---
 
 # Confident AI SDK
 
 Use this skill to call the **Confident AI API** from code with the
-`confidentai` package, available for both Python and TypeScript. It covers
+`confident-ai` package, available for both Python and TypeScript. It covers
 **275 operations across 35 resources**: the account (organizations, projects,
 members, RBAC, governance, API keys) and the resources a project holds
 (prompts, datasets, traces, spans, threads, metrics, test runs, evaluations,
@@ -72,8 +72,8 @@ test suite.
 
 ## Prerequisites
 
-- The SDK installed: `pip install confidentai` (Python) or
-  `npm install confidentai` (TypeScript).
+- The SDK installed: `pip install confident-ai` (Python) or
+  `npm install confident-ai` (TypeScript).
 - An **Organization API Key** (`confident_us_org_...`) for account work, a
   **Project API Key** (`confident_us_proj_...`) for everything else, or both.
   Read by default from `CONFIDENT_ORG_API_KEY` and `CONFIDENT_PROJ_API_KEY`.
@@ -90,7 +90,7 @@ reference.
 2. **Otherwise infer from the project — but only for a _clean single-language_
    project** (markers from one ecosystem and none from the other):
    - Python markers: `*.py`, `pyproject.toml`, `requirements.txt`, `setup.py`, `Pipfile`, a `.venv`/`venv`
-   - TypeScript/Node markers: `*.ts`, `*.tsx`, `package.json`, `tsconfig.json`, `node_modules` (JavaScript-only counts as TypeScript — same `confidentai` package)
+   - TypeScript/Node markers: `*.ts`, `*.tsx`, `package.json`, `tsconfig.json`, `node_modules` (JavaScript-only counts as TypeScript — same `confident-ai` package)
 3. **If markers from BOTH ecosystems are present — even if one side has more
    code — or the project is empty/unclear, it is AMBIGUOUS: STOP and ask which
    language before writing any code.** Do not rationalize a "dominant" or
@@ -132,9 +132,9 @@ language's examples.
    a stateful handle** that holds the record's id, so its methods take only
    what is left. `get()` fills the handle and returns it; `update()` sends what
    the handle holds.
-5. **Types are imported from the resource**: `from confidentai.datasets import
+5. **Types are imported from the resource**: `from confident_ai.datasets import
    SingleTurnGolden` (Python), `import { SingleTurnGolden } from
-   "confidentai/datasets"` (TypeScript).
+   "confident-ai/datasets"` (TypeScript).
 6. An API key's full secret `value` is returned **only at creation** (creating a
    project also mints its first project key). Store it securely then; later
    reads are masked. Prefer `rotate_api_key` over delete-and-recreate when a key

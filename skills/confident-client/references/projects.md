@@ -22,7 +22,7 @@ List every project in your organization. The call returns a `ProjectList`; the
 rows are on `.projects`.
 
 ```python
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI()
 
@@ -32,7 +32,7 @@ for project in projects.projects:
 ```
 
 ```typescript
-import { ConfidentAI } from "confidentai";
+import { ConfidentAI } from "confident-ai";
 
 const client = new ConfidentAI();
 

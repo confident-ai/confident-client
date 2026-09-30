@@ -2,7 +2,7 @@
 
 Source: https://www.confident-ai.com/docs/settings/project/management/introduction
 
-The `confidentai` package is the Confident AI API in Python and TypeScript:
+The `confident-ai` package is the Confident AI API in Python and TypeScript:
 **275 operations across 35 resources**, covering both the account
 (organizations, projects, members, RBAC, governance, API keys) and the resources
 a project holds (prompts, datasets, traces, spans, threads, metrics, test runs,
@@ -76,11 +76,11 @@ await project.listMembers();
 **Types come from the resource:**
 
 ```python
-from confidentai.datasets import SingleTurnGolden
+from confident_ai.datasets import SingleTurnGolden
 ```
 
 ```typescript
-import { SingleTurnGolden } from "confidentai/datasets";
+import { SingleTurnGolden } from "confident-ai/datasets";
 ```
 
 **Python has an async twin for every method**, prefixed `a_`

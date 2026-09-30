@@ -1,7 +1,7 @@
 # SDK generation
 
 The Python and TypeScript SDKs are generated from the OpenAPI spec
-confident-cloud publishes. Nothing under `python/confidentai/` or
+confident-cloud publishes. Nothing under `python/confident_ai/` or
 `typescript/src/` that carries an `@generated` banner is edited by hand — change
 the route upstream, regenerate, and both SDKs move together.
 

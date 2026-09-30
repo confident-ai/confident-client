@@ -18,7 +18,7 @@ Retrieve the organization tied to your API key, including its `id`, `name`,
 `plan` and creation time.
 
 ```python
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI()
 
@@ -27,7 +27,7 @@ print(organization.id, organization.name, organization.plan)
 ```
 
 ```typescript
-import { ConfidentAI } from "confidentai";
+import { ConfidentAI } from "confident-ai";
 
 const client = new ConfidentAI();
 

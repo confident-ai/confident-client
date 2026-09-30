@@ -70,8 +70,8 @@ Set the template on the handle, then push. `alias` identifies the prompt and is
 created if it does not exist. Send `text` or `messages`, never both.
 
 ```python
-from confidentai.common.types import PromptType
-from confidentai.prompts import PromptInterpolationType
+from confident_ai.common.types import PromptType
+from confident_ai.prompts import PromptInterpolationType
 
 prompt = client.prompt(alias="greeting")
 prompt.text = "Hello {name}, welcome to {product}"
@@ -83,8 +83,8 @@ print(pushed.prompt_id, pushed.hash)
 ```
 
 ```typescript
-import { PromptType } from "confidentai/common";
-import { PromptInterpolationType } from "confidentai/prompts";
+import { PromptType } from "confident-ai/common";
+import { PromptInterpolationType } from "confident-ai/prompts";
 
 const prompt = client.prompt(undefined, { alias: "greeting" });
 prompt.text = "Hello {name}, welcome to {product}";
@@ -141,7 +141,7 @@ by the dataset's `multi_turn`.
 an `id` is created. So the round trip is pull, edit the list, push.
 
 ```python
-from confidentai.datasets import SingleTurnGolden
+from confident_ai.datasets import SingleTurnGolden
 
 dataset = client.dataset("<DATASET-ID>").pull()
 print(dataset.alias, len(dataset.goldens))
@@ -154,7 +154,7 @@ dataset.push()
 ```
 
 ```typescript
-import { SingleTurnGolden } from "confidentai/datasets";
+import { SingleTurnGolden } from "confident-ai/datasets";
 
 const dataset = await client.dataset("<DATASET-ID>").pull();
 console.log(dataset.alias, dataset.goldens!.length);
@@ -218,7 +218,7 @@ All three list with **cursor pagination**: pass `page_size`, then the `cursor`
 from the previous page.
 
 ```python
-from confidentai.common import Environment
+from confident_ai.common import Environment
 
 traces = client.traces.list(page_size=25, environment=Environment.PRODUCTION)
 for trace in traces.traces:
@@ -231,7 +231,7 @@ span = client.spans.get("<SPAN-UUID>")
 thread = client.threads.get("<THREAD-ID>")
 
 # Narrow spans by what they are and what they used
-from confidentai.common import SpanType
+from confident_ai.common import SpanType
 
 llm_spans = client.spans.list(
     type=SpanType.LLM, model="gpt-4o", has_error="false"
@@ -239,7 +239,7 @@ llm_spans = client.spans.list(
 ```
 
 ```typescript
-import { Environment } from "confidentai/common";
+import { Environment } from "confident-ai/common";
 
 const traces = await client.traces.list({
   pageSize: 25,
@@ -272,7 +272,7 @@ metrics with the settings an evaluation runs them under. Collections are what
 you name when running an evaluation.
 
 ```python
-from confidentai.metric_collections import MetricSettingConfig
+from confident_ai.metric_collections import MetricSettingConfig
 
 metrics = client.metrics.list()                    # rows on `.metrics`
 metric = client.metrics.create(

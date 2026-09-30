@@ -9,11 +9,11 @@
     {
       "name": "confident-client",
       "source": "./",
-      "description": "Skills for managing Confident AI organizations, projects, members, roles, governance policies, and API keys programmatically with the Confident AI Admin SDK (confidentai).",
+      "description": "Skills for managing Confident AI organizations, projects, members, roles, governance policies, and API keys programmatically with the Confident AI Admin SDK (confident-ai).",
       "category": "developer-tools",
       "keywords": [
         "confident-ai",
-        "confidentai",
+        "confident-ai",
         "admin-sdk",
         "organizations",
         "projects",

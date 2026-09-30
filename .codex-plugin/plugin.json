@@ -1,7 +1,7 @@
 {
   "name": "confident-client",
   "version": "1.0.0",
-  "description": "Skills for managing Confident AI organizations, projects, members, roles, governance policies, and API keys programmatically with the Confident AI Admin SDK (confidentai).",
+  "description": "Skills for managing Confident AI organizations, projects, members, roles, governance policies, and API keys programmatically with the Confident AI Admin SDK (confident-ai).",
   "author": {
     "name": "Confident AI",
     "email": "support@confident-ai.com",
@@ -12,7 +12,7 @@
   "license": "Apache-2.0",
   "keywords": [
     "confident-ai",
-    "confidentai",
+    "confident-ai",
     "admin-sdk",
     "organizations",
     "projects",
@@ -24,7 +24,7 @@
   "interface": {
     "displayName": "Confident AI Client",
     "shortDescription": "Manage Confident AI organizations, projects, members, roles, governance policies, and API keys from your agent.",
-    "longDescription": "Skills that teach Codex to drive the Confident AI Admin SDK (confidentai) for Python and TypeScript — creating and configuring organizations, projects, members, roles, governance policies, and API keys through natural-language prompts.",
+    "longDescription": "Skills that teach Codex to drive the Confident AI Admin SDK (confident-ai) for Python and TypeScript — creating and configuring organizations, projects, members, roles, governance policies, and API keys through natural-language prompts.",
     "developerName": "Confident AI",
     "category": "Developer Tools",
     "websiteURL": "https://confident-ai.com",

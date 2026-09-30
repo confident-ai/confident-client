@@ -34,7 +34,7 @@ Permissions are read-only. List them to discover the ids to attach to policies.
 The rows are on `.permissions`.
 
 ```python
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI()
 project = client.project("<PROJECT-ID>")
@@ -47,7 +47,7 @@ for permission in permissions.permissions:
 ```
 
 ```typescript
-import { ConfidentAI } from "confidentai";
+import { ConfidentAI } from "confident-ai";
 
 const client = new ConfidentAI();
 const project = client.project("<PROJECT-ID>");

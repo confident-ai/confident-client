@@ -10,12 +10,12 @@ code block matching your project.
 
 ```bash
 # Python
-pip install confidentai
+pip install confident-ai
 ```
 
 ```bash
 # TypeScript
-npm install confidentai
+npm install confident-ai
 ```
 
 ## Configure the Keys
@@ -37,13 +37,13 @@ export CONFIDENT_PROJ_API_KEY="confident_us_proj_..."
 ```
 
 ```python
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI()
 ```
 
 ```typescript
-import { ConfidentAI } from "confidentai";
+import { ConfidentAI } from "confident-ai";
 
 const client = new ConfidentAI();
 ```
@@ -113,13 +113,13 @@ Each resource re-exports its own types, so import from the resource rather than
 reaching inside it:
 
 ```python
-from confidentai.datasets import SingleTurnGolden
-from confidentai.prompts import PromptInterpolationType
+from confident_ai.datasets import SingleTurnGolden
+from confident_ai.prompts import PromptInterpolationType
 ```
 
 ```typescript
-import { SingleTurnGolden } from "confidentai/datasets";
-import { PromptInterpolationType } from "confidentai/prompts";
+import { SingleTurnGolden } from "confident-ai/datasets";
+import { PromptInterpolationType } from "confident-ai/prompts";
 ```
 
 ## Async (Python)
@@ -132,7 +132,7 @@ promise.)
 
 ```python
 import asyncio
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI()
 

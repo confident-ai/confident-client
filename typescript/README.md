@@ -1,4 +1,4 @@
-# confidentai (TypeScript)
+# confident-ai (TypeScript)
 
 The official TypeScript SDK for the [Confident AI](https://www.confident-ai.com)
 platform **management API** — manage organizations, projects, API keys, members,
@@ -13,13 +13,13 @@ invitations, roles, and policies.
 ## Installation
 
 ```bash
-npm install confidentai
+npm install confident-ai
 ```
 
 ## Quickstart
 
 ```ts
-import { ConfidentAI } from "confidentai";
+import { ConfidentAI } from "confident-ai";
 
 const client = new ConfidentAI({ apiKey: "confident_org_..." });
 
@@ -137,7 +137,7 @@ When the API returns an unsuccessful response, `sendRequest` throws an `Error`
 whose message is the server-provided error (or the HTTP status text).
 
 ```ts
-import { ConfidentAI } from "confidentai";
+import { ConfidentAI } from "confident-ai";
 
 const client = new ConfidentAI();
 

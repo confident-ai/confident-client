@@ -21,7 +21,7 @@ List every governance policy in the organization. The call returns a
 includes its `controls` and a count of the projects it covers.
 
 ```python
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI()
 
@@ -33,7 +33,7 @@ for policy in policies.governance_policies:
 ```
 
 ```typescript
-import { ConfidentAI } from "confidentai";
+import { ConfidentAI } from "confident-ai";
 
 const client = new ConfidentAI();
 

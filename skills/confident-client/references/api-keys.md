@@ -33,7 +33,7 @@ List every API key at the organization or project level, with secret values
 masked. The call returns an `ApiKeyList`; the rows are on `.api_keys`.
 
 ```python
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI()
 project = client.project("<PROJECT-ID>")
@@ -46,7 +46,7 @@ for api_key in organization_keys.api_keys:
 ```
 
 ```typescript
-import { ConfidentAI } from "confidentai";
+import { ConfidentAI } from "confident-ai";
 
 const client = new ConfidentAI();
 const project = client.project("<PROJECT-ID>");

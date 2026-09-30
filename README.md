@@ -8,11 +8,11 @@ evaluations, red teaming, dashboards and more).
 
 | Language | Package | Location |
 | --- | --- | --- |
-| Python | `confidentai` | [`python/`](./python) |
-| TypeScript | `confidentai` | [`typescript/`](./typescript) |
+| Python | `confident-ai` | [`python/`](./python) |
+| TypeScript | `confident-ai` | [`typescript/`](./typescript) |
 
 > **Both SDKs are generated** from the OpenAPI spec confident-cloud publishes.
-> Nothing under `python/confidentai/` or `typescript/src/` carrying an
+> Nothing under `python/confident_ai/` or `typescript/src/` carrying an
 > `@generated` banner is edited by hand — change the route upstream and
 > regenerate. See [`scripts/README.md`](./scripts/README.md).
 
@@ -29,7 +29,7 @@ routes it owns, named for what they do rather than for the operation id:
 
 ```python
 # Python
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI(api_key="confident_us_org_...")
 
@@ -40,7 +40,7 @@ datasets = client.datasets.list()                 # -> DatasetList
 
 ```ts
 // TypeScript
-import { ConfidentAI } from "confidentai";
+import { ConfidentAI } from "confident-ai";
 
 const client = new ConfidentAI({ apiKey: "confident_us_org_..." });
 

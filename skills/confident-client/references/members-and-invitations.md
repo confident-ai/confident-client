@@ -36,7 +36,7 @@ Both calls take `page` and `page_size`, and return an envelope whose rows are on
 `.members`.
 
 ```python
-from confidentai import ConfidentAI
+from confident_ai import ConfidentAI
 
 client = ConfidentAI()
 project = client.project("<PROJECT-ID>")
@@ -53,7 +53,7 @@ for member in project_members.members:
 ```
 
 ```typescript
-import { ConfidentAI } from "confidentai";
+import { ConfidentAI } from "confident-ai";
 
 const client = new ConfidentAI();
 const project = client.project("<PROJECT-ID>");
