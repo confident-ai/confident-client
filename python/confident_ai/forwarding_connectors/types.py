@@ -7,7 +7,6 @@ from typing import List, Optional
 
 from pydantic import Field
 
-from confident_ai.common.types import Environment
 from confident_ai.types import ConfidentBaseModel
 
 
@@ -20,7 +19,7 @@ class CreateForwardingConnectorRequest(ConfidentBaseModel):
     name: str
     endpoint: str
     headers: Optional[List[ForwardingConnectorHeaderConfig]] = None
-    environments: Optional[List[Environment]] = None
+    environments: Optional[List[str]] = None
     enabled: Optional[bool] = None
 
 
@@ -34,7 +33,7 @@ class ForwardingConnector(ConfidentBaseModel):
     name: str
     endpoint: str
     headers: List[ForwardingConnectorHeader]
-    environments: List[Environment]
+    environments: List[str]
     enabled: bool
     last_forwarded_at: Optional[str] = Field(alias="lastForwardedAt")
     last_error: Optional[str] = Field(alias="lastError")
@@ -68,5 +67,5 @@ class UpdateForwardingConnectorRequest(ConfidentBaseModel):
     name: Optional[str] = None
     endpoint: Optional[str] = None
     headers: Optional[List[ForwardingConnectorHeaderConfig]] = None
-    environments: Optional[List[Environment]] = None
+    environments: Optional[List[str]] = None
     enabled: Optional[bool] = None

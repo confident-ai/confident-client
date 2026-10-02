@@ -130,6 +130,10 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
    * @param annotationQueueId The id of the annotation queue the task fills.
    * @param queueIngestionTaskId The id of the queue ingestion task.
    * @param name The name of the task.
+   * @param newAnnotationQueueId Moves the task to another queue, which must
+   *   hold the same data model. Later items are queued there; items already
+   *   queued stay where they are. Send `null` to detach the task, which only a
+   *   recurring task may do — it then creates a queue of its own each period.
    * @param description A note about what the task harvests. Send `null` to
    *   clear it.
    * @param enabled Whether the task runs. Disabling it stops new items
@@ -149,6 +153,7 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
     options: {
       name?: string;
       dataModel?: IngestionDataModel;
+      newAnnotationQueueId?: string | null;
       description?: string | null;
       enabled?: boolean;
       sampleRate?: number;
@@ -161,6 +166,7 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
     const {
       name,
       dataModel,
+      newAnnotationQueueId,
       description,
       enabled,
       sampleRate,
@@ -176,6 +182,7 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
         body: {
           name,
           dataModel,
+          newAnnotationQueueId,
           description,
           enabled,
           sampleRate,

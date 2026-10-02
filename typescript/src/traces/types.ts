@@ -4,7 +4,6 @@
 // and regenerate.
 
 import {
-  Environment,
   EvaluationErrorType,
   ToolCall,
   TraceSpanStatus,
@@ -194,7 +193,7 @@ export interface CreateTraceRequest {
   startTime: string;
   endTime: string;
   status?: TraceSpanStatus;
-  environment?: Environment;
+  environment?: string;
   metadata?: Record<string, unknown>;
   tags?: string[];
   threadId?: string;
@@ -228,7 +227,7 @@ export interface TraceSummary {
   threadId: string | null;
   userId: string | null;
   customerId: string | null;
-  environment: Environment;
+  environment: string;
   tags: string[] | null;
   metadata: Record<string, unknown> | null;
   inputPreview: string | null;

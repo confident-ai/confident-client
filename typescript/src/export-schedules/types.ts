@@ -4,7 +4,6 @@
 // and regenerate.
 
 import {
-  Environment,
   FilterSet,
   ScheduleIntervalUnit,
   ScheduleRecurrenceType,
@@ -37,7 +36,7 @@ export interface CreateExportScheduleRequest {
   description?: string | null;
   exportType: SchedulableExportType;
   filters?: FilterSet;
-  environment?: Environment | null;
+  environment?: string | null;
   annotationSelectionType?: AnnotationSelectionType | null;
   destinationId?: string | null;
   enabled?: boolean;
@@ -61,7 +60,7 @@ export interface ExportSchedule {
   description: string | null;
   exportType: SchedulableExportType;
   filters: FilterSet;
-  environment: Environment | null;
+  environment: string | null;
   annotationSelectionType: AnnotationSelectionType | null;
   destinationId: string | null;
   scheduleSettings: ExportScheduleSettings | null;
@@ -97,7 +96,7 @@ export interface UpdateExportScheduleRequest {
   name?: string;
   description?: string | null;
   filters?: FilterSet;
-  environment?: Environment | null;
+  environment?: string | null;
   annotationSelectionType?: AnnotationSelectionType | null;
   destinationId?: string | null;
   enabled?: boolean;

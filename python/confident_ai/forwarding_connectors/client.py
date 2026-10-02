@@ -6,7 +6,6 @@
 from typing import List, Optional
 
 from confident_ai.api import Api, HttpMethods
-from confident_ai.common.types import Environment
 from confident_ai.endpoints import Endpoints
 from confident_ai.forwarding_connectors.types import (
     CreateForwardingConnectorRequest,
@@ -70,7 +69,7 @@ class ForwardingConnectorsClient:
         endpoint: str,
         *,
         headers: Optional[List[ForwardingConnectorHeaderConfig]] = None,
-        environments: Optional[List[Environment]] = None,
+        environments: Optional[List[str]] = None,
         enabled: Optional[bool] = None
     ) -> ForwardingConnectorRef:
         """Create Forwarding Connector
@@ -120,7 +119,7 @@ class ForwardingConnectorsClient:
         endpoint: str,
         *,
         headers: Optional[List[ForwardingConnectorHeaderConfig]] = None,
-        environments: Optional[List[Environment]] = None,
+        environments: Optional[List[str]] = None,
         enabled: Optional[bool] = None
     ) -> ForwardingConnectorRef:
         """Create Forwarding Connector
@@ -205,7 +204,7 @@ class ForwardingConnectorsClient:
         name: Optional[str] = None,
         endpoint: Optional[str] = None,
         headers: Optional[List[ForwardingConnectorHeaderConfig]] = None,
-        environments: Optional[List[Environment]] = None,
+        environments: Optional[List[str]] = None,
         enabled: Optional[bool] = None
     ) -> ForwardingConnector:
         """Update Forwarding Connector
@@ -254,7 +253,7 @@ class ForwardingConnectorsClient:
         name: Optional[str] = None,
         endpoint: Optional[str] = None,
         headers: Optional[List[ForwardingConnectorHeaderConfig]] = None,
-        environments: Optional[List[Environment]] = None,
+        environments: Optional[List[str]] = None,
         enabled: Optional[bool] = None
     ) -> ForwardingConnector:
         """Update Forwarding Connector

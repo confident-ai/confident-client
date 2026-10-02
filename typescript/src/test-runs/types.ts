@@ -3,12 +3,7 @@
 // Do not edit by hand — change the route in confident-cloud
 // and regenerate.
 
-import {
-  Environment,
-  EvaluationErrorType,
-  ToolCall,
-  Turn,
-} from "../common/types";
+import { EvaluationErrorType, ToolCall, Turn } from "../common/types";
 
 export enum TestCaseResultStatus {
   ACCEPTED = "accepted",
@@ -101,7 +96,7 @@ export interface TestCaseTrace {
   output: string | null;
   startTime: string;
   endTime: string;
-  environment: Environment;
+  environment: string;
   metadata: Record<string, unknown> | null;
   tags: string[] | null;
   threadId: string | null;

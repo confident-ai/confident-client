@@ -5,7 +5,6 @@
 
 import { Api, HttpMethods } from "../api";
 import { Endpoints } from "../endpoints";
-import { Environment } from "../common/types";
 import { Thread, ThreadList, ThreadSortBy } from "./types";
 
 export class ThreadsClient {
@@ -44,7 +43,7 @@ export class ThreadsClient {
       end?: string;
       ascending?: "true" | "false";
       sortBy?: ThreadSortBy;
-      environment?: Environment;
+      environment?: string;
     } = {},
   ): Promise<ThreadList> {
     const { pageSize, cursor, start, end, ascending, sortBy, environment } =

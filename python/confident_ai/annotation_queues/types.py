@@ -235,6 +235,7 @@ class CreateQueueIngestionTaskRequest(ConfidentBaseModel):
 
 class QueueIngestionTask(ConfidentBaseModel):
     id: str
+    annotation_queue_id: Optional[str] = Field(alias="annotationQueueId")
     name: str
     description: Optional[str]
     enabled: bool
@@ -276,6 +277,10 @@ class UpdateQueueIngestionTaskRequest(ConfidentBaseModel):
     data_model: Optional[IngestionDataModel] = Field(
         default=None,
         alias="dataModel",
+    )
+    new_annotation_queue_id: Optional[str] = Field(
+        default=None,
+        alias="newAnnotationQueueId",
     )
     description: Optional[str] = None
     enabled: Optional[bool] = None

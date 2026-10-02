@@ -9,7 +9,6 @@ from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import Field
 
 from confident_ai.common.types import (
-    Environment,
     EvaluationErrorType,
     ToolCall,
     TraceSpanStatus,
@@ -302,7 +301,7 @@ class CreateTraceRequest(ConfidentBaseModel):
     start_time: str = Field(alias="startTime")
     end_time: str = Field(alias="endTime")
     status: Optional[TraceSpanStatus] = None
-    environment: Optional[Environment] = None
+    environment: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
     tags: Optional[List[str]] = None
     thread_id: Optional[str] = Field(default=None, alias="threadId")
@@ -351,7 +350,7 @@ class TraceSummary(ConfidentBaseModel):
     thread_id: Optional[str] = Field(alias="threadId")
     user_id: Optional[str] = Field(alias="userId")
     customer_id: Optional[str] = Field(alias="customerId")
-    environment: Environment
+    environment: str
     tags: Optional[List[str]]
     metadata: Optional[Dict[str, Any]]
     input_preview: Optional[str] = Field(alias="inputPreview")

@@ -6,7 +6,6 @@
 from typing import Literal, Optional
 
 from confident_ai.api import Api, HttpMethods
-from confident_ai.common.types import Environment
 from confident_ai.endpoints import Endpoints
 from confident_ai.threads.types import Thread, ThreadList, ThreadSortBy
 
@@ -24,7 +23,7 @@ class ThreadsClient:
         end: Optional[str] = None,
         ascending: Optional[Literal["true", "false"]] = None,
         sort_by: Optional[ThreadSortBy] = None,
-        environment: Optional[Environment] = None
+        environment: Optional[str] = None
     ) -> ThreadList:
         """List Threads
 
@@ -76,7 +75,7 @@ class ThreadsClient:
         end: Optional[str] = None,
         ascending: Optional[Literal["true", "false"]] = None,
         sort_by: Optional[ThreadSortBy] = None,
-        environment: Optional[Environment] = None
+        environment: Optional[str] = None
     ) -> ThreadList:
         """List Threads
 

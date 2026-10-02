@@ -9,7 +9,6 @@ from typing import List, Optional
 from pydantic import Field
 
 from confident_ai.common.types import (
-    Environment,
     FilterSet,
     ScheduleIntervalUnit,
     ScheduleRecurrenceType,
@@ -47,7 +46,7 @@ class CreateExportScheduleRequest(ConfidentBaseModel):
     description: Optional[str] = None
     export_type: SchedulableExportType = Field(alias="exportType")
     filters: Optional[FilterSet] = None
-    environment: Optional[Environment] = None
+    environment: Optional[str] = None
     annotation_selection_type: Optional[AnnotationSelectionType] = Field(
         default=None,
         alias="annotationSelectionType",
@@ -74,7 +73,7 @@ class ExportSchedule(ConfidentBaseModel):
     description: Optional[str]
     export_type: SchedulableExportType = Field(alias="exportType")
     filters: FilterSet
-    environment: Optional[Environment]
+    environment: Optional[str]
     annotation_selection_type: Optional[AnnotationSelectionType] = Field(
         alias="annotationSelectionType",
     )
@@ -119,7 +118,7 @@ class UpdateExportScheduleRequest(ConfidentBaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     filters: Optional[FilterSet] = None
-    environment: Optional[Environment] = None
+    environment: Optional[str] = None
     annotation_selection_type: Optional[AnnotationSelectionType] = Field(
         default=None,
         alias="annotationSelectionType",

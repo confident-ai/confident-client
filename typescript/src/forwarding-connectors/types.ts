@@ -3,8 +3,6 @@
 // Do not edit by hand — change the route in confident-cloud
 // and regenerate.
 
-import { Environment } from "../common/types";
-
 export interface ForwardingConnectorHeaderConfig {
   key: string;
   value: string;
@@ -14,7 +12,7 @@ export interface CreateForwardingConnectorRequest {
   name: string;
   endpoint: string;
   headers?: ForwardingConnectorHeaderConfig[];
-  environments?: Environment[];
+  environments?: string[];
   enabled?: boolean;
 }
 
@@ -28,7 +26,7 @@ export interface ForwardingConnector {
   name: string;
   endpoint: string;
   headers: ForwardingConnectorHeader[];
-  environments: Environment[];
+  environments: string[];
   enabled: boolean;
   lastForwardedAt: string | null;
   lastError: string | null;
@@ -60,6 +58,6 @@ export interface UpdateForwardingConnectorRequest {
   name?: string;
   endpoint?: string;
   headers?: ForwardingConnectorHeaderConfig[];
-  environments?: Environment[];
+  environments?: string[];
   enabled?: boolean;
 }

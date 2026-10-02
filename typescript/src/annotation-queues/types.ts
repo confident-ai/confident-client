@@ -194,6 +194,7 @@ export interface CreateQueueIngestionTaskRequest {
 
 export interface QueueIngestionTask {
   id: string;
+  annotationQueueId: string | null;
   name: string;
   description: string | null;
   enabled: boolean;
@@ -231,6 +232,7 @@ export interface UpdateAnnotationQueueRequest {
 export interface UpdateQueueIngestionTaskRequest {
   name?: string;
   dataModel?: IngestionDataModel;
+  newAnnotationQueueId?: string | null;
   description?: string | null;
   enabled?: boolean;
   sampleRate?: number;

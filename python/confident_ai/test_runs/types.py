@@ -8,12 +8,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import Field
 
-from confident_ai.common.types import (
-    Environment,
-    EvaluationErrorType,
-    ToolCall,
-    Turn,
-)
+from confident_ai.common.types import EvaluationErrorType, ToolCall, Turn
 from confident_ai.types import ConfidentBaseModel
 
 
@@ -126,7 +121,7 @@ class TestCaseTrace(ConfidentBaseModel):
     output: Optional[str]
     start_time: str = Field(alias="startTime")
     end_time: str = Field(alias="endTime")
-    environment: Environment
+    environment: str
     metadata: Optional[Dict[str, Any]]
     tags: Optional[List[str]]
     thread_id: Optional[str] = Field(alias="threadId")

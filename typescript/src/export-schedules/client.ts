@@ -6,7 +6,6 @@
 import { Api, HttpMethods } from "../api";
 import { Endpoints } from "../endpoints";
 import {
-  Environment,
   FilterSet,
   ScheduleIntervalUnit,
   ScheduleRecurrenceType,
@@ -96,7 +95,7 @@ export class ExportSchedulesClient {
       endAt?: string | null;
       description?: string | null;
       filters?: FilterSet;
-      environment?: Environment | null;
+      environment?: string | null;
       annotationSelectionType?: AnnotationSelectionType | null;
       destinationId?: string | null;
       enabled?: boolean;
@@ -199,7 +198,7 @@ export class ExportSchedulesClient {
       name?: string;
       description?: string | null;
       filters?: FilterSet;
-      environment?: Environment | null;
+      environment?: string | null;
       annotationSelectionType?: AnnotationSelectionType | null;
       destinationId?: string | null;
       enabled?: boolean;

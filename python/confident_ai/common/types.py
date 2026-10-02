@@ -28,13 +28,6 @@ class AuditLogExportStatus(Enum):
     ERRORED = "ERRORED"
 
 
-class Environment(Enum):
-    PRODUCTION = "production"
-    DEVELOPMENT = "development"
-    STAGING = "staging"
-    TESTING = "testing"
-
-
 class EvaluationErrorType(Enum):
     AI_CONNECTION_ERROR = "AI_CONNECTION_ERROR"
     TRANSFORMER_ERROR = "TRANSFORMER_ERROR"
@@ -382,7 +375,7 @@ class MetricDag(ConfidentBaseModel):
     nodes: Dict[str, Any]
 
 
-class JevQuestionJevQuestion0(ConfidentBaseModel):
+class JevNoulQuestion(ConfidentBaseModel):
     type: Literal["noul"]
     question: str
     weight: Optional[float] = None
@@ -396,23 +389,21 @@ class JevQuestionJevQuestion0(ConfidentBaseModel):
     )
 
 
-class JevQuestionJevQuestion1(ConfidentBaseModel):
+class JevScoreQuestion(ConfidentBaseModel):
     type: Literal["score"]
     question: str
     weight: Optional[float] = None
     levels: List[str]
 
 
-class JevQuestionJevQuestion2(ConfidentBaseModel):
+class JevChoiceQuestion(ConfidentBaseModel):
     type: Literal["choice"]
     question: str
     weight: Optional[float] = None
     options: Dict[str, Optional[float]]
 
 
-JevQuestion = Union[
-    JevQuestionJevQuestion0, JevQuestionJevQuestion1, JevQuestionJevQuestion2
-]
+JevQuestion = Union[JevNoulQuestion, JevScoreQuestion, JevChoiceQuestion]
 
 
 class CreateMetricRequest(ConfidentBaseModel):
@@ -950,7 +941,7 @@ class Trace(ConfidentBaseModel):
     thread_id: Optional[str] = Field(alias="threadId")
     user_id: Optional[str] = Field(alias="userId")
     customer_id: Optional[str] = Field(alias="customerId")
-    environment: Environment
+    environment: str
     tags: Optional[List[str]]
     metadata: Optional[Dict[str, Any]]
     input: Optional[str]

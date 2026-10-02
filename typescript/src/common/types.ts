@@ -20,13 +20,6 @@ export enum AuditLogExportStatus {
   ERRORED = "ERRORED",
 }
 
-export enum Environment {
-  PRODUCTION = "production",
-  DEVELOPMENT = "development",
-  STAGING = "staging",
-  TESTING = "testing",
-}
-
 export enum EvaluationErrorType {
   AI_CONNECTION_ERROR = "AI_CONNECTION_ERROR",
   TRANSFORMER_ERROR = "TRANSFORMER_ERROR",
@@ -371,7 +364,7 @@ export interface MetricDag {
   nodes: Record<string, unknown>;
 }
 
-export interface JevQuestionJevQuestion0 {
+export interface JevNoulQuestion {
   type: "noul";
   question: string;
   weight?: number;
@@ -379,14 +372,14 @@ export interface JevQuestionJevQuestion0 {
   falseDescription?: string;
 }
 
-export interface JevQuestionJevQuestion1 {
+export interface JevScoreQuestion {
   type: "score";
   question: string;
   weight?: number;
   levels: string[];
 }
 
-export interface JevQuestionJevQuestion2 {
+export interface JevChoiceQuestion {
   type: "choice";
   question: string;
   weight?: number;
@@ -394,7 +387,7 @@ export interface JevQuestionJevQuestion2 {
 }
 
 export type JevQuestion =
-  JevQuestionJevQuestion0 | JevQuestionJevQuestion1 | JevQuestionJevQuestion2;
+  JevNoulQuestion | JevScoreQuestion | JevChoiceQuestion;
 
 export interface CreateMetricRequest {
   name: string;
@@ -886,7 +879,7 @@ export interface Trace {
   threadId: string | null;
   userId: string | null;
   customerId: string | null;
-  environment: Environment;
+  environment: string;
   tags: string[] | null;
   metadata: Record<string, unknown> | null;
   input: string | null;

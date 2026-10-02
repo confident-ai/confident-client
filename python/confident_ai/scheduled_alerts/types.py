@@ -51,9 +51,24 @@ class AlertThresholdSettings(ConfidentBaseModel):
     direction: AlertThresholdDirection
 
 
-class ScheduledAlertDetectionSettingsScheduledAlertDetectionSettings0(
-    ConfidentBaseModel
-):
+class AnomalyDetectionSettings(ConfidentBaseModel):
+    trace_name: Optional[str] = Field(default=None, alias="traceName")
+    metrics: Optional[
+        List[
+            Literal[
+                "avg_score",
+                "error_rate",
+                "avg_latency",
+                "avg_cost",
+                "negative_label_rate",
+            ]
+        ]
+    ] = None
+    direction: Literal["WORSENED", "ANY"]
+    min_affected_count: int = Field(alias="minAffectedCount")
+
+
+class RegressionDetectionSettings(ConfidentBaseModel):
     trace_name: Optional[str] = Field(default=None, alias="traceName")
     metrics: Optional[
         List[
@@ -71,37 +86,16 @@ class ScheduledAlertDetectionSettingsScheduledAlertDetectionSettings0(
     significant_only: bool = Field(alias="significantOnly")
 
 
-class ScheduledAlertDetectionSettingsScheduledAlertDetectionSettings1(
-    ConfidentBaseModel
-):
-    trace_name: Optional[str] = Field(default=None, alias="traceName")
-    metrics: Optional[
-        List[
-            Literal[
-                "avg_score",
-                "error_rate",
-                "avg_latency",
-                "avg_cost",
-                "negative_label_rate",
-            ]
-        ]
-    ] = None
-    direction: Literal["WORSENED", "ANY"]
-    min_affected_count: int = Field(alias="minAffectedCount")
-
-
-class ScheduledAlertDetectionSettingsScheduledAlertDetectionSettings2(
-    ConfidentBaseModel
-):
+class SignalSpikeDetectionSettings(ConfidentBaseModel):
     classifier_ids: List[str] = Field(alias="classifierIds")
     direction: Literal["WORSENED", "ANY"]
     min_affected_count: int = Field(alias="minAffectedCount")
 
 
 ScheduledAlertDetectionSettings = Union[
-    ScheduledAlertDetectionSettingsScheduledAlertDetectionSettings0,
-    ScheduledAlertDetectionSettingsScheduledAlertDetectionSettings1,
-    ScheduledAlertDetectionSettingsScheduledAlertDetectionSettings2,
+    RegressionDetectionSettings,
+    AnomalyDetectionSettings,
+    SignalSpikeDetectionSettings,
 ]
 
 
@@ -133,47 +127,6 @@ class CreateScheduledAlertRequest(ConfidentBaseModel):
     enabled: Optional[bool] = None
 
 
-class ScheduledAlertDetectionSettings0(ConfidentBaseModel):
-    trace_name: Optional[str] = Field(default=None, alias="traceName")
-    metrics: Optional[
-        List[
-            Literal[
-                "avg_score",
-                "error_rate",
-                "avg_latency",
-                "avg_cost",
-                "negative_label_rate",
-            ]
-        ]
-    ] = None
-    direction: Literal["WORSENED", "ANY"]
-    min_affected_count: int = Field(alias="minAffectedCount")
-    significant_only: bool = Field(alias="significantOnly")
-
-
-class ScheduledAlertDetectionSettings1(ConfidentBaseModel):
-    trace_name: Optional[str] = Field(default=None, alias="traceName")
-    metrics: Optional[
-        List[
-            Literal[
-                "avg_score",
-                "error_rate",
-                "avg_latency",
-                "avg_cost",
-                "negative_label_rate",
-            ]
-        ]
-    ] = None
-    direction: Literal["WORSENED", "ANY"]
-    min_affected_count: int = Field(alias="minAffectedCount")
-
-
-class ScheduledAlertDetectionSettings2(ConfidentBaseModel):
-    classifier_ids: List[str] = Field(alias="classifierIds")
-    direction: Literal["WORSENED", "ANY"]
-    min_affected_count: int = Field(alias="minAffectedCount")
-
-
 class ScheduledAlertScheduleSettings(ConfidentBaseModel):
     recurrence: ScheduleRecurrenceType
     repeat_every: Optional[int] = Field(alias="repeatEvery")
@@ -199,9 +152,9 @@ class ScheduledAlert(ConfidentBaseModel):
     )
     detection_settings: Optional[
         Union[
-            ScheduledAlertDetectionSettings0,
-            ScheduledAlertDetectionSettings1,
-            ScheduledAlertDetectionSettings2,
+            RegressionDetectionSettings,
+            AnomalyDetectionSettings,
+            SignalSpikeDetectionSettings,
         ]
     ] = Field(
         alias="detectionSettings",

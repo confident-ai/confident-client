@@ -6,7 +6,7 @@
 from typing import Literal, Optional
 
 from confident_ai.api import Api, HttpMethods
-from confident_ai.common.types import Environment, Span, SpanType
+from confident_ai.common.types import Span, SpanType
 from confident_ai.endpoints import Endpoints
 from confident_ai.spans.types import SpanList, SpanSortBy
 
@@ -24,7 +24,7 @@ class SpansClient:
         end: Optional[str] = None,
         ascending: Optional[Literal["true", "false"]] = None,
         sort_by: Optional[SpanSortBy] = None,
-        environment: Optional[Environment] = None,
+        environment: Optional[str] = None,
         type: Optional[SpanType] = None,
         trace_uuid: Optional[str] = None,
         name: Optional[str] = None,
@@ -113,7 +113,7 @@ class SpansClient:
         end: Optional[str] = None,
         ascending: Optional[Literal["true", "false"]] = None,
         sort_by: Optional[SpanSortBy] = None,
-        environment: Optional[Environment] = None,
+        environment: Optional[str] = None,
         type: Optional[SpanType] = None,
         trace_uuid: Optional[str] = None,
         name: Optional[str] = None,

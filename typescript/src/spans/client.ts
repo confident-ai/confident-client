@@ -5,7 +5,7 @@
 
 import { Api, HttpMethods } from "../api";
 import { Endpoints } from "../endpoints";
-import { Environment, Span, SpanType } from "../common/types";
+import { Span, SpanType } from "../common/types";
 import { SpanList, SpanSortBy } from "./types";
 
 export class SpansClient {
@@ -58,7 +58,7 @@ export class SpansClient {
       end?: string;
       ascending?: "true" | "false";
       sortBy?: SpanSortBy;
-      environment?: Environment;
+      environment?: string;
       type?: SpanType;
       traceUuid?: string;
       name?: string;

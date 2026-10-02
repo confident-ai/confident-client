@@ -7,7 +7,6 @@ from typing import Literal, Optional
 
 from confident_ai.api import Api, HttpMethods
 from confident_ai.common.types import (
-    Environment,
     FilterSet,
     ScheduleIntervalUnit,
     ScheduleRecurrenceType,
@@ -107,7 +106,7 @@ class ExportSchedulesClient:
         end_at: Optional[str] = None,
         description: Optional[str] = None,
         filters: Optional[FilterSet] = None,
-        environment: Optional[Environment] = None,
+        environment: Optional[str] = None,
         annotation_selection_type: Optional[AnnotationSelectionType] = None,
         destination_id: Optional[str] = None,
         enabled: Optional[bool] = None
@@ -182,7 +181,7 @@ class ExportSchedulesClient:
         end_at: Optional[str] = None,
         description: Optional[str] = None,
         filters: Optional[FilterSet] = None,
-        environment: Optional[Environment] = None,
+        environment: Optional[str] = None,
         annotation_selection_type: Optional[AnnotationSelectionType] = None,
         destination_id: Optional[str] = None,
         enabled: Optional[bool] = None
@@ -289,7 +288,7 @@ class ExportSchedulesClient:
         name: Optional[str] = None,
         description: Optional[str] = None,
         filters: Optional[FilterSet] = None,
-        environment: Optional[Environment] = None,
+        environment: Optional[str] = None,
         annotation_selection_type: Optional[AnnotationSelectionType] = None,
         destination_id: Optional[str] = None,
         enabled: Optional[bool] = None
@@ -361,7 +360,7 @@ class ExportSchedulesClient:
         name: Optional[str] = None,
         description: Optional[str] = None,
         filters: Optional[FilterSet] = None,
-        environment: Optional[Environment] = None,
+        environment: Optional[str] = None,
         annotation_selection_type: Optional[AnnotationSelectionType] = None,
         destination_id: Optional[str] = None,
         enabled: Optional[bool] = None
