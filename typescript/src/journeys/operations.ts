@@ -46,9 +46,10 @@ export class JourneysOperations {
    * a project; reusing one returns a 409.
    *
    * @param name The name of the journey, unique within the project.
-   * @param description What the user is trying to get done on this journey.
-   *   When `graphSource` is `ai`, the draft is written from this and the name,
-   *   so say how the conversation can end.
+   * @param description What the user is trying to get done on this journey, and
+   *   how the conversation can end. It guides the draft when `graphSource` is
+   *   `ai`, but the simulated user never sees it, so put the user's situation
+   *   in `Start`'s instructions.
    * @param graphSource Send `ai` to have Confident AI draft the journey's
    *   states and edges in the background with your project's platform model.
    *   Omit it to start with only the root `Start` state. The draft lands
@@ -95,8 +96,9 @@ export class JourneysOperations {
    * @param journeyId The id of the journey.
    * @param name The name of the journey, unique within the project. Omit it to
    *   keep the current name.
-   * @param description What the user is trying to get done on this journey.
-   *   Send `null` to clear it, or omit it to keep the current one.
+   * @param description What the user is trying to get done on this journey; the
+   *   simulated user never sees it. Send `null` to clear it, or omit it to keep
+   *   the current one.
    */
   async update(
     journeyId: string,

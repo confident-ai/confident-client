@@ -22,18 +22,19 @@ export class StatesOperations extends EdgesOperations {
    * reusing one returns a 409.
    *
    * @param journeyId The id of the journey.
-   * @param name The name of the state, unique within the journey.
-   * @param instructions What happens at this step of the conversation. When
-   *   goldens are generated for a path, the instructions of its states, in
-   *   order, are what the scenario is written from. May be empty.
+   * @param name The name of the state, unique within the journey. Name it for
+   *   what the user does, in a few words.
+   * @param instructions What the simulated user says or does in this state,
+   *   written to them in the second person. They keep acting it out until the
+   *   app's reply matches an edge leaving the state.
    * @param fromStateId The id of an existing state in this journey to connect
    *   the new state from. An edge from that state to the new one is created
    *   alongside it, and `when` is then required. Omit it to add an unconnected
    *   state.
-   * @param when The condition for the edge from `fromStateId`, in plain
-   *   language. Required with `fromStateId` and ignored without it. An empty
-   *   condition keeps the edge out of the journey's paths until it is given
-   *   one.
+   * @param when What the app does or says in its reply that moves the simulated
+   *   user from `fromStateId` into the new state; describe the app's reply, not
+   *   the user. Required with `fromStateId` and ignored without it. An empty
+   *   `when` keeps the edge out of the journey's paths until it is given one.
    */
   async createState(
     journeyId: string,
@@ -60,11 +61,12 @@ export class StatesOperations extends EdgesOperations {
    *
    * @param journeyId The id of the journey the state belongs to.
    * @param stateId The id of the state.
-   * @param name The name of the state, unique within the journey. Omit it to
-   *   keep the current name.
-   * @param instructions What happens at this step of the conversation. The text
-   *   replaces the stored one outright, so send the whole of it. Omit it to
-   *   keep the current instructions.
+   * @param name The name of the state, unique within the journey, for what the
+   *   user does. Omit it to keep the current name.
+   * @param instructions What the simulated user says or does in this state,
+   *   written to them in the second person. The text replaces the stored one
+   *   outright, so send the whole of it. Omit it to keep the current
+   *   instructions.
    */
   async updateState(
     journeyId: string,

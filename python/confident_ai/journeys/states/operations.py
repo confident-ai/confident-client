@@ -37,19 +37,20 @@ class StatesOperations:
 
         Args:
             journey_id: The id of the journey.
-            name: The name of the state, unique within the journey.
-            instructions: What happens at this step of the conversation. When
-                goldens are generated for a path, the instructions of its
-                states, in order, are what the scenario is written from. May be
-                empty.
+            name: The name of the state, unique within the journey. Name it for
+                what the user does, in a few words.
+            instructions: What the simulated user says or does in this state,
+                written to them in the second person. They keep acting it out
+                until the app's reply matches an edge leaving the state.
             from_state_id: The id of an existing state in this journey to
                 connect the new state from. An edge from that state to the new
                 one is created alongside it, and `when` is then required. Omit
                 it to add an unconnected state.
-            when: The condition for the edge from `fromStateId`, in plain
-                language. Required with `fromStateId` and ignored without it. An
-                empty condition keeps the edge out of the journey's paths until
-                it is given one.
+            when: What the app does or says in its reply that moves the
+                simulated user from `fromStateId` into the new state; describe
+                the app's reply, not the user. Required with `fromStateId` and
+                ignored without it. An empty `when` keeps the edge out of the
+                journey's paths until it is given one.
         """
         return self._api.request(
             HttpMethods.POST,
@@ -83,19 +84,20 @@ class StatesOperations:
 
         Args:
             journey_id: The id of the journey.
-            name: The name of the state, unique within the journey.
-            instructions: What happens at this step of the conversation. When
-                goldens are generated for a path, the instructions of its
-                states, in order, are what the scenario is written from. May be
-                empty.
+            name: The name of the state, unique within the journey. Name it for
+                what the user does, in a few words.
+            instructions: What the simulated user says or does in this state,
+                written to them in the second person. They keep acting it out
+                until the app's reply matches an edge leaving the state.
             from_state_id: The id of an existing state in this journey to
                 connect the new state from. An edge from that state to the new
                 one is created alongside it, and `when` is then required. Omit
                 it to add an unconnected state.
-            when: The condition for the edge from `fromStateId`, in plain
-                language. Required with `fromStateId` and ignored without it. An
-                empty condition keeps the edge out of the journey's paths until
-                it is given one.
+            when: What the app does or says in its reply that moves the
+                simulated user from `fromStateId` into the new state; describe
+                the app's reply, not the user. Required with `fromStateId` and
+                ignored without it. An empty `when` keeps the edge out of the
+                journey's paths until it is given one.
         """
         return await self._api.a_request(
             HttpMethods.POST,
@@ -128,11 +130,12 @@ class StatesOperations:
         Args:
             journey_id: The id of the journey the state belongs to.
             state_id: The id of the state.
-            name: The name of the state, unique within the journey. Omit it to
-                keep the current name.
-            instructions: What happens at this step of the conversation. The
-                text replaces the stored one outright, so send the whole of it.
-                Omit it to keep the current instructions.
+            name: The name of the state, unique within the journey, for what the
+                user does. Omit it to keep the current name.
+            instructions: What the simulated user says or does in this state,
+                written to them in the second person. The text replaces the
+                stored one outright, so send the whole of it. Omit it to keep
+                the current instructions.
         """
         return self._api.request(
             HttpMethods.PUT,
@@ -160,11 +163,12 @@ class StatesOperations:
         Args:
             journey_id: The id of the journey the state belongs to.
             state_id: The id of the state.
-            name: The name of the state, unique within the journey. Omit it to
-                keep the current name.
-            instructions: What happens at this step of the conversation. The
-                text replaces the stored one outright, so send the whole of it.
-                Omit it to keep the current instructions.
+            name: The name of the state, unique within the journey, for what the
+                user does. Omit it to keep the current name.
+            instructions: What the simulated user says or does in this state,
+                written to them in the second person. The text replaces the
+                stored one outright, so send the whole of it. Omit it to keep
+                the current instructions.
         """
         return await self._api.a_request(
             HttpMethods.PUT,

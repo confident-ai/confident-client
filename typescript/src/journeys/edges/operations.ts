@@ -20,9 +20,9 @@ export class EdgesOperations extends JourneysOperations {
    * @param fromStateId The id of the state the edge leaves from.
    * @param toStateId The id of the state the edge leads to. It must differ from
    *   `fromStateId`, and both must be in this journey.
-   * @param when The condition under which the conversation moves along this
-   *   edge, in plain language. An empty condition keeps the edge out of the
-   *   journey's paths until it is given one.
+   * @param when What the app does or says in its reply that moves the simulated
+   *   user along this edge; describe the app's reply, not the user. An empty
+   *   `when` keeps the edge out of the journey's paths until it is given one.
    */
   async createEdge(
     journeyId: string,
@@ -46,8 +46,8 @@ export class EdgesOperations extends JourneysOperations {
    *
    * @param journeyId The id of the journey the edge belongs to.
    * @param edgeId The id of the edge.
-   * @param when The condition under which the conversation moves along this
-   *   edge. Omit it to keep the current condition.
+   * @param when What the app does or says in its reply that moves the simulated
+   *   user along this edge. Omit it to keep the current one.
    * @param toStateId The id of the state the edge should lead to instead, in
    *   this journey. It cannot be the state the edge leaves from. Goldens
    *   generated for a path through the old edge are kept but no longer belong

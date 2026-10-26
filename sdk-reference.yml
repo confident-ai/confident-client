@@ -11596,9 +11596,10 @@ resources:
           python: true
           typescript: false
         default: None
-        description: What the user is trying to get done on this journey. When `graphSource`
-          is `ai`, the draft is written from this and the name, so say how the conversation
-          can end.
+        description: What the user is trying to get done on this journey, and how
+          the conversation can end. It guides the draft when `graphSource` is `ai`,
+          but the simulated user never sees it, so put the user's situation in `Start`'s
+          instructions.
         example: A customer asks for a refund on a recent order. The agent verifies
           who they are, then either issues the refund or hands the conversation to
           a human.
@@ -11732,8 +11733,9 @@ resources:
           python: true
           typescript: false
         default: None
-        description: What the user is trying to get done on this journey. Send `null`
-          to clear it, or omit it to keep the current one.
+        description: What the user is trying to get done on this journey; the simulated
+          user never sees it. Send `null` to clear it, or omit it to keep the current
+          one.
         example: A customer asks for a refund on a recent order. The agent verifies
           who they are, then either issues the refund or hands the conversation to
           a human.
@@ -12046,11 +12048,10 @@ resources:
           python: false
           typescript: false
         default: null
-        description: The condition under which the conversation moves along this
-          edge, in plain language. An empty condition keeps the edge out of the journey's
-          paths until it is given one.
-        example: The customer has given an order number and the email on the account,
-          and they match.
+        description: What the app does or says in its reply that moves the simulated
+          user along this edge; describe the app's reply, not the user. An empty
+          `when` keeps the edge out of the journey's paths until it is given one.
+        example: The assistant confirms the refund has been issued.
         references: []
       order:
         python:
@@ -12123,10 +12124,9 @@ resources:
           python: true
           typescript: false
         default: None
-        description: The condition under which the conversation moves along this
-          edge. Omit it to keep the current condition.
-        example: The customer has given an order number and the email on the account,
-          and they match.
+        description: What the app does or says in its reply that moves the simulated
+          user along this edge. Omit it to keep the current one.
+        example: The assistant confirms the refund has been issued.
         references: []
       - python: to_state_id
         typescript: toStateId
@@ -12268,8 +12268,9 @@ resources:
           python: false
           typescript: false
         default: null
-        description: The name of the state, unique within the journey.
-        example: Verify identity
+        description: The name of the state, unique within the journey. Name it for
+          what the user does, in a few words.
+        example: Share Order Details
         references: []
       - python: instructions
         typescript: instructions
@@ -12283,11 +12284,10 @@ resources:
           python: false
           typescript: false
         default: null
-        description: What happens at this step of the conversation. When goldens
-          are generated for a path, the instructions of its states, in order, are
-          what the scenario is written from. May be empty.
-        example: The agent asks for the order number and the email on the account,
-          and checks they match before going further.
+        description: What the simulated user says or does in this state, written
+          to them in the second person. They keep acting it out until the app's reply
+          matches an edge leaving the state.
+        example: Give order number 48213 and the email jane@example.com.
         references: []
       - python: from_state_id
         typescript: fromStateId
@@ -12318,10 +12318,11 @@ resources:
           python: true
           typescript: false
         default: None
-        description: The condition for the edge from `fromStateId`, in plain language.
-          Required with `fromStateId` and ignored without it. An empty condition
-          keeps the edge out of the journey's paths until it is given one.
-        example: The customer asks for their money back on an order.
+        description: What the app does or says in its reply that moves the simulated
+          user from `fromStateId` into the new state; describe the app's reply, not
+          the user. Required with `fromStateId` and ignored without it. An empty
+          `when` keeps the edge out of the journey's paths until it is given one.
+        example: The assistant asks for your order number or email.
         references: []
       order:
         python:
@@ -12396,9 +12397,9 @@ resources:
           python: true
           typescript: false
         default: None
-        description: The name of the state, unique within the journey. Omit it to
-          keep the current name.
-        example: Verify identity
+        description: The name of the state, unique within the journey, for what the
+          user does. Omit it to keep the current name.
+        example: Share Order Details
         references: []
       - python: instructions
         typescript: instructions
@@ -12412,11 +12413,10 @@ resources:
           python: true
           typescript: false
         default: None
-        description: What happens at this step of the conversation. The text replaces
-          the stored one outright, so send the whole of it. Omit it to keep the current
-          instructions.
-        example: The agent asks for the order number and the email on the account,
-          and checks they match before going further.
+        description: What the simulated user says or does in this state, written
+          to them in the second person. The text replaces the stored one outright,
+          so send the whole of it. Omit it to keep the current instructions.
+        example: Give order number 48213 and the email jane@example.com.
         references: []
       order:
         python:
@@ -36894,8 +36894,9 @@ types:
     - <GOVERNANCE-POLICY-ID>
     references: []
 - name: CreateJourneyEdgeInput
-  description: An edge to add between two states of a journey. Only one edge may
-    run from one state to another; adding a second returns a 409.
+  description: An edge to add from one state of a journey to another, taken when
+    the app's reply matches its `when`. Only one edge may run from one state to another;
+    adding a second returns a 409.
   example: null
   python:
     module: confident_ai.journeys
@@ -36934,15 +36935,15 @@ types:
       python: str
       typescript: string
     required: true
-    description: The condition under which the conversation moves along this edge,
-      in plain language. An empty condition keeps the edge out of the journey's paths
-      until it is given one.
-    example: The customer has given an order number and the email on the account,
-      and they match.
+    description: What the app does or says in its reply that moves the simulated
+      user along this edge; describe the app's reply, not the user. An empty `when`
+      keeps the edge out of the journey's paths until it is given one.
+    example: The assistant confirms the refund has been issued.
     references: []
 - name: CreateJourneyInput
   description: A journey to add to this project. It is created with a root `Start`
-    state, which every path through the journey begins at.
+    state, which every path begins at and whose instructions open every simulated
+    conversation; they start empty unless `graphSource` drafts them.
   example: null
   python:
     module: confident_ai.journeys
@@ -36971,9 +36972,9 @@ types:
       python: Optional[str]
       typescript: string | null
     required: false
-    description: What the user is trying to get done on this journey. When `graphSource`
-      is `ai`, the draft is written from this and the name, so say how the conversation
-      can end.
+    description: What the user is trying to get done on this journey, and how the
+      conversation can end. It guides the draft when `graphSource` is `ai`, but the
+      simulated user never sees it, so put the user's situation in `Start`'s instructions.
     example: A customer asks for a refund on a recent order. The agent verifies who
       they are, then either issues the refund or hands the conversation to a human.
     references: []
@@ -37012,8 +37013,9 @@ types:
       python: str
       typescript: string
     required: true
-    description: The name of the state, unique within the journey.
-    example: Verify identity
+    description: The name of the state, unique within the journey. Name it for what
+      the user does, in a few words.
+    example: Share Order Details
     references: []
   - wire: instructions
     python: instructions
@@ -37022,11 +37024,10 @@ types:
       python: str
       typescript: string
     required: true
-    description: What happens at this step of the conversation. When goldens are
-      generated for a path, the instructions of its states, in order, are what the
-      scenario is written from. May be empty.
-    example: The agent asks for the order number and the email on the account, and
-      checks they match before going further.
+    description: What the simulated user says or does in this state, written to them
+      in the second person. They keep acting it out until the app's reply matches
+      an edge leaving the state.
+    example: Give order number 48213 and the email jane@example.com.
     references: []
   - wire: fromStateId
     python: from_state_id
@@ -37047,10 +37048,11 @@ types:
       python: Optional[str]
       typescript: string
     required: false
-    description: The condition for the edge from `fromStateId`, in plain language.
-      Required with `fromStateId` and ignored without it. An empty condition keeps
+    description: What the app does or says in its reply that moves the simulated
+      user from `fromStateId` into the new state; describe the app's reply, not the
+      user. Required with `fromStateId` and ignored without it. An empty `when` keeps
       the edge out of the journey's paths until it is given one.
-    example: The customer asks for their money back on an order.
+    example: The assistant asks for your order number or email.
     references: []
 - name: CreateMcpServerInput
   description: One of your MCP servers to register with the project. An `HTTP` server
@@ -46588,9 +46590,9 @@ types:
     references: []
 - name: Journey
   description: A map of the ways a conversation with your LLM app can go. States
-    are the steps, edges are the conditions that move the conversation between them,
-    and each route from the root state to an end is a path you can generate multi-turn
-    goldens for, so every branch gets tested.
+    are what a simulated user says or does, edges are the app replies that move it
+    from one state to the next, and each route from the root state to an end is a
+    path you can generate multi-turn goldens for, so every branch gets tested.
   example: null
   python:
     module: confident_ai.journeys
@@ -46644,8 +46646,8 @@ types:
       python: Optional[str]
       typescript: string | null
     required: true
-    description: The id of the root `Start` state, which every path begins at. It
-      cannot be deleted.
+    description: The id of the root `Start` state, which every path begins at and
+      whose instructions open every simulated conversation. It cannot be deleted.
     example: <JOURNEY-STATE-ID>
     references: []
   - wire: states
@@ -46727,8 +46729,8 @@ types:
     example: '2025-01-16T09:12:00+00:00'
     references: []
 - name: JourneyEdge
-  description: A transition from one state of a journey to another, taken when its
-    condition holds.
+  description: A transition from one state of a journey to another, taken when the
+    app's reply matches its `when`.
   example: null
   python:
     module: confident_ai.journeys
@@ -46776,10 +46778,10 @@ types:
       python: str
       typescript: string
     required: true
-    description: The condition under which the conversation moves along this edge.
-      Empty when none has been given, which keeps the edge out of the journey's paths.
-    example: The customer has given an order number and the email on the account,
-      and they match.
+    description: What the app does or says in its reply that moves the simulated
+      user along this edge. Empty when none has been given, which keeps the edge
+      out of the journey's paths.
+    example: The assistant confirms the refund has been issued.
     references: []
   - wire: createdAt
     python: created_at
@@ -47250,8 +47252,8 @@ types:
     example: <JOURNEY-ID>
     references: []
 - name: JourneyState
-  description: 'One step of a journey: a point the conversation can reach, with instructions
-    for what happens there.'
+  description: Something the simulated user does at one point in a journey, with
+    the instructions it follows there.
   example: null
   python:
     module: confident_ai.journeys
@@ -47280,7 +47282,7 @@ types:
       typescript: string
     required: true
     description: The name of the state, unique within the journey.
-    example: Verify identity
+    example: Share Order Details
     references: []
   - wire: instructions
     python: instructions
@@ -47289,10 +47291,9 @@ types:
       python: str
       typescript: string
     required: true
-    description: What happens at this step of the conversation, as golden generation
-      reads it.
-    example: The agent asks for the order number and the email on the account, and
-      checks they match before going further.
+    description: What the simulated user says or does in this state, written to them
+      in the second person.
+    example: Give order number 48213 and the email jane@example.com.
     references: []
   - wire: goldenCount
     python: golden_count
@@ -66971,10 +66972,9 @@ types:
       python: Optional[str]
       typescript: string
     required: false
-    description: The condition under which the conversation moves along this edge.
-      Omit it to keep the current condition.
-    example: The customer has given an order number and the email on the account,
-      and they match.
+    description: What the app does or says in its reply that moves the simulated
+      user along this edge. Omit it to keep the current one.
+    example: The assistant confirms the refund has been issued.
     references: []
   - wire: toStateId
     python: to_state_id
@@ -67020,8 +67020,9 @@ types:
       python: Optional[str]
       typescript: string | null
     required: false
-    description: What the user is trying to get done on this journey. Send `null`
-      to clear it, or omit it to keep the current one.
+    description: What the user is trying to get done on this journey; the simulated
+      user never sees it. Send `null` to clear it, or omit it to keep the current
+      one.
     example: A customer asks for a refund on a recent order. The agent verifies who
       they are, then either issues the refund or hands the conversation to a human.
     references: []
@@ -67046,9 +67047,9 @@ types:
       python: Optional[str]
       typescript: string
     required: false
-    description: The name of the state, unique within the journey. Omit it to keep
-      the current name.
-    example: Verify identity
+    description: The name of the state, unique within the journey, for what the user
+      does. Omit it to keep the current name.
+    example: Share Order Details
     references: []
   - wire: instructions
     python: instructions
@@ -67057,11 +67058,10 @@ types:
       python: Optional[str]
       typescript: string
     required: false
-    description: What happens at this step of the conversation. The text replaces
-      the stored one outright, so send the whole of it. Omit it to keep the current
-      instructions.
-    example: The agent asks for the order number and the email on the account, and
-      checks they match before going further.
+    description: What the simulated user says or does in this state, written to them
+      in the second person. The text replaces the stored one outright, so send the
+      whole of it. Omit it to keep the current instructions.
+    example: Give order number 48213 and the email jane@example.com.
     references: []
 - name: UpdateMcpServerInput
   description: The fields of the MCP server to change. Send at least one; anything

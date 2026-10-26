@@ -33,9 +33,10 @@ class EdgesOperations:
             from_state_id: The id of the state the edge leaves from.
             to_state_id: The id of the state the edge leads to. It must differ
                 from `fromStateId`, and both must be in this journey.
-            when: The condition under which the conversation moves along this
-                edge, in plain language. An empty condition keeps the edge out
-                of the journey's paths until it is given one.
+            when: What the app does or says in its reply that moves the
+                simulated user along this edge; describe the app's reply, not
+                the user. An empty `when` keeps the edge out of the journey's
+                paths until it is given one.
         """
         return self._api.request(
             HttpMethods.POST,
@@ -64,9 +65,10 @@ class EdgesOperations:
             from_state_id: The id of the state the edge leaves from.
             to_state_id: The id of the state the edge leads to. It must differ
                 from `fromStateId`, and both must be in this journey.
-            when: The condition under which the conversation moves along this
-                edge, in plain language. An empty condition keeps the edge out
-                of the journey's paths until it is given one.
+            when: What the app does or says in its reply that moves the
+                simulated user along this edge; describe the app's reply, not
+                the user. An empty `when` keeps the edge out of the journey's
+                paths until it is given one.
         """
         return await self._api.a_request(
             HttpMethods.POST,
@@ -98,8 +100,8 @@ class EdgesOperations:
         Args:
             journey_id: The id of the journey the edge belongs to.
             edge_id: The id of the edge.
-            when: The condition under which the conversation moves along this
-                edge. Omit it to keep the current condition.
+            when: What the app does or says in its reply that moves the
+                simulated user along this edge. Omit it to keep the current one.
             to_state_id: The id of the state the edge should lead to instead, in
                 this journey. It cannot be the state the edge leaves from.
                 Goldens generated for a path through the old edge are kept but
@@ -132,8 +134,8 @@ class EdgesOperations:
         Args:
             journey_id: The id of the journey the edge belongs to.
             edge_id: The id of the edge.
-            when: The condition under which the conversation moves along this
-                edge. Omit it to keep the current condition.
+            when: What the app does or says in its reply that moves the
+                simulated user along this edge. Omit it to keep the current one.
             to_state_id: The id of the state the edge should lead to instead, in
                 this journey. It cannot be the state the edge leaves from.
                 Goldens generated for a path through the old edge are kept but
