@@ -41,8 +41,8 @@ class TracesClient:
         """List Traces
 
         Lists the traces in your Confident AI project one page at a time, newest
-        first by default, as summary rows. Retrieve a trace by uuid for its full
-        detail.
+        first by default, as summary rows. Use `nextCursor` as `cursor` to get
+        the next page. Retrieve a trace by uuid for its full detail.
 
         Args:
             page_size: The number of results per page, at most 100. Defaults to
@@ -97,8 +97,8 @@ class TracesClient:
         """List Traces
 
         Lists the traces in your Confident AI project one page at a time, newest
-        first by default, as summary rows. Retrieve a trace by uuid for its full
-        detail.
+        first by default, as summary rows. Use `nextCursor` as `cursor` to get
+        the next page. Retrieve a trace by uuid for its full detail.
 
         Args:
             page_size: The number of results per page, at most 100. Defaults to
@@ -404,7 +404,12 @@ class TracesClient:
             },
         )
 
-    def get(self, trace_uuid: str) -> Trace:
+    def get(
+        self,
+        trace_uuid: str,
+        *,
+        include_otel: Optional[Literal["true", "false"]] = None
+    ) -> Trace:
         """Get Trace
 
         Retrieves a trace by uuid from your Confident AI project, with its
@@ -413,15 +418,23 @@ class TracesClient:
 
         Args:
             trace_uuid: The unique identifier of the trace.
+            include_otel: Whether to return `otel` on each span, the raw
+                OpenTelemetry data it was ingested from. Defaults to `false`.
         """
         return self._api.request(
             HttpMethods.GET,
             Endpoints.TRACE_ENDPOINT,
             response_schema=Trace,
             path={"traceUuid": trace_uuid},
+            query={"includeOtel": include_otel},
         )
 
-    async def a_get(self, trace_uuid: str) -> Trace:
+    async def a_get(
+        self,
+        trace_uuid: str,
+        *,
+        include_otel: Optional[Literal["true", "false"]] = None
+    ) -> Trace:
         """Get Trace
 
         Retrieves a trace by uuid from your Confident AI project, with its
@@ -430,10 +443,13 @@ class TracesClient:
 
         Args:
             trace_uuid: The unique identifier of the trace.
+            include_otel: Whether to return `otel` on each span, the raw
+                OpenTelemetry data it was ingested from. Defaults to `false`.
         """
         return await self._api.a_request(
             HttpMethods.GET,
             Endpoints.TRACE_ENDPOINT,
             response_schema=Trace,
             path={"traceUuid": trace_uuid},
+            query={"includeOtel": include_otel},
         )

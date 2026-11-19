@@ -6,9 +6,13 @@
 import { HttpMethods } from "../../api";
 import { Endpoints } from "../../endpoints";
 import { ItemsOperations } from "../items/operations";
-import { FilterSet, IngestionDataModel } from "../../common/types";
 import {
   AssignmentStrategy,
+  FilterSet,
+  IngestionDataModel,
+  SpanType,
+} from "../../common/types";
+import {
   QueueIngestionTask,
   QueueIngestionTaskList,
   QueueIngestionTaskRef,
@@ -53,6 +57,10 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
    * @param sampleRate The fraction of matching items to queue, between 0 and 1.
    *   On create it defaults to 1, all of them; omit it on an update to leave it
    *   unchanged.
+   * @param spanType Only queue spans of this kind. Allowed only when
+   *   `dataModel` is `SPAN`, and cleared automatically if the task moves off
+   *   `SPAN`. Send `null` to queue every span; omit it on an update to leave it
+   *   unchanged.
    * @param maxItems The maximum number of items this task will ever queue. Send
    *   `null` to remove the cap.
    * @param reviewerEmails The project members harvested items are assigned to,
@@ -67,6 +75,7 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
       enabled?: boolean;
       sampleRate?: number;
       filters?: FilterSet;
+      spanType?: SpanType | null;
       maxItems?: number | null;
       assignmentStrategy?: AssignmentStrategy;
       reviewerEmails?: string[];
@@ -77,6 +86,7 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
       enabled,
       sampleRate,
       filters,
+      spanType,
       maxItems,
       assignmentStrategy,
       reviewerEmails,
@@ -92,6 +102,7 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
           enabled,
           sampleRate,
           filters,
+          spanType,
           maxItems,
           assignmentStrategy,
           reviewerEmails,
@@ -142,6 +153,10 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
    * @param sampleRate The fraction of matching items to queue, between 0 and 1.
    *   On create it defaults to 1, all of them; omit it on an update to leave it
    *   unchanged.
+   * @param spanType Only queue spans of this kind. Allowed only when
+   *   `dataModel` is `SPAN`, and cleared automatically if the task moves off
+   *   `SPAN`. Send `null` to queue every span; omit it on an update to leave it
+   *   unchanged.
    * @param maxItems The maximum number of items this task will ever queue. Send
    *   `null` to remove the cap.
    * @param reviewerEmails The project members harvested items are assigned to,
@@ -158,6 +173,7 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
       enabled?: boolean;
       sampleRate?: number;
       filters?: FilterSet;
+      spanType?: SpanType | null;
       maxItems?: number | null;
       assignmentStrategy?: AssignmentStrategy;
       reviewerEmails?: string[];
@@ -171,6 +187,7 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
       enabled,
       sampleRate,
       filters,
+      spanType,
       maxItems,
       assignmentStrategy,
       reviewerEmails,
@@ -187,6 +204,7 @@ export class QueueIngestionTasksOperations extends ItemsOperations {
           enabled,
           sampleRate,
           filters,
+          spanType,
           maxItems,
           assignmentStrategy,
           reviewerEmails,

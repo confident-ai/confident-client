@@ -27,6 +27,10 @@ export class StatesOperations extends EdgesOperations {
    * @param instructions What the simulated user says or does in this state,
    *   written to them in the second person. They keep acting it out until the
    *   app's reply matches an edge leaving the state.
+   * @param userMessage A message the simulated user sends word for word on
+   *   entering this state, instead of one written from `instructions`. Any
+   *   further messages while still in the state follow `instructions`. Omit it
+   *   or send `null` to write every message from `instructions`.
    * @param fromStateId The id of an existing state in this journey to connect
    *   the new state from. An edge from that state to the new one is created
    *   alongside it, and `when` is then required. Omit it to add an unconnected
@@ -40,14 +44,18 @@ export class StatesOperations extends EdgesOperations {
     journeyId: string,
     name: string,
     instructions: string,
-    fromStateId?: string,
-    when?: string,
+    options: {
+      userMessage?: string | null;
+      fromStateId?: string;
+      when?: string;
+    } = {},
   ): Promise<JourneyStateRef> {
+    const { userMessage, fromStateId, when } = options;
     return this.api.sendRequest<JourneyStateRef>(
       HttpMethods.POST,
       Endpoints.JOURNEY_STATES_ENDPOINT,
       {
-        body: { name, instructions, fromStateId, when },
+        body: { name, instructions, userMessage, fromStateId, when },
         urlParams: { journeyId },
       },
     );
@@ -56,8 +64,9 @@ export class StatesOperations extends EdgesOperations {
   /**
    * Update Journey State
    *
-   * Renames a state or rewrites its instructions, and returns it. State names
-   * are unique within a journey; taking another state's name returns a 409.
+   * Renames a state or rewrites its `instructions` or `userMessage`, and
+   * returns it. State names are unique within a journey; taking another state's
+   * name returns a 409.
    *
    * @param journeyId The id of the journey the state belongs to.
    * @param stateId The id of the state.
@@ -67,17 +76,27 @@ export class StatesOperations extends EdgesOperations {
    *   written to them in the second person. The text replaces the stored one
    *   outright, so send the whole of it. Omit it to keep the current
    *   instructions.
+   * @param userMessage A message the simulated user sends word for word on
+   *   entering this state, instead of one written from `instructions`. Send
+   *   `null` to remove it, or omit it to keep the current one.
    */
   async updateState(
     journeyId: string,
     stateId: string,
-    name?: string,
-    instructions?: string,
+    options: {
+      name?: string;
+      instructions?: string;
+      userMessage?: string | null;
+    } = {},
   ): Promise<JourneyState> {
+    const { name, instructions, userMessage } = options;
     return this.api.sendRequest<JourneyState>(
       HttpMethods.PUT,
       Endpoints.JOURNEY_STATE_ENDPOINT,
-      { body: { name, instructions }, urlParams: { journeyId, stateId } },
+      {
+        body: { name, instructions, userMessage },
+        urlParams: { journeyId, stateId },
+      },
     );
   }
 

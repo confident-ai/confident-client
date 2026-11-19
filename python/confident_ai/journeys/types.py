@@ -41,6 +41,7 @@ class CreateJourneyInput(ConfidentBaseModel):
 class CreateJourneyStateInput(ConfidentBaseModel):
     name: str
     instructions: str
+    user_message: Optional[str] = Field(default=None, alias="userMessage")
     from_state_id: Optional[str] = Field(default=None, alias="fromStateId")
     when: Optional[str] = None
 
@@ -74,6 +75,7 @@ class JourneyState(ConfidentBaseModel):
     id: str
     name: str
     instructions: str
+    user_message: Optional[str] = Field(alias="userMessage")
     golden_count: int = Field(alias="goldenCount")
     created_at: str = Field(alias="createdAt")
     updated_at: str = Field(alias="updatedAt")
@@ -177,3 +179,4 @@ class UpdateJourneyInput(ConfidentBaseModel):
 class UpdateJourneyStateInput(ConfidentBaseModel):
     name: Optional[str] = None
     instructions: Optional[str] = None
+    user_message: Optional[str] = Field(default=None, alias="userMessage")

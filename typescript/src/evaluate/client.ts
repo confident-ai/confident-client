@@ -117,8 +117,10 @@ export class EvaluateClient {
    * trace, so fetch the trace to read them once it has finished.
    *
    * @param traceUuid The unique identifier of the trace.
-   * @param metricCollection The name of the single-turn metric collection you
-   *   wish to use for evaluation.
+   * @param metricCollection The name of the metric collection you wish to use
+   *   for evaluation. A single-turn collection scores the trace's input and
+   *   output, and a multi-turn collection scores the conversation inside the
+   *   trace.
    * @param overwriteMetrics Set this to `true` to re-run every metric in the
    *   collection and replace the results already stored, and omit this field to
    *   keep those results and only run the metrics that have none yet.

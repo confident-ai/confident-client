@@ -34,6 +34,18 @@ export interface SpanSummary {
   costPerOutputToken: number | null;
   inputTokenCount: number | null;
   outputTokenCount: number | null;
+  temperature: number | null;
+  maxTokens: number | null;
+  streaming: boolean | null;
+  topP: number | null;
+  reasoningEffort: string | null;
+  outputType: string | null;
+  timeToFirstToken: number | null;
+  finishReasons: string[] | null;
+  cacheReadTokenCount: number | null;
+  cacheWriteTokenCount: number | null;
+  reasoningTokenCount: number | null;
+  imageTokenCount: number | null;
   promptAlias: string | null;
   promptVersion: string | null;
   promptLabel: string | null;

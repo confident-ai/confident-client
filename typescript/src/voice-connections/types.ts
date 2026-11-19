@@ -57,6 +57,10 @@ export interface WebRTCVoiceConfig {
   livekit: WebRTCVoiceConfigLivekit;
   pipecat: WebRTCVoiceConfigPipecat;
   headers: VoiceHeader[];
+  metadata?: Record<string, unknown>;
+  metadataMode?: "JSON" | "CODE";
+  metadataCode?: string;
+  testConversationalGolden?: Record<string, unknown> | null;
 }
 
 export type VoiceTransportConfig =
@@ -68,6 +72,7 @@ export interface VoiceCallSettingsInput {
   maxCallDurationS?: number;
   silenceTimeoutS?: number | null;
   recordCalls?: boolean;
+  traceTimeout?: number;
 }
 
 export interface CreateVoiceConnectionInput {
@@ -88,6 +93,7 @@ export interface VoiceCallSettings {
   maxCallDurationS: number;
   silenceTimeoutS: number | null;
   recordCalls: boolean;
+  traceTimeout: number;
 }
 
 export interface VoiceConnection {
@@ -123,6 +129,15 @@ export interface VoiceConnectionLog {
   durationMs: number;
   transcript: string | null;
   error: string | null;
+  endReason:
+    | "COMPLETED"
+    | "MAX_TURNS"
+    | "AGENT_HUNG_UP"
+    | "SILENCE_TIMEOUT"
+    | "MAX_DURATION"
+    | "NO_AGENT_SPEECH"
+    | "ERROR"
+    | null;
   audioUrl: string | null;
 }
 

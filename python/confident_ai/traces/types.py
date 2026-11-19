@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import Field
 
 from confident_ai.common.types import (
+    Classification,
     EvaluationErrorType,
     ToolCall,
     TraceSpanStatus,
@@ -191,6 +192,40 @@ class LlmSpanInput(ConfidentBaseModel):
         default=None,
         alias="outputTokenCount",
     )
+    temperature: Optional[float] = None
+    max_tokens: Optional[int] = Field(default=None, alias="maxTokens")
+    streaming: Optional[bool] = None
+    top_p: Optional[float] = Field(default=None, alias="topP")
+    top_k: Optional[int] = Field(default=None, alias="topK")
+    reasoning_effort: Optional[str] = Field(
+        default=None,
+        alias="reasoningEffort",
+    )
+    output_type: Optional[str] = Field(default=None, alias="outputType")
+    time_to_first_token: Optional[float] = Field(
+        default=None,
+        alias="timeToFirstToken",
+    )
+    finish_reasons: Optional[List[str]] = Field(
+        default=None,
+        alias="finishReasons",
+    )
+    cache_read_token_count: Optional[int] = Field(
+        default=None,
+        alias="cacheReadTokenCount",
+    )
+    cache_write_token_count: Optional[int] = Field(
+        default=None,
+        alias="cacheWriteTokenCount",
+    )
+    reasoning_token_count: Optional[int] = Field(
+        default=None,
+        alias="reasoningTokenCount",
+    )
+    image_token_count: Optional[int] = Field(
+        default=None,
+        alias="imageTokenCount",
+    )
     prompt_alias: Optional[str] = Field(default=None, alias="promptAlias")
     prompt_version: Optional[str] = Field(default=None, alias="promptVersion")
     prompt_label: Optional[str] = Field(default=None, alias="promptLabel")
@@ -355,6 +390,7 @@ class TraceSummary(ConfidentBaseModel):
     metadata: Optional[Dict[str, Any]]
     input_preview: Optional[str] = Field(alias="inputPreview")
     output_preview: Optional[str] = Field(alias="outputPreview")
+    labels: Optional[Dict[str, Classification]] = None
 
 
 class TraceList(ConfidentBaseModel):

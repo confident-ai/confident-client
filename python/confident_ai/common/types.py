@@ -22,6 +22,12 @@ class AnnotationFieldType(Enum):
     THUMBS_RATING = "THUMBS_RATING"
 
 
+class AssignmentStrategy(Enum):
+    SINGLE_USER = "SINGLE_USER"
+    ROUND_ROBIN = "ROUND_ROBIN"
+    RANDOM = "RANDOM"
+
+
 class AuditLogExportStatus(Enum):
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
@@ -109,6 +115,10 @@ class ModelProvider(Enum):
     TYPE_SAFE = "TYPE_SAFE"
     FAL = "FAL"
     Z_AI = "Z_AI"
+    DEEPGRAM = "DEEPGRAM"
+    ASSEMBLY_AI = "ASSEMBLY_AI"
+    ELEVEN_LABS = "ELEVEN_LABS"
+    CARTESIA = "CARTESIA"
 
 
 class ModelType(Enum):
@@ -443,6 +453,18 @@ class FilterSetGroupFilter(ConfidentBaseModel):
         "Model",
         "Provider",
         "Integration",
+        "Temperature",
+        "Top-P",
+        "Max tokens",
+        "Reasoning effort",
+        "Output type",
+        "Streaming",
+        "Finish reason",
+        "Time to first token",
+        "Cache read tokens",
+        "Cache write tokens",
+        "Reasoning tokens",
+        "Image tokens",
         "Input argument",
         "Embedder",
         "Chunk Size",
@@ -454,6 +476,7 @@ class FilterSetGroupFilter(ConfidentBaseModel):
         "Identifier",
         "Test File",
         "Status",
+        "AI connection",
         "Official",
         "Evals Mode",
         "Tests Passed",
@@ -484,9 +507,13 @@ class FilterSetGroupFilter(ConfidentBaseModel):
         "Metric",
         "Metric Name",
         "Trace Count",
+        "Call Duration",
+        "Call Audio",
         "Test Case ID",
         "Requested review from",
         "Assigned to",
+        "Queue Item Status",
+        "Added at",
         "Tags",
         "Labels",
         "Tools Called",
@@ -496,6 +523,7 @@ class FilterSetGroupFilter(ConfidentBaseModel):
         "Latency",
         "Environment",
         "Review flag",
+        "Annotation Queue",
         "Vulnerability",
         "Vulnerability Type",
         "Attack Method",
@@ -510,6 +538,7 @@ class FilterSetGroupFilter(ConfidentBaseModel):
         "Annotations",
         "Failure Mode",
         "Recommended",
+        "Source Queue",
         "Sub-mode Name",
         "Sub-mode Recommended",
         "Sub-mode Certainty",
@@ -541,7 +570,7 @@ class FilterSetGroupFilter(ConfidentBaseModel):
         "Has changed from",
         "Is between",
     ]
-    value: Union[str, float, List[str]]
+    value: Optional[Union[str, float, List[str]]] = None
     key: Optional[str] = None
 
 
@@ -674,6 +703,19 @@ class MetricData(ConfidentBaseModel):
     threshold: Optional[float]
     strict_mode: bool = Field(alias="strictMode")
     skipped: bool
+    skip_reason: Optional[
+        Literal[
+            "HOURLY_LIMIT",
+            "CREDITS",
+            "BUDGET",
+            "PLAN_LIMIT",
+            "PARENT_NOT_RUN",
+            "CHAIN_EXPIRED",
+            "RUN_FAILED",
+        ]
+    ] = Field(
+        alias="skipReason",
+    )
     flaky: bool
     evaluation_model: Optional[str] = Field(alias="evaluationModel")
     evaluation_cost: Optional[float] = Field(alias="evaluationCost")
@@ -854,6 +896,18 @@ class Span(ConfidentBaseModel):
     cost_per_output_token: Optional[float] = Field(alias="costPerOutputToken")
     input_token_count: Optional[int] = Field(alias="inputTokenCount")
     output_token_count: Optional[int] = Field(alias="outputTokenCount")
+    temperature: Optional[float]
+    max_tokens: Optional[int] = Field(alias="maxTokens")
+    streaming: Optional[bool]
+    top_p: Optional[float] = Field(alias="topP")
+    reasoning_effort: Optional[str] = Field(alias="reasoningEffort")
+    output_type: Optional[str] = Field(alias="outputType")
+    time_to_first_token: Optional[float] = Field(alias="timeToFirstToken")
+    finish_reasons: Optional[List[str]] = Field(alias="finishReasons")
+    cache_read_token_count: Optional[int] = Field(alias="cacheReadTokenCount")
+    cache_write_token_count: Optional[int] = Field(alias="cacheWriteTokenCount")
+    reasoning_token_count: Optional[int] = Field(alias="reasoningTokenCount")
+    image_token_count: Optional[int] = Field(alias="imageTokenCount")
     prompt_alias: Optional[str] = Field(alias="promptAlias")
     prompt_version: Optional[str] = Field(alias="promptVersion")
     prompt_label: Optional[str] = Field(alias="promptLabel")
@@ -876,6 +930,7 @@ class Span(ConfidentBaseModel):
     labels: Dict[str, Classification]
     metrics_data: List[MetricData] = Field(alias="metricsData")
     annotations: List[AnnotationSummary]
+    otel: Optional[Dict[str, Any]] = None
 
 
 class Tool(ConfidentBaseModel):

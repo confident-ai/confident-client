@@ -10,15 +10,17 @@ from confident_ai.classifiers.types import (
     Classifier,
     ClassifierAutoGenerationConfig,
     ClassifierDataModel,
+    ClassifierEvalMode,
     ClassifierLabelGeneration,
     ClassifierList,
     ClassifierPreset,
     ClassifierRef,
     ClassifierVersionList,
     CreateClassifierInput,
+    GenerateClassifierLabelsInput,
     UpdateClassifierInput,
 )
-from confident_ai.common.types import FilterSet
+from confident_ai.common.types import FilterSet, ModelProvider
 from confident_ai.endpoints import Endpoints
 
 
@@ -43,6 +45,7 @@ class ClassifiersOperations:
             page: The page to return. Defaults to 1.
             page_size: The number of results per page, at most 100. Defaults to
                 25.
+            data_model: Only classifiers with a task on this data model.
         """
         return self._api.request(
             HttpMethods.GET,
@@ -73,6 +76,7 @@ class ClassifiersOperations:
             page: The page to return. Defaults to 1.
             page_size: The number of results per page, at most 100. Defaults to
                 25.
+            data_model: Only classifiers with a task on this data model.
         """
         return await self._api.a_request(
             HttpMethods.GET,
@@ -88,13 +92,29 @@ class ClassifiersOperations:
     def create(
         self,
         name: str,
-        data_model: ClassifierDataModel,
         *,
+        data_model: Optional[ClassifierDataModel] = None,
         preset: Optional[ClassifierPreset] = None,
         description: Optional[str] = None,
+        trace_description: Optional[str] = None,
+        span_description: Optional[str] = None,
+        thread_description: Optional[str] = None,
         enabled: Optional[bool] = None,
         auto_classify: Optional[bool] = None,
         include_audio: Optional[bool] = None,
+        evaluation_model_provider: Optional[ModelProvider] = None,
+        evaluation_model_name: Optional[str] = None,
+        evaluation_model_credential_id: Optional[str] = None,
+        decision_model_provider: Optional[ModelProvider] = None,
+        decision_model_name: Optional[str] = None,
+        eval_mode: Optional[ClassifierEvalMode] = None,
+        audio_model_provider: Optional[ModelProvider] = None,
+        audio_model_name: Optional[str] = None,
+        audio_model_credential_id: Optional[str] = None,
+        suggest_model_provider: Optional[ModelProvider] = None,
+        suggest_model_name: Optional[str] = None,
+        suggest_model_credential_id: Optional[str] = None,
+        issue_threshold: Optional[float] = None,
         filters: Optional[FilterSet] = None,
         auto_generation_config: Optional[ClassifierAutoGenerationConfig] = None
     ) -> ClassifierRef:
@@ -106,9 +126,16 @@ class ClassifiersOperations:
         field you send explicitly overrides what the preset would have set.
 
         Args:
-            name: The name of the classifier, unique per data model within the
-                project.
+            name: The name of the classifier, unique within the project.
             description: What this classifier is for. Send `null` to clear it.
+            trace_description: What this classifier is for when it classifies
+                traces, replacing `description` there. `null` uses
+                `description`.
+            span_description: What this classifier is for when it classifies
+                spans, replacing `description` there. `null` uses `description`.
+            thread_description: What this classifier is for when it classifies
+                threads, replacing `description` there. `null` uses
+                `description`.
             enabled: Whether the classifier runs at all. Defaults to `true` on
                 create; omit it on an update to leave it unchanged.
             auto_classify: Whether incoming items are classified automatically
@@ -120,11 +147,58 @@ class ClassifiersOperations:
                 mismatch between the audio and its transcript. Needs an audio-
                 capable platform model. Defaults to `false` on create; omit it
                 on an update to leave it unchanged.
-            filters: Narrows which traces, spans or threads the classifier runs
-                on, so it can watch one route rather than the whole project.
-                Only the groups are stored, so the set's top-level operator is
-                dropped and the groups are combined by the platform. Send `null`
-                to clear the filters and classify everything of this data model.
+            evaluation_model_provider: The provider of the model this classifier
+                runs with in place of the project's platform model: in `LLM` it
+                classifies, and in `DECISION` with `autoClassify` on it proposes
+                new labels. Send `null` to use the platform model.
+            evaluation_model_name: The name of the model this classifier runs
+                with in place of the project's platform model. Required whenever
+                `evaluationModelProvider` is set to anything other than
+                `CONFIDENT_AI`, and has no effect without a provider.
+            evaluation_model_credential_id: For `BEDROCK` and `AZURE`, the id of
+                the stored credential this classifier runs with. Omit it or send
+                `null` to use the provider's default credential.
+            decision_model_provider: The provider of the decision model this
+                classifier picks labels with in the `DECISION` eval mode:
+                `CONFIDENT_AI`, `TYPE_SAFE` or `OPEN_AI`. `OPEN_AI` calls with
+                the project's only OpenAI credential, or the one named
+                `Default`. Send `null` to use the project's decision model.
+            decision_model_name: The name of the decision model this classifier
+                picks labels with in the `DECISION` eval mode. Required whenever
+                `decisionModelProvider` is set, and has no effect without a
+                provider.
+            eval_mode: How this classifier picks a label, or `null` to run as
+                `LLM`. With `DECISION` and `autoClassify` on, the evaluation
+                model still proposes new labels.
+            audio_model_provider: With `includeAudio` on, the provider of the
+                model that listens to the audio and describes it. Send `null` to
+                listen with the evaluation model in `LLM`, else the project's
+                voice model.
+            audio_model_name: The name of the audio-capable model that listens.
+                Required whenever `audioModelProvider` is set to anything other
+                than `CONFIDENT_AI`.
+            audio_model_credential_id: The id of the stored credential the audio
+                model runs with. Omit it or send `null` to use the provider's
+                default credential.
+            suggest_model_provider: With `autoClassify` on, the provider of the
+                model that suggests a new label when none fits. Send `null` to
+                suggest with the evaluation model, or the project's model in the
+                `DECISION` eval mode.
+            suggest_model_name: The name of the model that suggests new labels.
+                Required whenever `suggestModelProvider` is set to anything
+                other than `CONFIDENT_AI`.
+            suggest_model_credential_id: The id of the stored credential the
+                suggest model runs with. Omit it or send `null` to use the
+                provider's default credential.
+            issue_threshold: For an issue classifier, the confidence from 0 to 1
+                a label needs to be kept; every label at or above it is kept.
+                Send `null` to use the default.
+            filters: Narrows which traces, spans or threads the classifier's
+                task runs on, so it can watch one route rather than the whole
+                project. Only the groups are stored, so the set's top-level
+                operator is dropped and the groups are combined by the platform.
+                Send `null` to clear the filters and classify everything of the
+                task's data model.
             auto_generation_config: How a generation run samples your traffic to
                 generate labels. Send `null` to clear it.
         """
@@ -138,9 +212,25 @@ class ClassifiersOperations:
                 "dataModel": data_model,
                 "preset": preset,
                 "description": description,
+                "traceDescription": trace_description,
+                "spanDescription": span_description,
+                "threadDescription": thread_description,
                 "enabled": enabled,
                 "autoClassify": auto_classify,
                 "includeAudio": include_audio,
+                "evaluationModelProvider": evaluation_model_provider,
+                "evaluationModelName": evaluation_model_name,
+                "evaluationModelCredentialId": evaluation_model_credential_id,
+                "decisionModelProvider": decision_model_provider,
+                "decisionModelName": decision_model_name,
+                "evalMode": eval_mode,
+                "audioModelProvider": audio_model_provider,
+                "audioModelName": audio_model_name,
+                "audioModelCredentialId": audio_model_credential_id,
+                "suggestModelProvider": suggest_model_provider,
+                "suggestModelName": suggest_model_name,
+                "suggestModelCredentialId": suggest_model_credential_id,
+                "issueThreshold": issue_threshold,
                 "filters": filters,
                 "autoGenerationConfig": auto_generation_config,
             },
@@ -149,13 +239,29 @@ class ClassifiersOperations:
     async def a_create(
         self,
         name: str,
-        data_model: ClassifierDataModel,
         *,
+        data_model: Optional[ClassifierDataModel] = None,
         preset: Optional[ClassifierPreset] = None,
         description: Optional[str] = None,
+        trace_description: Optional[str] = None,
+        span_description: Optional[str] = None,
+        thread_description: Optional[str] = None,
         enabled: Optional[bool] = None,
         auto_classify: Optional[bool] = None,
         include_audio: Optional[bool] = None,
+        evaluation_model_provider: Optional[ModelProvider] = None,
+        evaluation_model_name: Optional[str] = None,
+        evaluation_model_credential_id: Optional[str] = None,
+        decision_model_provider: Optional[ModelProvider] = None,
+        decision_model_name: Optional[str] = None,
+        eval_mode: Optional[ClassifierEvalMode] = None,
+        audio_model_provider: Optional[ModelProvider] = None,
+        audio_model_name: Optional[str] = None,
+        audio_model_credential_id: Optional[str] = None,
+        suggest_model_provider: Optional[ModelProvider] = None,
+        suggest_model_name: Optional[str] = None,
+        suggest_model_credential_id: Optional[str] = None,
+        issue_threshold: Optional[float] = None,
         filters: Optional[FilterSet] = None,
         auto_generation_config: Optional[ClassifierAutoGenerationConfig] = None
     ) -> ClassifierRef:
@@ -167,9 +273,16 @@ class ClassifiersOperations:
         field you send explicitly overrides what the preset would have set.
 
         Args:
-            name: The name of the classifier, unique per data model within the
-                project.
+            name: The name of the classifier, unique within the project.
             description: What this classifier is for. Send `null` to clear it.
+            trace_description: What this classifier is for when it classifies
+                traces, replacing `description` there. `null` uses
+                `description`.
+            span_description: What this classifier is for when it classifies
+                spans, replacing `description` there. `null` uses `description`.
+            thread_description: What this classifier is for when it classifies
+                threads, replacing `description` there. `null` uses
+                `description`.
             enabled: Whether the classifier runs at all. Defaults to `true` on
                 create; omit it on an update to leave it unchanged.
             auto_classify: Whether incoming items are classified automatically
@@ -181,11 +294,58 @@ class ClassifiersOperations:
                 mismatch between the audio and its transcript. Needs an audio-
                 capable platform model. Defaults to `false` on create; omit it
                 on an update to leave it unchanged.
-            filters: Narrows which traces, spans or threads the classifier runs
-                on, so it can watch one route rather than the whole project.
-                Only the groups are stored, so the set's top-level operator is
-                dropped and the groups are combined by the platform. Send `null`
-                to clear the filters and classify everything of this data model.
+            evaluation_model_provider: The provider of the model this classifier
+                runs with in place of the project's platform model: in `LLM` it
+                classifies, and in `DECISION` with `autoClassify` on it proposes
+                new labels. Send `null` to use the platform model.
+            evaluation_model_name: The name of the model this classifier runs
+                with in place of the project's platform model. Required whenever
+                `evaluationModelProvider` is set to anything other than
+                `CONFIDENT_AI`, and has no effect without a provider.
+            evaluation_model_credential_id: For `BEDROCK` and `AZURE`, the id of
+                the stored credential this classifier runs with. Omit it or send
+                `null` to use the provider's default credential.
+            decision_model_provider: The provider of the decision model this
+                classifier picks labels with in the `DECISION` eval mode:
+                `CONFIDENT_AI`, `TYPE_SAFE` or `OPEN_AI`. `OPEN_AI` calls with
+                the project's only OpenAI credential, or the one named
+                `Default`. Send `null` to use the project's decision model.
+            decision_model_name: The name of the decision model this classifier
+                picks labels with in the `DECISION` eval mode. Required whenever
+                `decisionModelProvider` is set, and has no effect without a
+                provider.
+            eval_mode: How this classifier picks a label, or `null` to run as
+                `LLM`. With `DECISION` and `autoClassify` on, the evaluation
+                model still proposes new labels.
+            audio_model_provider: With `includeAudio` on, the provider of the
+                model that listens to the audio and describes it. Send `null` to
+                listen with the evaluation model in `LLM`, else the project's
+                voice model.
+            audio_model_name: The name of the audio-capable model that listens.
+                Required whenever `audioModelProvider` is set to anything other
+                than `CONFIDENT_AI`.
+            audio_model_credential_id: The id of the stored credential the audio
+                model runs with. Omit it or send `null` to use the provider's
+                default credential.
+            suggest_model_provider: With `autoClassify` on, the provider of the
+                model that suggests a new label when none fits. Send `null` to
+                suggest with the evaluation model, or the project's model in the
+                `DECISION` eval mode.
+            suggest_model_name: The name of the model that suggests new labels.
+                Required whenever `suggestModelProvider` is set to anything
+                other than `CONFIDENT_AI`.
+            suggest_model_credential_id: The id of the stored credential the
+                suggest model runs with. Omit it or send `null` to use the
+                provider's default credential.
+            issue_threshold: For an issue classifier, the confidence from 0 to 1
+                a label needs to be kept; every label at or above it is kept.
+                Send `null` to use the default.
+            filters: Narrows which traces, spans or threads the classifier's
+                task runs on, so it can watch one route rather than the whole
+                project. Only the groups are stored, so the set's top-level
+                operator is dropped and the groups are combined by the platform.
+                Send `null` to clear the filters and classify everything of the
+                task's data model.
             auto_generation_config: How a generation run samples your traffic to
                 generate labels. Send `null` to clear it.
         """
@@ -199,9 +359,25 @@ class ClassifiersOperations:
                 "dataModel": data_model,
                 "preset": preset,
                 "description": description,
+                "traceDescription": trace_description,
+                "spanDescription": span_description,
+                "threadDescription": thread_description,
                 "enabled": enabled,
                 "autoClassify": auto_classify,
                 "includeAudio": include_audio,
+                "evaluationModelProvider": evaluation_model_provider,
+                "evaluationModelName": evaluation_model_name,
+                "evaluationModelCredentialId": evaluation_model_credential_id,
+                "decisionModelProvider": decision_model_provider,
+                "decisionModelName": decision_model_name,
+                "evalMode": eval_mode,
+                "audioModelProvider": audio_model_provider,
+                "audioModelName": audio_model_name,
+                "audioModelCredentialId": audio_model_credential_id,
+                "suggestModelProvider": suggest_model_provider,
+                "suggestModelName": suggest_model_name,
+                "suggestModelCredentialId": suggest_model_credential_id,
+                "issueThreshold": issue_threshold,
                 "filters": filters,
                 "autoGenerationConfig": auto_generation_config,
             },
@@ -245,9 +421,25 @@ class ClassifiersOperations:
         *,
         name: Optional[str] = None,
         description: Optional[str] = None,
+        trace_description: Optional[str] = None,
+        span_description: Optional[str] = None,
+        thread_description: Optional[str] = None,
         enabled: Optional[bool] = None,
         auto_classify: Optional[bool] = None,
         include_audio: Optional[bool] = None,
+        evaluation_model_provider: Optional[ModelProvider] = None,
+        evaluation_model_name: Optional[str] = None,
+        evaluation_model_credential_id: Optional[str] = None,
+        decision_model_provider: Optional[ModelProvider] = None,
+        decision_model_name: Optional[str] = None,
+        eval_mode: Optional[ClassifierEvalMode] = None,
+        audio_model_provider: Optional[ModelProvider] = None,
+        audio_model_name: Optional[str] = None,
+        audio_model_credential_id: Optional[str] = None,
+        suggest_model_provider: Optional[ModelProvider] = None,
+        suggest_model_name: Optional[str] = None,
+        suggest_model_credential_id: Optional[str] = None,
+        issue_threshold: Optional[float] = None,
         filters: Optional[FilterSet] = None,
         auto_generation_config: Optional[ClassifierAutoGenerationConfig] = None
     ) -> Classifier:
@@ -255,15 +447,21 @@ class ClassifiersOperations:
 
         Updates a classifier and returns it. Only the fields you send are
         changed: omitting a field leaves it untouched, and sending `null` clears
-        it. `dataModel` cannot be changed after creation and a preset can only
-        be applied when creating one; labels are managed through their own
-        endpoints.
+        it. A preset can only be applied when creating one; labels are managed
+        through their own endpoints.
 
         Args:
             classifier_id: The id of the classifier.
-            name: The name of the classifier, unique per data model within the
-                project.
+            name: The name of the classifier, unique within the project.
             description: What this classifier is for. Send `null` to clear it.
+            trace_description: What this classifier is for when it classifies
+                traces, replacing `description` there. `null` uses
+                `description`.
+            span_description: What this classifier is for when it classifies
+                spans, replacing `description` there. `null` uses `description`.
+            thread_description: What this classifier is for when it classifies
+                threads, replacing `description` there. `null` uses
+                `description`.
             enabled: Whether the classifier runs at all. Defaults to `true` on
                 create; omit it on an update to leave it unchanged.
             auto_classify: Whether incoming items are classified automatically
@@ -275,11 +473,58 @@ class ClassifiersOperations:
                 mismatch between the audio and its transcript. Needs an audio-
                 capable platform model. Defaults to `false` on create; omit it
                 on an update to leave it unchanged.
-            filters: Narrows which traces, spans or threads the classifier runs
-                on, so it can watch one route rather than the whole project.
-                Only the groups are stored, so the set's top-level operator is
-                dropped and the groups are combined by the platform. Send `null`
-                to clear the filters and classify everything of this data model.
+            evaluation_model_provider: The provider of the model this classifier
+                runs with in place of the project's platform model: in `LLM` it
+                classifies, and in `DECISION` with `autoClassify` on it proposes
+                new labels. Send `null` to use the platform model.
+            evaluation_model_name: The name of the model this classifier runs
+                with in place of the project's platform model. Required whenever
+                `evaluationModelProvider` is set to anything other than
+                `CONFIDENT_AI`, and has no effect without a provider.
+            evaluation_model_credential_id: For `BEDROCK` and `AZURE`, the id of
+                the stored credential this classifier runs with. Omit it or send
+                `null` to use the provider's default credential.
+            decision_model_provider: The provider of the decision model this
+                classifier picks labels with in the `DECISION` eval mode:
+                `CONFIDENT_AI`, `TYPE_SAFE` or `OPEN_AI`. `OPEN_AI` calls with
+                the project's only OpenAI credential, or the one named
+                `Default`. Send `null` to use the project's decision model.
+            decision_model_name: The name of the decision model this classifier
+                picks labels with in the `DECISION` eval mode. Required whenever
+                `decisionModelProvider` is set, and has no effect without a
+                provider.
+            eval_mode: How this classifier picks a label, or `null` to run as
+                `LLM`. With `DECISION` and `autoClassify` on, the evaluation
+                model still proposes new labels.
+            audio_model_provider: With `includeAudio` on, the provider of the
+                model that listens to the audio and describes it. Send `null` to
+                listen with the evaluation model in `LLM`, else the project's
+                voice model.
+            audio_model_name: The name of the audio-capable model that listens.
+                Required whenever `audioModelProvider` is set to anything other
+                than `CONFIDENT_AI`.
+            audio_model_credential_id: The id of the stored credential the audio
+                model runs with. Omit it or send `null` to use the provider's
+                default credential.
+            suggest_model_provider: With `autoClassify` on, the provider of the
+                model that suggests a new label when none fits. Send `null` to
+                suggest with the evaluation model, or the project's model in the
+                `DECISION` eval mode.
+            suggest_model_name: The name of the model that suggests new labels.
+                Required whenever `suggestModelProvider` is set to anything
+                other than `CONFIDENT_AI`.
+            suggest_model_credential_id: The id of the stored credential the
+                suggest model runs with. Omit it or send `null` to use the
+                provider's default credential.
+            issue_threshold: For an issue classifier, the confidence from 0 to 1
+                a label needs to be kept; every label at or above it is kept.
+                Send `null` to use the default.
+            filters: Narrows which traces, spans or threads the classifier's
+                task runs on, so it can watch one route rather than the whole
+                project. Only the groups are stored, so the set's top-level
+                operator is dropped and the groups are combined by the platform.
+                Send `null` to clear the filters and classify everything of the
+                task's data model.
             auto_generation_config: How a generation run samples your traffic to
                 generate labels. Send `null` to clear it.
         """
@@ -291,9 +536,25 @@ class ClassifiersOperations:
             body={
                 "name": name,
                 "description": description,
+                "traceDescription": trace_description,
+                "spanDescription": span_description,
+                "threadDescription": thread_description,
                 "enabled": enabled,
                 "autoClassify": auto_classify,
                 "includeAudio": include_audio,
+                "evaluationModelProvider": evaluation_model_provider,
+                "evaluationModelName": evaluation_model_name,
+                "evaluationModelCredentialId": evaluation_model_credential_id,
+                "decisionModelProvider": decision_model_provider,
+                "decisionModelName": decision_model_name,
+                "evalMode": eval_mode,
+                "audioModelProvider": audio_model_provider,
+                "audioModelName": audio_model_name,
+                "audioModelCredentialId": audio_model_credential_id,
+                "suggestModelProvider": suggest_model_provider,
+                "suggestModelName": suggest_model_name,
+                "suggestModelCredentialId": suggest_model_credential_id,
+                "issueThreshold": issue_threshold,
                 "filters": filters,
                 "autoGenerationConfig": auto_generation_config,
             },
@@ -306,9 +567,25 @@ class ClassifiersOperations:
         *,
         name: Optional[str] = None,
         description: Optional[str] = None,
+        trace_description: Optional[str] = None,
+        span_description: Optional[str] = None,
+        thread_description: Optional[str] = None,
         enabled: Optional[bool] = None,
         auto_classify: Optional[bool] = None,
         include_audio: Optional[bool] = None,
+        evaluation_model_provider: Optional[ModelProvider] = None,
+        evaluation_model_name: Optional[str] = None,
+        evaluation_model_credential_id: Optional[str] = None,
+        decision_model_provider: Optional[ModelProvider] = None,
+        decision_model_name: Optional[str] = None,
+        eval_mode: Optional[ClassifierEvalMode] = None,
+        audio_model_provider: Optional[ModelProvider] = None,
+        audio_model_name: Optional[str] = None,
+        audio_model_credential_id: Optional[str] = None,
+        suggest_model_provider: Optional[ModelProvider] = None,
+        suggest_model_name: Optional[str] = None,
+        suggest_model_credential_id: Optional[str] = None,
+        issue_threshold: Optional[float] = None,
         filters: Optional[FilterSet] = None,
         auto_generation_config: Optional[ClassifierAutoGenerationConfig] = None
     ) -> Classifier:
@@ -316,15 +593,21 @@ class ClassifiersOperations:
 
         Updates a classifier and returns it. Only the fields you send are
         changed: omitting a field leaves it untouched, and sending `null` clears
-        it. `dataModel` cannot be changed after creation and a preset can only
-        be applied when creating one; labels are managed through their own
-        endpoints.
+        it. A preset can only be applied when creating one; labels are managed
+        through their own endpoints.
 
         Args:
             classifier_id: The id of the classifier.
-            name: The name of the classifier, unique per data model within the
-                project.
+            name: The name of the classifier, unique within the project.
             description: What this classifier is for. Send `null` to clear it.
+            trace_description: What this classifier is for when it classifies
+                traces, replacing `description` there. `null` uses
+                `description`.
+            span_description: What this classifier is for when it classifies
+                spans, replacing `description` there. `null` uses `description`.
+            thread_description: What this classifier is for when it classifies
+                threads, replacing `description` there. `null` uses
+                `description`.
             enabled: Whether the classifier runs at all. Defaults to `true` on
                 create; omit it on an update to leave it unchanged.
             auto_classify: Whether incoming items are classified automatically
@@ -336,11 +619,58 @@ class ClassifiersOperations:
                 mismatch between the audio and its transcript. Needs an audio-
                 capable platform model. Defaults to `false` on create; omit it
                 on an update to leave it unchanged.
-            filters: Narrows which traces, spans or threads the classifier runs
-                on, so it can watch one route rather than the whole project.
-                Only the groups are stored, so the set's top-level operator is
-                dropped and the groups are combined by the platform. Send `null`
-                to clear the filters and classify everything of this data model.
+            evaluation_model_provider: The provider of the model this classifier
+                runs with in place of the project's platform model: in `LLM` it
+                classifies, and in `DECISION` with `autoClassify` on it proposes
+                new labels. Send `null` to use the platform model.
+            evaluation_model_name: The name of the model this classifier runs
+                with in place of the project's platform model. Required whenever
+                `evaluationModelProvider` is set to anything other than
+                `CONFIDENT_AI`, and has no effect without a provider.
+            evaluation_model_credential_id: For `BEDROCK` and `AZURE`, the id of
+                the stored credential this classifier runs with. Omit it or send
+                `null` to use the provider's default credential.
+            decision_model_provider: The provider of the decision model this
+                classifier picks labels with in the `DECISION` eval mode:
+                `CONFIDENT_AI`, `TYPE_SAFE` or `OPEN_AI`. `OPEN_AI` calls with
+                the project's only OpenAI credential, or the one named
+                `Default`. Send `null` to use the project's decision model.
+            decision_model_name: The name of the decision model this classifier
+                picks labels with in the `DECISION` eval mode. Required whenever
+                `decisionModelProvider` is set, and has no effect without a
+                provider.
+            eval_mode: How this classifier picks a label, or `null` to run as
+                `LLM`. With `DECISION` and `autoClassify` on, the evaluation
+                model still proposes new labels.
+            audio_model_provider: With `includeAudio` on, the provider of the
+                model that listens to the audio and describes it. Send `null` to
+                listen with the evaluation model in `LLM`, else the project's
+                voice model.
+            audio_model_name: The name of the audio-capable model that listens.
+                Required whenever `audioModelProvider` is set to anything other
+                than `CONFIDENT_AI`.
+            audio_model_credential_id: The id of the stored credential the audio
+                model runs with. Omit it or send `null` to use the provider's
+                default credential.
+            suggest_model_provider: With `autoClassify` on, the provider of the
+                model that suggests a new label when none fits. Send `null` to
+                suggest with the evaluation model, or the project's model in the
+                `DECISION` eval mode.
+            suggest_model_name: The name of the model that suggests new labels.
+                Required whenever `suggestModelProvider` is set to anything
+                other than `CONFIDENT_AI`.
+            suggest_model_credential_id: The id of the stored credential the
+                suggest model runs with. Omit it or send `null` to use the
+                provider's default credential.
+            issue_threshold: For an issue classifier, the confidence from 0 to 1
+                a label needs to be kept; every label at or above it is kept.
+                Send `null` to use the default.
+            filters: Narrows which traces, spans or threads the classifier's
+                task runs on, so it can watch one route rather than the whole
+                project. Only the groups are stored, so the set's top-level
+                operator is dropped and the groups are combined by the platform.
+                Send `null` to clear the filters and classify everything of the
+                task's data model.
             auto_generation_config: How a generation run samples your traffic to
                 generate labels. Send `null` to clear it.
         """
@@ -352,9 +682,25 @@ class ClassifiersOperations:
             body={
                 "name": name,
                 "description": description,
+                "traceDescription": trace_description,
+                "spanDescription": span_description,
+                "threadDescription": thread_description,
                 "enabled": enabled,
                 "autoClassify": auto_classify,
                 "includeAudio": include_audio,
+                "evaluationModelProvider": evaluation_model_provider,
+                "evaluationModelName": evaluation_model_name,
+                "evaluationModelCredentialId": evaluation_model_credential_id,
+                "decisionModelProvider": decision_model_provider,
+                "decisionModelName": decision_model_name,
+                "evalMode": eval_mode,
+                "audioModelProvider": audio_model_provider,
+                "audioModelName": audio_model_name,
+                "audioModelCredentialId": audio_model_credential_id,
+                "suggestModelProvider": suggest_model_provider,
+                "suggestModelName": suggest_model_name,
+                "suggestModelCredentialId": suggest_model_credential_id,
+                "issueThreshold": issue_threshold,
                 "filters": filters,
                 "autoGenerationConfig": auto_generation_config,
             },
@@ -395,17 +741,24 @@ class ClassifiersOperations:
             path={"classifierId": classifier_id},
         )
 
-    def generate_labels(self, classifier_id: str) -> ClassifierLabelGeneration:
+    def generate_labels(
+        self,
+        classifier_id: str,
+        *,
+        data_model: Optional[ClassifierDataModel] = None
+    ) -> ClassifierLabelGeneration:
         """Generate Classifier Labels
 
         Generates labels for a classifier from your project's real traffic: it
-        samples recent traces, spans or threads and runs them through the
-        classifier's normal auto-classification pipeline. Repeated proposals are
-        merged and written back as `RECOMMENDED` labels for a human to review.
-        The run is asynchronous, so poll the labels endpoint for results.
-        Existing labels are retained, and the sampled entities receive ordinary
-        classification results. Auto Classify must be enabled. Reading traffic
-        and running the model consumes usage.
+        samples recent traces, spans or threads (`dataModel`, else the
+        generation config's, else that of the task created with the classifier,
+        else traces) and runs them through the classifier's normal auto-
+        classification pipeline. Repeated proposals are merged and written back
+        as `RECOMMENDED` labels for a human to review. The run is asynchronous,
+        so poll the labels endpoint for results. Existing labels are retained,
+        and the sampled entities receive ordinary classification results. Auto
+        Classify must be enabled. Reading traffic and running the model consumes
+        usage.
 
         Args:
             classifier_id: The id of the classifier.
@@ -414,22 +767,29 @@ class ClassifiersOperations:
             HttpMethods.POST,
             Endpoints.CLASSIFIER_GENERATE_ENDPOINT,
             response_schema=ClassifierLabelGeneration,
+            request_schema=GenerateClassifierLabelsInput,
+            body={"dataModel": data_model},
             path={"classifierId": classifier_id},
         )
 
     async def a_generate_labels(
-        self, classifier_id: str
+        self,
+        classifier_id: str,
+        *,
+        data_model: Optional[ClassifierDataModel] = None
     ) -> ClassifierLabelGeneration:
         """Generate Classifier Labels
 
         Generates labels for a classifier from your project's real traffic: it
-        samples recent traces, spans or threads and runs them through the
-        classifier's normal auto-classification pipeline. Repeated proposals are
-        merged and written back as `RECOMMENDED` labels for a human to review.
-        The run is asynchronous, so poll the labels endpoint for results.
-        Existing labels are retained, and the sampled entities receive ordinary
-        classification results. Auto Classify must be enabled. Reading traffic
-        and running the model consumes usage.
+        samples recent traces, spans or threads (`dataModel`, else the
+        generation config's, else that of the task created with the classifier,
+        else traces) and runs them through the classifier's normal auto-
+        classification pipeline. Repeated proposals are merged and written back
+        as `RECOMMENDED` labels for a human to review. The run is asynchronous,
+        so poll the labels endpoint for results. Existing labels are retained,
+        and the sampled entities receive ordinary classification results. Auto
+        Classify must be enabled. Reading traffic and running the model consumes
+        usage.
 
         Args:
             classifier_id: The id of the classifier.
@@ -438,6 +798,8 @@ class ClassifiersOperations:
             HttpMethods.POST,
             Endpoints.CLASSIFIER_GENERATE_ENDPOINT,
             response_schema=ClassifierLabelGeneration,
+            request_schema=GenerateClassifierLabelsInput,
+            body={"dataModel": data_model},
             path={"classifierId": classifier_id},
         )
 

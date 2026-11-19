@@ -36,13 +36,30 @@ class SpansClient:
         prompt_commit_hash: Optional[str] = None,
         embedder: Optional[str] = None,
         top_k: Optional[int] = None,
-        chunk_size: Optional[int] = None
+        chunk_size: Optional[int] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        reasoning_effort: Optional[str] = None,
+        output_type: Optional[str] = None,
+        streaming: Optional[Literal["true", "false"]] = None,
+        finish_reason: Optional[str] = None,
+        min_time_to_first_token: Optional[float] = None,
+        max_time_to_first_token: Optional[float] = None,
+        min_cache_read_token_count: Optional[int] = None,
+        max_cache_read_token_count: Optional[int] = None,
+        min_cache_write_token_count: Optional[int] = None,
+        max_cache_write_token_count: Optional[int] = None,
+        min_reasoning_token_count: Optional[int] = None,
+        max_reasoning_token_count: Optional[int] = None,
+        min_image_token_count: Optional[int] = None,
+        max_image_token_count: Optional[int] = None
     ) -> SpanList:
         """List Spans
 
         Lists the spans in your Confident AI project one page at a time, newest
-        first by default, as summary rows. Retrieve a span by id for its full
-        detail.
+        first by default, as summary rows. Use `nextCursor` as `cursor` to get
+        the next page. Retrieve a span by id for its full detail.
 
         Args:
             page_size: The number of results per page, at most 100. Defaults to
@@ -74,8 +91,45 @@ class SpansClient:
             prompt_commit_hash: This filters the spans by the exact prompt
                 commit hash used.
             embedder: Filter retriever spans by the embedder model used.
-            top_k: Filter retriever spans by the `topK` value.
+            top_k: Filter LLM and retriever spans by their `topK`: the sampling
+                top-k on an LLM span, or how many chunks a retriever span
+                returned.
             chunk_size: Filter retriever spans by the chunk size.
+            temperature: Filter LLM spans by the exact sampling temperature
+                requested.
+            top_p: Filter LLM spans by the exact `topP` requested.
+            max_tokens: Filter LLM spans by the exact output token limit
+                requested.
+            reasoning_effort: Filter LLM spans by the reasoning effort
+                requested, such as `low` or `high`.
+            output_type: Filter LLM spans by the type of output requested, such
+                as `text` or `json`.
+            streaming: Filter for LLM spans whose response was streamed (`true`)
+                or returned whole (`false`).
+            finish_reason: Filter LLM spans to those whose finish reasons
+                include this one, such as `stop` or `length`.
+            min_time_to_first_token: Filter LLM spans to those whose first
+                streamed chunk arrived at least this many seconds after the
+                request.
+            max_time_to_first_token: Filter LLM spans to those whose first
+                streamed chunk arrived at most this many seconds after the
+                request.
+            min_cache_read_token_count: Filter LLM spans to those that read at
+                least this many input tokens from the prompt cache.
+            max_cache_read_token_count: Filter LLM spans to those that read at
+                most this many input tokens from the prompt cache.
+            min_cache_write_token_count: Filter LLM spans to those that wrote at
+                least this many input tokens to the prompt cache.
+            max_cache_write_token_count: Filter LLM spans to those that wrote at
+                most this many input tokens to the prompt cache.
+            min_reasoning_token_count: Filter LLM spans to those that spent at
+                least this many output tokens on reasoning.
+            max_reasoning_token_count: Filter LLM spans to those that spent at
+                most this many output tokens on reasoning.
+            min_image_token_count: Filter LLM spans to those that used at least
+                this many image tokens.
+            max_image_token_count: Filter LLM spans to those that used at most
+                this many image tokens.
         """
         return self._api.request(
             HttpMethods.GET,
@@ -101,6 +155,23 @@ class SpansClient:
                 "embedder": embedder,
                 "topK": top_k,
                 "chunkSize": chunk_size,
+                "temperature": temperature,
+                "topP": top_p,
+                "maxTokens": max_tokens,
+                "reasoningEffort": reasoning_effort,
+                "outputType": output_type,
+                "streaming": streaming,
+                "finishReason": finish_reason,
+                "minTimeToFirstToken": min_time_to_first_token,
+                "maxTimeToFirstToken": max_time_to_first_token,
+                "minCacheReadTokenCount": min_cache_read_token_count,
+                "maxCacheReadTokenCount": max_cache_read_token_count,
+                "minCacheWriteTokenCount": min_cache_write_token_count,
+                "maxCacheWriteTokenCount": max_cache_write_token_count,
+                "minReasoningTokenCount": min_reasoning_token_count,
+                "maxReasoningTokenCount": max_reasoning_token_count,
+                "minImageTokenCount": min_image_token_count,
+                "maxImageTokenCount": max_image_token_count,
             },
         )
 
@@ -125,13 +196,30 @@ class SpansClient:
         prompt_commit_hash: Optional[str] = None,
         embedder: Optional[str] = None,
         top_k: Optional[int] = None,
-        chunk_size: Optional[int] = None
+        chunk_size: Optional[int] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        reasoning_effort: Optional[str] = None,
+        output_type: Optional[str] = None,
+        streaming: Optional[Literal["true", "false"]] = None,
+        finish_reason: Optional[str] = None,
+        min_time_to_first_token: Optional[float] = None,
+        max_time_to_first_token: Optional[float] = None,
+        min_cache_read_token_count: Optional[int] = None,
+        max_cache_read_token_count: Optional[int] = None,
+        min_cache_write_token_count: Optional[int] = None,
+        max_cache_write_token_count: Optional[int] = None,
+        min_reasoning_token_count: Optional[int] = None,
+        max_reasoning_token_count: Optional[int] = None,
+        min_image_token_count: Optional[int] = None,
+        max_image_token_count: Optional[int] = None
     ) -> SpanList:
         """List Spans
 
         Lists the spans in your Confident AI project one page at a time, newest
-        first by default, as summary rows. Retrieve a span by id for its full
-        detail.
+        first by default, as summary rows. Use `nextCursor` as `cursor` to get
+        the next page. Retrieve a span by id for its full detail.
 
         Args:
             page_size: The number of results per page, at most 100. Defaults to
@@ -163,8 +251,45 @@ class SpansClient:
             prompt_commit_hash: This filters the spans by the exact prompt
                 commit hash used.
             embedder: Filter retriever spans by the embedder model used.
-            top_k: Filter retriever spans by the `topK` value.
+            top_k: Filter LLM and retriever spans by their `topK`: the sampling
+                top-k on an LLM span, or how many chunks a retriever span
+                returned.
             chunk_size: Filter retriever spans by the chunk size.
+            temperature: Filter LLM spans by the exact sampling temperature
+                requested.
+            top_p: Filter LLM spans by the exact `topP` requested.
+            max_tokens: Filter LLM spans by the exact output token limit
+                requested.
+            reasoning_effort: Filter LLM spans by the reasoning effort
+                requested, such as `low` or `high`.
+            output_type: Filter LLM spans by the type of output requested, such
+                as `text` or `json`.
+            streaming: Filter for LLM spans whose response was streamed (`true`)
+                or returned whole (`false`).
+            finish_reason: Filter LLM spans to those whose finish reasons
+                include this one, such as `stop` or `length`.
+            min_time_to_first_token: Filter LLM spans to those whose first
+                streamed chunk arrived at least this many seconds after the
+                request.
+            max_time_to_first_token: Filter LLM spans to those whose first
+                streamed chunk arrived at most this many seconds after the
+                request.
+            min_cache_read_token_count: Filter LLM spans to those that read at
+                least this many input tokens from the prompt cache.
+            max_cache_read_token_count: Filter LLM spans to those that read at
+                most this many input tokens from the prompt cache.
+            min_cache_write_token_count: Filter LLM spans to those that wrote at
+                least this many input tokens to the prompt cache.
+            max_cache_write_token_count: Filter LLM spans to those that wrote at
+                most this many input tokens to the prompt cache.
+            min_reasoning_token_count: Filter LLM spans to those that spent at
+                least this many output tokens on reasoning.
+            max_reasoning_token_count: Filter LLM spans to those that spent at
+                most this many output tokens on reasoning.
+            min_image_token_count: Filter LLM spans to those that used at least
+                this many image tokens.
+            max_image_token_count: Filter LLM spans to those that used at most
+                this many image tokens.
         """
         return await self._api.a_request(
             HttpMethods.GET,
@@ -190,10 +315,32 @@ class SpansClient:
                 "embedder": embedder,
                 "topK": top_k,
                 "chunkSize": chunk_size,
+                "temperature": temperature,
+                "topP": top_p,
+                "maxTokens": max_tokens,
+                "reasoningEffort": reasoning_effort,
+                "outputType": output_type,
+                "streaming": streaming,
+                "finishReason": finish_reason,
+                "minTimeToFirstToken": min_time_to_first_token,
+                "maxTimeToFirstToken": max_time_to_first_token,
+                "minCacheReadTokenCount": min_cache_read_token_count,
+                "maxCacheReadTokenCount": max_cache_read_token_count,
+                "minCacheWriteTokenCount": min_cache_write_token_count,
+                "maxCacheWriteTokenCount": max_cache_write_token_count,
+                "minReasoningTokenCount": min_reasoning_token_count,
+                "maxReasoningTokenCount": max_reasoning_token_count,
+                "minImageTokenCount": min_image_token_count,
+                "maxImageTokenCount": max_image_token_count,
             },
         )
 
-    def get(self, span_uuid: str) -> Span:
+    def get(
+        self,
+        span_uuid: str,
+        *,
+        include_otel: Optional[Literal["true", "false"]] = None
+    ) -> Span:
         """Get Span
 
         Retrieves a span by uuid from your Confident AI project, with its full
@@ -201,15 +348,23 @@ class SpansClient:
 
         Args:
             span_uuid: The unique identifier of the span.
+            include_otel: Whether to return `otel`, the raw OpenTelemetry data
+                the span was ingested from. Defaults to `false`.
         """
         return self._api.request(
             HttpMethods.GET,
             Endpoints.SPAN_ENDPOINT,
             response_schema=Span,
             path={"spanUuid": span_uuid},
+            query={"includeOtel": include_otel},
         )
 
-    async def a_get(self, span_uuid: str) -> Span:
+    async def a_get(
+        self,
+        span_uuid: str,
+        *,
+        include_otel: Optional[Literal["true", "false"]] = None
+    ) -> Span:
         """Get Span
 
         Retrieves a span by uuid from your Confident AI project, with its full
@@ -217,10 +372,13 @@ class SpansClient:
 
         Args:
             span_uuid: The unique identifier of the span.
+            include_otel: Whether to return `otel`, the raw OpenTelemetry data
+                the span was ingested from. Defaults to `false`.
         """
         return await self._api.a_request(
             HttpMethods.GET,
             Endpoints.SPAN_ENDPOINT,
             response_schema=Span,
             path={"spanUuid": span_uuid},
+            query={"includeOtel": include_otel},
         )

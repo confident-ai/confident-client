@@ -32,8 +32,9 @@ class VulnerabilitiesClient:
         """List Vulnerabilities
 
         Lists the vulnerabilities available to your Confident AI project one
-        page at a time, both the ones Confident AI ships and your project's own.
-        Filter by catalog category or by whether a vulnerability is built in.
+        page at a time, both the ones Confident AI ships and the ones your
+        organization defined. Filter by catalog category or by whether a
+        vulnerability is built in.
 
         Args:
             page: The page of vulnerabilities to return. Defaults to 1.
@@ -42,8 +43,8 @@ class VulnerabilitiesClient:
             category: Returns only vulnerabilities in this catalog category. An
                 unknown category is rejected with the list of valid ones.
             built_in: When `true`, returns only the vulnerabilities Confident AI
-                ships; when `false`, only the ones your project defined. Omit to
-                return both.
+                ships; when `false`, only the ones your organization defined.
+                Omit to return both.
         """
         return self._api.request(
             HttpMethods.GET,
@@ -68,8 +69,9 @@ class VulnerabilitiesClient:
         """List Vulnerabilities
 
         Lists the vulnerabilities available to your Confident AI project one
-        page at a time, both the ones Confident AI ships and your project's own.
-        Filter by catalog category or by whether a vulnerability is built in.
+        page at a time, both the ones Confident AI ships and the ones your
+        organization defined. Filter by catalog category or by whether a
+        vulnerability is built in.
 
         Args:
             page: The page of vulnerabilities to return. Defaults to 1.
@@ -78,8 +80,8 @@ class VulnerabilitiesClient:
             category: Returns only vulnerabilities in this catalog category. An
                 unknown category is rejected with the list of valid ones.
             built_in: When `true`, returns only the vulnerabilities Confident AI
-                ships; when `false`, only the ones your project defined. Omit to
-                return both.
+                ships; when `false`, only the ones your organization defined.
+                Omit to return both.
         """
         return await self._api.a_request(
             HttpMethods.GET,
@@ -107,13 +109,13 @@ class VulnerabilitiesClient:
     ) -> VulnerabilityRef:
         """Create Vulnerability
 
-        Creates a vulnerability in your Confident AI project and returns its id.
-        Give it at least one type: a risk category selects types, not
-        vulnerabilities. The name cannot match one Confident AI ships — update
-        that one instead to customise it for this project.
+        Creates a vulnerability in your Confident AI organization and returns
+        its id. Give it at least one type: a risk category selects types, not
+        vulnerabilities. The name cannot match one Confident AI ships. Update
+        that one instead to customise it for your organization.
 
         Args:
-            name: The name of the vulnerability, unique within the project.
+            name: The name of the vulnerability, unique within the organization.
             criteria: The rule the evaluator applies to decide whether a reply
                 is vulnerable.
             vulnerability_types: The names of the types this vulnerability
@@ -153,13 +155,13 @@ class VulnerabilitiesClient:
     ) -> VulnerabilityRef:
         """Create Vulnerability
 
-        Creates a vulnerability in your Confident AI project and returns its id.
-        Give it at least one type: a risk category selects types, not
-        vulnerabilities. The name cannot match one Confident AI ships — update
-        that one instead to customise it for this project.
+        Creates a vulnerability in your Confident AI organization and returns
+        its id. Give it at least one type: a risk category selects types, not
+        vulnerabilities. The name cannot match one Confident AI ships. Update
+        that one instead to customise it for your organization.
 
         Args:
-            name: The name of the vulnerability, unique within the project.
+            name: The name of the vulnerability, unique within the organization.
             criteria: The rule the evaluator applies to decide whether a reply
                 is vulnerable.
             vulnerability_types: The names of the types this vulnerability
@@ -237,13 +239,13 @@ class VulnerabilitiesClient:
         """Update Vulnerability
 
         Updates a vulnerability and returns it. Updating one Confident AI ships
-        makes this project its own copy of it, leaving every other project
-        untouched, and a built-in cannot be renamed.
+        makes your organization its own copy of it, shared by every project in
+        the organization, and a built-in cannot be renamed.
 
         Args:
             vulnerability_id: The id of the vulnerability, as the list returns
                 it. A built-in's catalog name also resolves.
-            name: The name of the vulnerability, unique within the project.
+            name: The name of the vulnerability, unique within the organization.
             description: What the vulnerability covers.
             criteria: The rule the evaluator applies to decide whether a reply
                 is vulnerable.
@@ -286,13 +288,13 @@ class VulnerabilitiesClient:
         """Update Vulnerability
 
         Updates a vulnerability and returns it. Updating one Confident AI ships
-        makes this project its own copy of it, leaving every other project
-        untouched, and a built-in cannot be renamed.
+        makes your organization its own copy of it, shared by every project in
+        the organization, and a built-in cannot be renamed.
 
         Args:
             vulnerability_id: The id of the vulnerability, as the list returns
                 it. A built-in's catalog name also resolves.
-            name: The name of the vulnerability, unique within the project.
+            name: The name of the vulnerability, unique within the organization.
             description: What the vulnerability covers.
             criteria: The rule the evaluator applies to decide whether a reply
                 is vulnerable.
@@ -322,9 +324,10 @@ class VulnerabilitiesClient:
     def delete(self, vulnerability_id: str) -> VulnerabilityRef:
         """Delete Vulnerability
 
-        Permanently deletes a vulnerability your project defined, along with its
-        types. A vulnerability Confident AI ships that this project has never
-        customised has nothing to delete, and is rejected.
+        Permanently deletes a vulnerability your organization defined, along
+        with its types. A vulnerability Confident AI ships that your
+        organization has never customised has nothing to delete, and is
+        rejected.
 
         Args:
             vulnerability_id: The id of the vulnerability, as the list returns
@@ -340,9 +343,10 @@ class VulnerabilitiesClient:
     async def a_delete(self, vulnerability_id: str) -> VulnerabilityRef:
         """Delete Vulnerability
 
-        Permanently deletes a vulnerability your project defined, along with its
-        types. A vulnerability Confident AI ships that this project has never
-        customised has nothing to delete, and is rejected.
+        Permanently deletes a vulnerability your organization defined, along
+        with its types. A vulnerability Confident AI ships that your
+        organization has never customised has nothing to delete, and is
+        rejected.
 
         Args:
             vulnerability_id: The id of the vulnerability, as the list returns

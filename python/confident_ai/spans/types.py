@@ -41,6 +41,18 @@ class SpanSummary(ConfidentBaseModel):
     cost_per_output_token: Optional[float] = Field(alias="costPerOutputToken")
     input_token_count: Optional[int] = Field(alias="inputTokenCount")
     output_token_count: Optional[int] = Field(alias="outputTokenCount")
+    temperature: Optional[float]
+    max_tokens: Optional[int] = Field(alias="maxTokens")
+    streaming: Optional[bool]
+    top_p: Optional[float] = Field(alias="topP")
+    reasoning_effort: Optional[str] = Field(alias="reasoningEffort")
+    output_type: Optional[str] = Field(alias="outputType")
+    time_to_first_token: Optional[float] = Field(alias="timeToFirstToken")
+    finish_reasons: Optional[List[str]] = Field(alias="finishReasons")
+    cache_read_token_count: Optional[int] = Field(alias="cacheReadTokenCount")
+    cache_write_token_count: Optional[int] = Field(alias="cacheWriteTokenCount")
+    reasoning_token_count: Optional[int] = Field(alias="reasoningTokenCount")
+    image_token_count: Optional[int] = Field(alias="imageTokenCount")
     prompt_alias: Optional[str] = Field(alias="promptAlias")
     prompt_version: Optional[str] = Field(alias="promptVersion")
     prompt_label: Optional[str] = Field(alias="promptLabel")

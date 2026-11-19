@@ -98,6 +98,9 @@ class AIConnection(ConfidentBaseModel):
     )
     state_key_path: List[Union[str, int]] = Field(alias="stateKeyPath")
     metadata_key_path: List[Union[str, int]] = Field(alias="metadataKeyPath")
+    turn_metadata_key_path: List[Union[str, int]] = Field(
+        alias="turnMetadataKeyPath",
+    )
     input_token_count_key_path: List[Union[str, int]] = Field(
         alias="inputTokenCountKeyPath",
     )
@@ -118,6 +121,9 @@ class AIConnection(ConfidentBaseModel):
     metadata_transformer_id: Optional[str] = Field(
         alias="metadataTransformerId",
     )
+    turn_metadata_transformer_id: Optional[str] = Field(
+        alias="turnMetadataTransformerId",
+    )
     input_token_count_transformer_id: Optional[str] = Field(
         alias="inputTokenCountTransformerId",
     )
@@ -134,6 +140,7 @@ class AIConnection(ConfidentBaseModel):
     tools_called_event: Optional[str] = Field(alias="toolsCalledEvent")
     state_event: Optional[str] = Field(alias="stateEvent")
     metadata_event: Optional[str] = Field(alias="metadataEvent")
+    turn_metadata_event: Optional[str] = Field(alias="turnMetadataEvent")
     actual_output_accumulate: bool = Field(alias="actualOutputAccumulate")
     merge_metadata: bool = Field(alias="mergeMetadata")
     prompts: Optional[Dict[str, AIConnectionPromptRef]]
@@ -166,6 +173,7 @@ class AIConnectionPingResult(ConfidentBaseModel):
     tools_called: Optional[List[Dict[str, Any]]] = Field(alias="toolsCalled")
     state: Optional[Dict[str, Any]]
     metadata: Optional[Dict[str, Any]]
+    turn_metadata: Optional[Dict[str, Any]] = Field(alias="turnMetadata")
     input_token_count: Optional[float] = Field(alias="inputTokenCount")
     output_token_count: Optional[float] = Field(alias="outputTokenCount")
     token_cost: Optional[float] = Field(alias="tokenCost")
@@ -174,6 +182,7 @@ class AIConnectionPingResult(ConfidentBaseModel):
     invalid_tools_called: bool = Field(alias="invalidToolsCalled")
     invalid_state: bool = Field(alias="invalidState")
     invalid_metadata: bool = Field(alias="invalidMetadata")
+    invalid_turn_metadata: bool = Field(alias="invalidTurnMetadata")
     invalid_input_token_count: bool = Field(alias="invalidInputTokenCount")
     invalid_output_token_count: bool = Field(alias="invalidOutputTokenCount")
     invalid_token_cost: bool = Field(alias="invalidTokenCost")
@@ -231,6 +240,10 @@ class CreateAIConnectionInput(ConfidentBaseModel):
         default=None,
         alias="metadataKeyPath",
     )
+    turn_metadata_key_path: Optional[List[Union[str, int]]] = Field(
+        default=None,
+        alias="turnMetadataKeyPath",
+    )
     input_token_count_key_path: Optional[List[Union[str, int]]] = Field(
         default=None,
         alias="inputTokenCountKeyPath",
@@ -257,6 +270,10 @@ class CreateAIConnectionInput(ConfidentBaseModel):
     )
     state_event: Optional[str] = Field(default=None, alias="stateEvent")
     metadata_event: Optional[str] = Field(default=None, alias="metadataEvent")
+    turn_metadata_event: Optional[str] = Field(
+        default=None,
+        alias="turnMetadataEvent",
+    )
     actual_output_accumulate: Optional[bool] = Field(
         default=None,
         alias="actualOutputAccumulate",
@@ -281,6 +298,10 @@ class CreateAIConnectionInput(ConfidentBaseModel):
     metadata_transformer_id: Optional[str] = Field(
         default=None,
         alias="metadataTransformerId",
+    )
+    turn_metadata_transformer_id: Optional[str] = Field(
+        default=None,
+        alias="turnMetadataTransformerId",
     )
     input_token_count_transformer_id: Optional[str] = Field(
         default=None,
@@ -349,6 +370,10 @@ class UpdateAIConnectionInput(ConfidentBaseModel):
         default=None,
         alias="metadataKeyPath",
     )
+    turn_metadata_key_path: Optional[List[Union[str, int]]] = Field(
+        default=None,
+        alias="turnMetadataKeyPath",
+    )
     input_token_count_key_path: Optional[List[Union[str, int]]] = Field(
         default=None,
         alias="inputTokenCountKeyPath",
@@ -375,6 +400,10 @@ class UpdateAIConnectionInput(ConfidentBaseModel):
     )
     state_event: Optional[str] = Field(default=None, alias="stateEvent")
     metadata_event: Optional[str] = Field(default=None, alias="metadataEvent")
+    turn_metadata_event: Optional[str] = Field(
+        default=None,
+        alias="turnMetadataEvent",
+    )
     actual_output_accumulate: Optional[bool] = Field(
         default=None,
         alias="actualOutputAccumulate",
@@ -399,6 +428,10 @@ class UpdateAIConnectionInput(ConfidentBaseModel):
     metadata_transformer_id: Optional[str] = Field(
         default=None,
         alias="metadataTransformerId",
+    )
+    turn_metadata_transformer_id: Optional[str] = Field(
+        default=None,
+        alias="turnMetadataTransformerId",
     )
     input_token_count_transformer_id: Optional[str] = Field(
         default=None,

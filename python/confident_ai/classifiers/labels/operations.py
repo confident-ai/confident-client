@@ -3,10 +3,11 @@
 # Do not edit by hand — change the route in confident-cloud
 # and regenerate.
 
-from typing import Optional
+from typing import List, Optional
 
 from confident_ai.api import Api, HttpMethods
 from confident_ai.classifiers.types import (
+    ClassifierDataModel,
     ClassifierLabel,
     ClassifierLabelList,
     ClassifierLabelRef,
@@ -85,7 +86,8 @@ class LabelsOperations:
         *,
         enabled: Optional[bool] = None,
         status: Optional[ClassifierLabelStatus] = None,
-        polarity: Optional[SignalPolarity] = None
+        polarity: Optional[SignalPolarity] = None,
+        data_models: Optional[List[ClassifierDataModel]] = None
     ) -> ClassifierLabelRef:
         """Create Classifier Label
 
@@ -102,6 +104,9 @@ class LabelsOperations:
                 restating the name.
             enabled: Whether the label can be applied. Defaults to `true` on
                 create; omit it on an update to leave it unchanged.
+            data_models: The data models this label can be applied on. Defaults
+                to all three on create; omit it on an update to leave it
+                unchanged.
         """
         return self._api.request(
             HttpMethods.POST,
@@ -114,6 +119,7 @@ class LabelsOperations:
                 "enabled": enabled,
                 "status": status,
                 "polarity": polarity,
+                "dataModels": data_models,
             },
             path={"classifierId": classifier_id},
         )
@@ -126,7 +132,8 @@ class LabelsOperations:
         *,
         enabled: Optional[bool] = None,
         status: Optional[ClassifierLabelStatus] = None,
-        polarity: Optional[SignalPolarity] = None
+        polarity: Optional[SignalPolarity] = None,
+        data_models: Optional[List[ClassifierDataModel]] = None
     ) -> ClassifierLabelRef:
         """Create Classifier Label
 
@@ -143,6 +150,9 @@ class LabelsOperations:
                 restating the name.
             enabled: Whether the label can be applied. Defaults to `true` on
                 create; omit it on an update to leave it unchanged.
+            data_models: The data models this label can be applied on. Defaults
+                to all three on create; omit it on an update to leave it
+                unchanged.
         """
         return await self._api.a_request(
             HttpMethods.POST,
@@ -155,6 +165,7 @@ class LabelsOperations:
                 "enabled": enabled,
                 "status": status,
                 "polarity": polarity,
+                "dataModels": data_models,
             },
             path={"classifierId": classifier_id},
         )
@@ -204,7 +215,8 @@ class LabelsOperations:
         description: Optional[str] = None,
         enabled: Optional[bool] = None,
         status: Optional[ClassifierLabelStatus] = None,
-        polarity: Optional[SignalPolarity] = None
+        polarity: Optional[SignalPolarity] = None,
+        data_models: Optional[List[ClassifierDataModel]] = None
     ) -> ClassifierLabel:
         """Update Classifier Label
 
@@ -219,6 +231,9 @@ class LabelsOperations:
             description: When this label applies. It cannot be cleared.
             enabled: Whether the label can be applied. Defaults to `true` on
                 create; omit it on an update to leave it unchanged.
+            data_models: The data models this label can be applied on. Defaults
+                to all three on create; omit it on an update to leave it
+                unchanged.
         """
         return self._api.request(
             HttpMethods.PUT,
@@ -231,6 +246,7 @@ class LabelsOperations:
                 "enabled": enabled,
                 "status": status,
                 "polarity": polarity,
+                "dataModels": data_models,
             },
             path={"classifierId": classifier_id, "labelId": label_id},
         )
@@ -244,7 +260,8 @@ class LabelsOperations:
         description: Optional[str] = None,
         enabled: Optional[bool] = None,
         status: Optional[ClassifierLabelStatus] = None,
-        polarity: Optional[SignalPolarity] = None
+        polarity: Optional[SignalPolarity] = None,
+        data_models: Optional[List[ClassifierDataModel]] = None
     ) -> ClassifierLabel:
         """Update Classifier Label
 
@@ -259,6 +276,9 @@ class LabelsOperations:
             description: When this label applies. It cannot be cleared.
             enabled: Whether the label can be applied. Defaults to `true` on
                 create; omit it on an update to leave it unchanged.
+            data_models: The data models this label can be applied on. Defaults
+                to all three on create; omit it on an update to leave it
+                unchanged.
         """
         return await self._api.a_request(
             HttpMethods.PUT,
@@ -271,6 +291,7 @@ class LabelsOperations:
                 "enabled": enabled,
                 "status": status,
                 "polarity": polarity,
+                "dataModels": data_models,
             },
             path={"classifierId": classifier_id, "labelId": label_id},
         )

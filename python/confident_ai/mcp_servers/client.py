@@ -96,13 +96,14 @@ class McpServersClient:
             headers: Static headers sent with every request. Only used when
                 `authType` is `HEADERS`, and cleared otherwise. This map is
                 stored as a whole rather than merged, so send every header you
-                want to keep.
+                want to keep; a header sent back with its masked value keeps the
+                stored one.
             auth_config: The credentials for a non-`HEADERS` auth type. Send
                 `null` to clear them.
-            command: The command that launches the server. Required when
-                `transport` is `STDIO`, and cleared otherwise.
-            args: The arguments passed to `command`. `STDIO` transport only.
-                This list is stored as a whole rather than appended to.
+            command: Deprecated. `STDIO` servers are not supported, so this is
+                always cleared.
+            args: Deprecated. `STDIO` servers are not supported, so this is
+                always cleared.
         """
         return self._api.request(
             HttpMethods.POST,
@@ -150,13 +151,14 @@ class McpServersClient:
             headers: Static headers sent with every request. Only used when
                 `authType` is `HEADERS`, and cleared otherwise. This map is
                 stored as a whole rather than merged, so send every header you
-                want to keep.
+                want to keep; a header sent back with its masked value keeps the
+                stored one.
             auth_config: The credentials for a non-`HEADERS` auth type. Send
                 `null` to clear them.
-            command: The command that launches the server. Required when
-                `transport` is `STDIO`, and cleared otherwise.
-            args: The arguments passed to `command`. `STDIO` transport only.
-                This list is stored as a whole rather than appended to.
+            command: Deprecated. `STDIO` servers are not supported, so this is
+                always cleared.
+            args: Deprecated. `STDIO` servers are not supported, so this is
+                always cleared.
         """
         return await self._api.a_request(
             HttpMethods.POST,
@@ -243,13 +245,14 @@ class McpServersClient:
             headers: Static headers sent with every request. Only used when
                 `authType` is `HEADERS`, and cleared otherwise. This map is
                 stored as a whole rather than merged, so send every header you
-                want to keep.
+                want to keep; a header sent back with its masked value keeps the
+                stored one.
             auth_config: The credentials for a non-`HEADERS` auth type. Send
                 `null` to clear them.
-            command: The command that launches the server. Required when
-                `transport` is `STDIO`, and cleared otherwise.
-            args: The arguments passed to `command`. `STDIO` transport only.
-                This list is stored as a whole rather than appended to.
+            command: Deprecated. `STDIO` servers are not supported, so this is
+                always cleared.
+            args: Deprecated. `STDIO` servers are not supported, so this is
+                always cleared.
         """
         return self._api.request(
             HttpMethods.PUT,
@@ -301,13 +304,14 @@ class McpServersClient:
             headers: Static headers sent with every request. Only used when
                 `authType` is `HEADERS`, and cleared otherwise. This map is
                 stored as a whole rather than merged, so send every header you
-                want to keep.
+                want to keep; a header sent back with its masked value keeps the
+                stored one.
             auth_config: The credentials for a non-`HEADERS` auth type. Send
                 `null` to clear them.
-            command: The command that launches the server. Required when
-                `transport` is `STDIO`, and cleared otherwise.
-            args: The arguments passed to `command`. `STDIO` transport only.
-                This list is stored as a whole rather than appended to.
+            command: Deprecated. `STDIO` servers are not supported, so this is
+                always cleared.
+            args: Deprecated. `STDIO` servers are not supported, so this is
+                always cleared.
         """
         return await self._api.a_request(
             HttpMethods.PUT,

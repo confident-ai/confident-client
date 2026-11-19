@@ -6,11 +6,18 @@
 import { HttpMethods } from "../../api";
 import { Endpoints } from "../../endpoints";
 import { DatasetsOperations } from "../operations";
-import { FilterSet, IngestionDataModel } from "../../common/types";
+import {
+  AssignmentStrategy,
+  FilterSet,
+  IngestionDataModel,
+  SpanType,
+} from "../../common/types";
 import {
   DatasetIngestionTask,
   DatasetIngestionTaskList,
   DatasetIngestionTaskRef,
+  InterruptionFrequency,
+  InterruptionOverlap,
 } from "../types";
 
 export class DatasetIngestionTasksOperations extends DatasetsOperations {
@@ -53,15 +60,22 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
    * @param sampleRate The fraction of matching items to ingest, between 0 and
    *   1. On create it defaults to 1, all of them; omit it on an update to leave
    *   it unchanged.
+   * @param spanType Only harvest spans of this kind. Allowed only when
+   *   `dataModel` is `SPAN`, and cleared automatically if the task moves off
+   *   `SPAN`. Send `null` to harvest every span; omit it on an update to leave
+   *   it unchanged.
    * @param maxGoldens The maximum number of goldens this task will ever create.
    *   Send `null` to remove the cap.
    * @param inputTransformerId The id of a transformer that reshapes the
    *   harvested input before it is stored. Send `null` to detach it.
    * @param outputTransformerId The id of a transformer that reshapes the
    *   harvested output before it is stored. Send `null` to detach it.
+   * @param turnsTransformerId The id of a transformer that builds a multi-turn
+   *   golden's `turns` from the harvested item, instead of reading them from
+   *   its messages. Send `null` to detach it.
    * @param includeInput Populate the golden's `input` from the harvested item.
-   *   On create it defaults to `true` and every other include flag defaults to
-   *   `false`; omit it on an update to leave it unchanged.
+   *   On create it and `includeTurns` default to `true` and every other include
+   *   flag defaults to `false`; omit it on an update to leave it unchanged.
    * @param includeActualOutput Populate the golden's `actualOutput` from the
    *   harvested item.
    * @param includeExpectedOutput Populate the golden's `expectedOutput` from
@@ -74,6 +88,34 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
    *   harvested item.
    * @param includeExpectedTools Populate the golden's `expectedTools` from the
    *   harvested item.
+   * @param includeTurns Populate a multi-turn golden's `turns` from the
+   *   harvested thread or trace. Ignored for single-turn datasets.
+   * @param includeUserDescription Generate a multi-turn golden's
+   *   `userDescription` from the harvested thread or trace, alongside its
+   *   `scenario`. Ignored for single-turn datasets.
+   * @param userDescription The `userDescription` set on every multi-turn
+   *   golden, instead of generating one. Send `null` to clear it. Ignored for
+   *   single-turn datasets.
+   * @param personaId The id of a persona to simulate every multi-turn golden
+   *   as. Its characteristics replace `userDescription`, and its interruptions,
+   *   when it has any, replace the interruption fields. Send `null` to clear
+   *   it. Ignored for single-turn datasets.
+   * @param journeyId The id of a journey to assign every multi-turn golden to.
+   *   Send `null` to clear it. Ignored for single-turn datasets.
+   * @param interruptionFrequency How often the simulated user interrupts on
+   *   every multi-turn golden. Send `null` to turn interruptions off. Ignored
+   *   for single-turn datasets.
+   * @param interruptionOverlap What the simulated user does when both sides
+   *   talk at once on every multi-turn golden. Only used with
+   *   `interruptionFrequency`, and `ADAPTIVE` when `null`. Ignored for single-
+   *   turn datasets.
+   * @param tags Tags added to every golden the task creates. Replaces the
+   *   stored tags: send `[]` to clear them, or omit to keep them.
+   * @param metadata Key-value pairs merged into every golden's
+   *   `additionalMetadata`, alongside the id of the item it came from. Send
+   *   `null` to clear it.
+   * @param reviewerEmails The project members harvested goldens are assigned
+   *   to, following `assignmentStrategy`.
    */
   async createIngestionTask(
     datasetId: string,
@@ -84,9 +126,11 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
       enabled?: boolean;
       sampleRate?: number;
       filters?: FilterSet;
+      spanType?: SpanType | null;
       maxGoldens?: number | null;
       inputTransformerId?: string | null;
       outputTransformerId?: string | null;
+      turnsTransformerId?: string | null;
       includeInput?: boolean;
       includeActualOutput?: boolean;
       includeExpectedOutput?: boolean;
@@ -94,6 +138,17 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
       includeContext?: boolean;
       includeToolsCalled?: boolean;
       includeExpectedTools?: boolean;
+      includeTurns?: boolean;
+      includeUserDescription?: boolean;
+      userDescription?: string | null;
+      personaId?: string | null;
+      journeyId?: string | null;
+      interruptionFrequency?: InterruptionFrequency | null;
+      interruptionOverlap?: InterruptionOverlap | null;
+      tags?: string[];
+      metadata?: Record<string, unknown> | null;
+      assignmentStrategy?: AssignmentStrategy;
+      reviewerEmails?: string[];
     } = {},
   ): Promise<DatasetIngestionTaskRef> {
     const {
@@ -101,9 +156,11 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
       enabled,
       sampleRate,
       filters,
+      spanType,
       maxGoldens,
       inputTransformerId,
       outputTransformerId,
+      turnsTransformerId,
       includeInput,
       includeActualOutput,
       includeExpectedOutput,
@@ -111,6 +168,17 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
       includeContext,
       includeToolsCalled,
       includeExpectedTools,
+      includeTurns,
+      includeUserDescription,
+      userDescription,
+      personaId,
+      journeyId,
+      interruptionFrequency,
+      interruptionOverlap,
+      tags,
+      metadata,
+      assignmentStrategy,
+      reviewerEmails,
     } = options;
     return this.api.sendRequest<DatasetIngestionTaskRef>(
       HttpMethods.POST,
@@ -123,9 +191,11 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
           enabled,
           sampleRate,
           filters,
+          spanType,
           maxGoldens,
           inputTransformerId,
           outputTransformerId,
+          turnsTransformerId,
           includeInput,
           includeActualOutput,
           includeExpectedOutput,
@@ -133,6 +203,17 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
           includeContext,
           includeToolsCalled,
           includeExpectedTools,
+          includeTurns,
+          includeUserDescription,
+          userDescription,
+          personaId,
+          journeyId,
+          interruptionFrequency,
+          interruptionOverlap,
+          tags,
+          metadata,
+          assignmentStrategy,
+          reviewerEmails,
         },
         urlParams: { datasetId },
       },
@@ -177,15 +258,22 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
    * @param sampleRate The fraction of matching items to ingest, between 0 and
    *   1. On create it defaults to 1, all of them; omit it on an update to leave
    *   it unchanged.
+   * @param spanType Only harvest spans of this kind. Allowed only when
+   *   `dataModel` is `SPAN`, and cleared automatically if the task moves off
+   *   `SPAN`. Send `null` to harvest every span; omit it on an update to leave
+   *   it unchanged.
    * @param maxGoldens The maximum number of goldens this task will ever create.
    *   Send `null` to remove the cap.
    * @param inputTransformerId The id of a transformer that reshapes the
    *   harvested input before it is stored. Send `null` to detach it.
    * @param outputTransformerId The id of a transformer that reshapes the
    *   harvested output before it is stored. Send `null` to detach it.
+   * @param turnsTransformerId The id of a transformer that builds a multi-turn
+   *   golden's `turns` from the harvested item, instead of reading them from
+   *   its messages. Send `null` to detach it.
    * @param includeInput Populate the golden's `input` from the harvested item.
-   *   On create it defaults to `true` and every other include flag defaults to
-   *   `false`; omit it on an update to leave it unchanged.
+   *   On create it and `includeTurns` default to `true` and every other include
+   *   flag defaults to `false`; omit it on an update to leave it unchanged.
    * @param includeActualOutput Populate the golden's `actualOutput` from the
    *   harvested item.
    * @param includeExpectedOutput Populate the golden's `expectedOutput` from
@@ -198,6 +286,34 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
    *   harvested item.
    * @param includeExpectedTools Populate the golden's `expectedTools` from the
    *   harvested item.
+   * @param includeTurns Populate a multi-turn golden's `turns` from the
+   *   harvested thread or trace. Ignored for single-turn datasets.
+   * @param includeUserDescription Generate a multi-turn golden's
+   *   `userDescription` from the harvested thread or trace, alongside its
+   *   `scenario`. Ignored for single-turn datasets.
+   * @param userDescription The `userDescription` set on every multi-turn
+   *   golden, instead of generating one. Send `null` to clear it. Ignored for
+   *   single-turn datasets.
+   * @param personaId The id of a persona to simulate every multi-turn golden
+   *   as. Its characteristics replace `userDescription`, and its interruptions,
+   *   when it has any, replace the interruption fields. Send `null` to clear
+   *   it. Ignored for single-turn datasets.
+   * @param journeyId The id of a journey to assign every multi-turn golden to.
+   *   Send `null` to clear it. Ignored for single-turn datasets.
+   * @param interruptionFrequency How often the simulated user interrupts on
+   *   every multi-turn golden. Send `null` to turn interruptions off. Ignored
+   *   for single-turn datasets.
+   * @param interruptionOverlap What the simulated user does when both sides
+   *   talk at once on every multi-turn golden. Only used with
+   *   `interruptionFrequency`, and `ADAPTIVE` when `null`. Ignored for single-
+   *   turn datasets.
+   * @param tags Tags added to every golden the task creates. Replaces the
+   *   stored tags: send `[]` to clear them, or omit to keep them.
+   * @param metadata Key-value pairs merged into every golden's
+   *   `additionalMetadata`, alongside the id of the item it came from. Send
+   *   `null` to clear it.
+   * @param reviewerEmails The project members harvested goldens are assigned
+   *   to, following `assignmentStrategy`.
    */
   async updateIngestionTask(
     datasetId: string,
@@ -209,9 +325,11 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
       enabled?: boolean;
       sampleRate?: number;
       filters?: FilterSet;
+      spanType?: SpanType | null;
       maxGoldens?: number | null;
       inputTransformerId?: string | null;
       outputTransformerId?: string | null;
+      turnsTransformerId?: string | null;
       includeInput?: boolean;
       includeActualOutput?: boolean;
       includeExpectedOutput?: boolean;
@@ -219,6 +337,17 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
       includeContext?: boolean;
       includeToolsCalled?: boolean;
       includeExpectedTools?: boolean;
+      includeTurns?: boolean;
+      includeUserDescription?: boolean;
+      userDescription?: string | null;
+      personaId?: string | null;
+      journeyId?: string | null;
+      interruptionFrequency?: InterruptionFrequency | null;
+      interruptionOverlap?: InterruptionOverlap | null;
+      tags?: string[];
+      metadata?: Record<string, unknown> | null;
+      assignmentStrategy?: AssignmentStrategy;
+      reviewerEmails?: string[];
     } = {},
   ): Promise<DatasetIngestionTask> {
     const {
@@ -228,9 +357,11 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
       enabled,
       sampleRate,
       filters,
+      spanType,
       maxGoldens,
       inputTransformerId,
       outputTransformerId,
+      turnsTransformerId,
       includeInput,
       includeActualOutput,
       includeExpectedOutput,
@@ -238,6 +369,17 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
       includeContext,
       includeToolsCalled,
       includeExpectedTools,
+      includeTurns,
+      includeUserDescription,
+      userDescription,
+      personaId,
+      journeyId,
+      interruptionFrequency,
+      interruptionOverlap,
+      tags,
+      metadata,
+      assignmentStrategy,
+      reviewerEmails,
     } = options;
     return this.api.sendRequest<DatasetIngestionTask>(
       HttpMethods.PUT,
@@ -250,9 +392,11 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
           enabled,
           sampleRate,
           filters,
+          spanType,
           maxGoldens,
           inputTransformerId,
           outputTransformerId,
+          turnsTransformerId,
           includeInput,
           includeActualOutput,
           includeExpectedOutput,
@@ -260,6 +404,17 @@ export class DatasetIngestionTasksOperations extends DatasetsOperations {
           includeContext,
           includeToolsCalled,
           includeExpectedTools,
+          includeTurns,
+          includeUserDescription,
+          userDescription,
+          personaId,
+          journeyId,
+          interruptionFrequency,
+          interruptionOverlap,
+          tags,
+          metadata,
+          assignmentStrategy,
+          reviewerEmails,
         },
         urlParams: { datasetId, datasetIngestionTaskId },
       },

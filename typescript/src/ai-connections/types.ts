@@ -76,6 +76,7 @@ export interface AIConnection {
   toolsCalledKeyPath: (string | number)[];
   stateKeyPath: (string | number)[];
   metadataKeyPath: (string | number)[];
+  turnMetadataKeyPath: (string | number)[];
   inputTokenCountKeyPath: (string | number)[];
   outputTokenCountKeyPath: (string | number)[];
   tokenCostKeyPath: (string | number)[];
@@ -84,6 +85,7 @@ export interface AIConnection {
   toolsCalledTransformerId: string | null;
   stateTransformerId: string | null;
   metadataTransformerId: string | null;
+  turnMetadataTransformerId: string | null;
   inputTokenCountTransformerId: string | null;
   outputTokenCountTransformerId: string | null;
   tokenCostTransformerId: string | null;
@@ -92,6 +94,7 @@ export interface AIConnection {
   toolsCalledEvent: string | null;
   stateEvent: string | null;
   metadataEvent: string | null;
+  turnMetadataEvent: string | null;
   actualOutputAccumulate: boolean;
   mergeMetadata: boolean;
   prompts: Record<string, AIConnectionPromptRef> | null;
@@ -124,6 +127,7 @@ export interface AIConnectionPingResult {
   toolsCalled: Record<string, unknown>[] | null;
   state: Record<string, unknown> | null;
   metadata: Record<string, unknown> | null;
+  turnMetadata: Record<string, unknown> | null;
   inputTokenCount: number | null;
   outputTokenCount: number | null;
   tokenCost: number | null;
@@ -132,6 +136,7 @@ export interface AIConnectionPingResult {
   invalidToolsCalled: boolean;
   invalidState: boolean;
   invalidMetadata: boolean;
+  invalidTurnMetadata: boolean;
   invalidInputTokenCount: boolean;
   invalidOutputTokenCount: boolean;
   invalidTokenCost: boolean;
@@ -162,6 +167,7 @@ export interface CreateAIConnectionInput {
   toolsCalledKeyPath?: (string | number)[] | null;
   stateKeyPath?: (string | number)[] | null;
   metadataKeyPath?: (string | number)[] | null;
+  turnMetadataKeyPath?: (string | number)[] | null;
   inputTokenCountKeyPath?: (string | number)[] | null;
   outputTokenCountKeyPath?: (string | number)[] | null;
   tokenCostKeyPath?: (string | number)[] | null;
@@ -170,6 +176,7 @@ export interface CreateAIConnectionInput {
   toolsCalledEvent?: string | null;
   stateEvent?: string | null;
   metadataEvent?: string | null;
+  turnMetadataEvent?: string | null;
   actualOutputAccumulate?: boolean;
   mergeMetadata?: boolean;
   actualOutputTransformerId?: string | null;
@@ -177,6 +184,7 @@ export interface CreateAIConnectionInput {
   toolsCalledTransformerId?: string | null;
   stateTransformerId?: string | null;
   metadataTransformerId?: string | null;
+  turnMetadataTransformerId?: string | null;
   inputTokenCountTransformerId?: string | null;
   outputTokenCountTransformerId?: string | null;
   tokenCostTransformerId?: string | null;
@@ -208,6 +216,7 @@ export interface UpdateAIConnectionInput {
   toolsCalledKeyPath?: (string | number)[] | null;
   stateKeyPath?: (string | number)[] | null;
   metadataKeyPath?: (string | number)[] | null;
+  turnMetadataKeyPath?: (string | number)[] | null;
   inputTokenCountKeyPath?: (string | number)[] | null;
   outputTokenCountKeyPath?: (string | number)[] | null;
   tokenCostKeyPath?: (string | number)[] | null;
@@ -216,6 +225,7 @@ export interface UpdateAIConnectionInput {
   toolsCalledEvent?: string | null;
   stateEvent?: string | null;
   metadataEvent?: string | null;
+  turnMetadataEvent?: string | null;
   actualOutputAccumulate?: boolean;
   mergeMetadata?: boolean;
   actualOutputTransformerId?: string | null;
@@ -223,6 +233,7 @@ export interface UpdateAIConnectionInput {
   toolsCalledTransformerId?: string | null;
   stateTransformerId?: string | null;
   metadataTransformerId?: string | null;
+  turnMetadataTransformerId?: string | null;
   inputTokenCountTransformerId?: string | null;
   outputTokenCountTransformerId?: string | null;
   tokenCostTransformerId?: string | null;

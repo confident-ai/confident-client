@@ -200,14 +200,18 @@ export class Prompt {
    * prompt first when it does not exist. Send `text` for a text prompt or
    * `messages` for a messages prompt, not both.
    */
-  async push(options: { branch?: string } = {}): Promise<PushPromptResult> {
-    const result = await this.client.push(this.pushBody(options.branch));
+  async push(
+    options: { branch?: string; commitMessage?: string } = {},
+  ): Promise<PushPromptResult> {
+    const result = await this.client.push(
+      this.pushBody(options.branch, options.commitMessage),
+    );
     this.promptId = result.promptId;
     this.hash = result.hash;
     return result;
   }
 
-  private pushBody(branch?: string): PromptInput {
+  private pushBody(branch?: string, commitMessage?: string): PromptInput {
     if (this.alias === undefined) {
       throw new Error("Set alias before calling push.");
     }
@@ -219,6 +223,7 @@ export class Prompt {
       outputSchema: this.outputSchema,
       tools: this.tools?.map((tool) => this.toolInput(tool)),
       branch,
+      commitMessage,
     };
     const chosen = (["text", "messages"] as const).filter(
       (name) => this[name] !== undefined,

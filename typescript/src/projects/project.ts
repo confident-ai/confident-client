@@ -568,7 +568,8 @@ export class Project {
    * Set Project Model
    *
    * Sets one of the project's models, selected by the `modelType` path segment;
-   * `decision` configures the model used by `JEVAL` metrics. The provider's
+   * `decision` configures the decision model used by `JEVAL` metrics, the
+   * `HYBRID` and `DECISION` eval modes, and journey discovery. The provider's
    * credential must already be configured on the project or organization, and a
    * provider blocked by the organization's model provider policy is rejected.
    * `CONFIDENT_AI` needs no credential and stores a `null` model name.

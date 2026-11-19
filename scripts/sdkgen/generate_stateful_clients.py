@@ -284,9 +284,9 @@ class Handle:
         fields = dict(properties_of(self.name, self.schemas))
         for name, save in (self.config.get("save") or {}).items():
             sends = request_type(self.route(save["operation"]))
-            arguments = set(save.get("call_params") or [])
+            arguments = {snake_case(name) for name in save.get("call_params") or []}
             for field, schema in properties_of(sends, self.schemas).items():
-                if field not in arguments:
+                if snake_case(field) not in arguments:
                     fields.setdefault(field, schema)
         return [
             (snake_case(field), self.resolve(schema, f"{self.name}.{field}"))
@@ -297,9 +297,9 @@ class Handle:
         fields = dict(properties_of(self.name, self.schemas))
         for _, save in (self.config.get("save") or {}).items():
             sends = request_type(self.route(save["operation"]))
-            arguments = set(save.get("call_params") or [])
+            arguments = {snake_case(name) for name in save.get("call_params") or []}
             for field, schema in properties_of(sends, self.schemas).items():
-                if field not in arguments:
+                if snake_case(field) not in arguments:
                     fields.setdefault(field, schema)
         resolved = []
         for field, schema in fields.items():
@@ -355,14 +355,14 @@ class Handle:
         differ by many optional fields, but by exactly one required one.
         """
         chosen: Dict[str, str] = {}
+        taken = {snake_case(argument) for argument in arguments}
         for branch in branches_of(name, self.schemas):
             schema = self.schemas.get(branch) or {}
             own = [
                 field
                 for field in schema.get("properties") or {}
                 if field not in shared
-                and field not in arguments
-                and camel_case(field) not in arguments
+                and snake_case(field) not in taken
                 and field in (schema.get("required") or [])
             ]
             if len(own) != 1:
@@ -503,9 +503,10 @@ class Handle:
         self, sends: str, arguments: Sequence[str]
     ) -> Dict[str, str]:
         """A save argument's type, read off the body it is sent in."""
+        wanted = [snake_case(name) for name in arguments]
         found: Dict[str, str] = {}
         for field, schema in properties_of(sends, self.schemas).items():
-            if field in arguments or snake_case(field) in arguments:
+            if snake_case(field) in wanted:
                 resolved = self.resolver.resolve(
                     schema, f"{sends}.{field}", pascal_case(f"{sends}.{field}")
                 )
@@ -513,7 +514,7 @@ class Handle:
                 annotation = resolved.as_python(True)
                 self.annotations.append(annotation)
                 found[snake_case(field)] = annotation
-        missing = [name for name in arguments if name not in found]
+        missing = [name for name in wanted if name not in found]
         if missing:
             raise SpecError(
                 f"`{sends}` declares no {', '.join(missing)}, so it cannot be "
@@ -1141,7 +1142,7 @@ class Handle:
         method = self.method(save["operation"])
         self.note(method)
         sends = request_type(self.route(save["operation"]))
-        arguments = list(save.get("call_params") or [])
+        arguments = [snake_case(name) for name in save.get("call_params") or []]
         mapping = save.get("response_mapping") or {}
         self.referenced.add(sends)
 
@@ -1294,7 +1295,7 @@ class Handle:
         shared = [
             field
             for field in properties_of(sends, self.schemas)
-            if field not in arguments
+            if snake_case(field) not in arguments
             and field != MEDIA_MAPPING_FIELD
             and all(
                 field in ((self.schemas.get(b) or {}).get("properties") or {})

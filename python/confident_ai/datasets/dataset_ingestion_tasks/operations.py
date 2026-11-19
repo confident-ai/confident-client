@@ -3,15 +3,22 @@
 # Do not edit by hand — change the route in confident-cloud
 # and regenerate.
 
-from typing import Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from confident_ai.api import Api, HttpMethods
-from confident_ai.common.types import FilterSet, IngestionDataModel
+from confident_ai.common.types import (
+    AssignmentStrategy,
+    FilterSet,
+    IngestionDataModel,
+    SpanType,
+)
 from confident_ai.datasets.types import (
     CreateDatasetIngestionTaskInput,
     DatasetIngestionTask,
     DatasetIngestionTaskList,
     DatasetIngestionTaskRef,
+    InterruptionFrequency,
+    InterruptionOverlap,
     UpdateDatasetIngestionTaskInput,
 )
 from confident_ai.endpoints import Endpoints
@@ -78,16 +85,29 @@ class DatasetIngestionTasksOperations:
         enabled: Optional[bool] = None,
         sample_rate: Optional[float] = None,
         filters: Optional[FilterSet] = None,
+        span_type: Optional[SpanType] = None,
         max_goldens: Optional[int] = None,
         input_transformer_id: Optional[str] = None,
         output_transformer_id: Optional[str] = None,
+        turns_transformer_id: Optional[str] = None,
         include_input: Optional[bool] = None,
         include_actual_output: Optional[bool] = None,
         include_expected_output: Optional[bool] = None,
         include_retrieval_context: Optional[bool] = None,
         include_context: Optional[bool] = None,
         include_tools_called: Optional[bool] = None,
-        include_expected_tools: Optional[bool] = None
+        include_expected_tools: Optional[bool] = None,
+        include_turns: Optional[bool] = None,
+        include_user_description: Optional[bool] = None,
+        user_description: Optional[str] = None,
+        persona_id: Optional[str] = None,
+        journey_id: Optional[str] = None,
+        interruption_frequency: Optional[InterruptionFrequency] = None,
+        interruption_overlap: Optional[InterruptionOverlap] = None,
+        tags: Optional[List[str]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        assignment_strategy: Optional[AssignmentStrategy] = None,
+        reviewer_emails: Optional[List[str]] = None
     ) -> DatasetIngestionTaskRef:
         """Create Dataset Ingestion Task
 
@@ -108,16 +128,23 @@ class DatasetIngestionTasksOperations:
             sample_rate: The fraction of matching items to ingest, between 0 and
                 1. On create it defaults to 1, all of them; omit it on an update
                 to leave it unchanged.
+            span_type: Only harvest spans of this kind. Allowed only when
+                `dataModel` is `SPAN`, and cleared automatically if the task
+                moves off `SPAN`. Send `null` to harvest every span; omit it on
+                an update to leave it unchanged.
             max_goldens: The maximum number of goldens this task will ever
                 create. Send `null` to remove the cap.
             input_transformer_id: The id of a transformer that reshapes the
                 harvested input before it is stored. Send `null` to detach it.
             output_transformer_id: The id of a transformer that reshapes the
                 harvested output before it is stored. Send `null` to detach it.
+            turns_transformer_id: The id of a transformer that builds a multi-
+                turn golden's `turns` from the harvested item, instead of
+                reading them from its messages. Send `null` to detach it.
             include_input: Populate the golden's `input` from the harvested
-                item. On create it defaults to `true` and every other include
-                flag defaults to `false`; omit it on an update to leave it
-                unchanged.
+                item. On create it and `includeTurns` default to `true` and
+                every other include flag defaults to `false`; omit it on an
+                update to leave it unchanged.
             include_actual_output: Populate the golden's `actualOutput` from the
                 harvested item.
             include_expected_output: Populate the golden's `expectedOutput` from
@@ -130,6 +157,34 @@ class DatasetIngestionTasksOperations:
                 harvested item.
             include_expected_tools: Populate the golden's `expectedTools` from
                 the harvested item.
+            include_turns: Populate a multi-turn golden's `turns` from the
+                harvested thread or trace. Ignored for single-turn datasets.
+            include_user_description: Generate a multi-turn golden's
+                `userDescription` from the harvested thread or trace, alongside
+                its `scenario`. Ignored for single-turn datasets.
+            user_description: The `userDescription` set on every multi-turn
+                golden, instead of generating one. Send `null` to clear it.
+                Ignored for single-turn datasets.
+            persona_id: The id of a persona to simulate every multi-turn golden
+                as. Its characteristics replace `userDescription`, and its
+                interruptions, when it has any, replace the interruption fields.
+                Send `null` to clear it. Ignored for single-turn datasets.
+            journey_id: The id of a journey to assign every multi-turn golden
+                to. Send `null` to clear it. Ignored for single-turn datasets.
+            interruption_frequency: How often the simulated user interrupts on
+                every multi-turn golden. Send `null` to turn interruptions off.
+                Ignored for single-turn datasets.
+            interruption_overlap: What the simulated user does when both sides
+                talk at once on every multi-turn golden. Only used with
+                `interruptionFrequency`, and `ADAPTIVE` when `null`. Ignored for
+                single-turn datasets.
+            tags: Tags added to every golden the task creates. Replaces the
+                stored tags: send `[]` to clear them, or omit to keep them.
+            metadata: Key-value pairs merged into every golden's
+                `additionalMetadata`, alongside the id of the item it came from.
+                Send `null` to clear it.
+            reviewer_emails: The project members harvested goldens are assigned
+                to, following `assignmentStrategy`.
         """
         return self._api.request(
             HttpMethods.POST,
@@ -143,9 +198,11 @@ class DatasetIngestionTasksOperations:
                 "enabled": enabled,
                 "sampleRate": sample_rate,
                 "filters": filters,
+                "spanType": span_type,
                 "maxGoldens": max_goldens,
                 "inputTransformerId": input_transformer_id,
                 "outputTransformerId": output_transformer_id,
+                "turnsTransformerId": turns_transformer_id,
                 "includeInput": include_input,
                 "includeActualOutput": include_actual_output,
                 "includeExpectedOutput": include_expected_output,
@@ -153,6 +210,17 @@ class DatasetIngestionTasksOperations:
                 "includeContext": include_context,
                 "includeToolsCalled": include_tools_called,
                 "includeExpectedTools": include_expected_tools,
+                "includeTurns": include_turns,
+                "includeUserDescription": include_user_description,
+                "userDescription": user_description,
+                "personaId": persona_id,
+                "journeyId": journey_id,
+                "interruptionFrequency": interruption_frequency,
+                "interruptionOverlap": interruption_overlap,
+                "tags": tags,
+                "metadata": metadata,
+                "assignmentStrategy": assignment_strategy,
+                "reviewerEmails": reviewer_emails,
             },
             path={"datasetId": dataset_id},
         )
@@ -167,16 +235,29 @@ class DatasetIngestionTasksOperations:
         enabled: Optional[bool] = None,
         sample_rate: Optional[float] = None,
         filters: Optional[FilterSet] = None,
+        span_type: Optional[SpanType] = None,
         max_goldens: Optional[int] = None,
         input_transformer_id: Optional[str] = None,
         output_transformer_id: Optional[str] = None,
+        turns_transformer_id: Optional[str] = None,
         include_input: Optional[bool] = None,
         include_actual_output: Optional[bool] = None,
         include_expected_output: Optional[bool] = None,
         include_retrieval_context: Optional[bool] = None,
         include_context: Optional[bool] = None,
         include_tools_called: Optional[bool] = None,
-        include_expected_tools: Optional[bool] = None
+        include_expected_tools: Optional[bool] = None,
+        include_turns: Optional[bool] = None,
+        include_user_description: Optional[bool] = None,
+        user_description: Optional[str] = None,
+        persona_id: Optional[str] = None,
+        journey_id: Optional[str] = None,
+        interruption_frequency: Optional[InterruptionFrequency] = None,
+        interruption_overlap: Optional[InterruptionOverlap] = None,
+        tags: Optional[List[str]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        assignment_strategy: Optional[AssignmentStrategy] = None,
+        reviewer_emails: Optional[List[str]] = None
     ) -> DatasetIngestionTaskRef:
         """Create Dataset Ingestion Task
 
@@ -197,16 +278,23 @@ class DatasetIngestionTasksOperations:
             sample_rate: The fraction of matching items to ingest, between 0 and
                 1. On create it defaults to 1, all of them; omit it on an update
                 to leave it unchanged.
+            span_type: Only harvest spans of this kind. Allowed only when
+                `dataModel` is `SPAN`, and cleared automatically if the task
+                moves off `SPAN`. Send `null` to harvest every span; omit it on
+                an update to leave it unchanged.
             max_goldens: The maximum number of goldens this task will ever
                 create. Send `null` to remove the cap.
             input_transformer_id: The id of a transformer that reshapes the
                 harvested input before it is stored. Send `null` to detach it.
             output_transformer_id: The id of a transformer that reshapes the
                 harvested output before it is stored. Send `null` to detach it.
+            turns_transformer_id: The id of a transformer that builds a multi-
+                turn golden's `turns` from the harvested item, instead of
+                reading them from its messages. Send `null` to detach it.
             include_input: Populate the golden's `input` from the harvested
-                item. On create it defaults to `true` and every other include
-                flag defaults to `false`; omit it on an update to leave it
-                unchanged.
+                item. On create it and `includeTurns` default to `true` and
+                every other include flag defaults to `false`; omit it on an
+                update to leave it unchanged.
             include_actual_output: Populate the golden's `actualOutput` from the
                 harvested item.
             include_expected_output: Populate the golden's `expectedOutput` from
@@ -219,6 +307,34 @@ class DatasetIngestionTasksOperations:
                 harvested item.
             include_expected_tools: Populate the golden's `expectedTools` from
                 the harvested item.
+            include_turns: Populate a multi-turn golden's `turns` from the
+                harvested thread or trace. Ignored for single-turn datasets.
+            include_user_description: Generate a multi-turn golden's
+                `userDescription` from the harvested thread or trace, alongside
+                its `scenario`. Ignored for single-turn datasets.
+            user_description: The `userDescription` set on every multi-turn
+                golden, instead of generating one. Send `null` to clear it.
+                Ignored for single-turn datasets.
+            persona_id: The id of a persona to simulate every multi-turn golden
+                as. Its characteristics replace `userDescription`, and its
+                interruptions, when it has any, replace the interruption fields.
+                Send `null` to clear it. Ignored for single-turn datasets.
+            journey_id: The id of a journey to assign every multi-turn golden
+                to. Send `null` to clear it. Ignored for single-turn datasets.
+            interruption_frequency: How often the simulated user interrupts on
+                every multi-turn golden. Send `null` to turn interruptions off.
+                Ignored for single-turn datasets.
+            interruption_overlap: What the simulated user does when both sides
+                talk at once on every multi-turn golden. Only used with
+                `interruptionFrequency`, and `ADAPTIVE` when `null`. Ignored for
+                single-turn datasets.
+            tags: Tags added to every golden the task creates. Replaces the
+                stored tags: send `[]` to clear them, or omit to keep them.
+            metadata: Key-value pairs merged into every golden's
+                `additionalMetadata`, alongside the id of the item it came from.
+                Send `null` to clear it.
+            reviewer_emails: The project members harvested goldens are assigned
+                to, following `assignmentStrategy`.
         """
         return await self._api.a_request(
             HttpMethods.POST,
@@ -232,9 +348,11 @@ class DatasetIngestionTasksOperations:
                 "enabled": enabled,
                 "sampleRate": sample_rate,
                 "filters": filters,
+                "spanType": span_type,
                 "maxGoldens": max_goldens,
                 "inputTransformerId": input_transformer_id,
                 "outputTransformerId": output_transformer_id,
+                "turnsTransformerId": turns_transformer_id,
                 "includeInput": include_input,
                 "includeActualOutput": include_actual_output,
                 "includeExpectedOutput": include_expected_output,
@@ -242,6 +360,17 @@ class DatasetIngestionTasksOperations:
                 "includeContext": include_context,
                 "includeToolsCalled": include_tools_called,
                 "includeExpectedTools": include_expected_tools,
+                "includeTurns": include_turns,
+                "includeUserDescription": include_user_description,
+                "userDescription": user_description,
+                "personaId": persona_id,
+                "journeyId": journey_id,
+                "interruptionFrequency": interruption_frequency,
+                "interruptionOverlap": interruption_overlap,
+                "tags": tags,
+                "metadata": metadata,
+                "assignmentStrategy": assignment_strategy,
+                "reviewerEmails": reviewer_emails,
             },
             path={"datasetId": dataset_id},
         )
@@ -301,16 +430,29 @@ class DatasetIngestionTasksOperations:
         enabled: Optional[bool] = None,
         sample_rate: Optional[float] = None,
         filters: Optional[FilterSet] = None,
+        span_type: Optional[SpanType] = None,
         max_goldens: Optional[int] = None,
         input_transformer_id: Optional[str] = None,
         output_transformer_id: Optional[str] = None,
+        turns_transformer_id: Optional[str] = None,
         include_input: Optional[bool] = None,
         include_actual_output: Optional[bool] = None,
         include_expected_output: Optional[bool] = None,
         include_retrieval_context: Optional[bool] = None,
         include_context: Optional[bool] = None,
         include_tools_called: Optional[bool] = None,
-        include_expected_tools: Optional[bool] = None
+        include_expected_tools: Optional[bool] = None,
+        include_turns: Optional[bool] = None,
+        include_user_description: Optional[bool] = None,
+        user_description: Optional[str] = None,
+        persona_id: Optional[str] = None,
+        journey_id: Optional[str] = None,
+        interruption_frequency: Optional[InterruptionFrequency] = None,
+        interruption_overlap: Optional[InterruptionOverlap] = None,
+        tags: Optional[List[str]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        assignment_strategy: Optional[AssignmentStrategy] = None,
+        reviewer_emails: Optional[List[str]] = None
     ) -> DatasetIngestionTask:
         """Update Dataset Ingestion Task
 
@@ -331,16 +473,23 @@ class DatasetIngestionTasksOperations:
             sample_rate: The fraction of matching items to ingest, between 0 and
                 1. On create it defaults to 1, all of them; omit it on an update
                 to leave it unchanged.
+            span_type: Only harvest spans of this kind. Allowed only when
+                `dataModel` is `SPAN`, and cleared automatically if the task
+                moves off `SPAN`. Send `null` to harvest every span; omit it on
+                an update to leave it unchanged.
             max_goldens: The maximum number of goldens this task will ever
                 create. Send `null` to remove the cap.
             input_transformer_id: The id of a transformer that reshapes the
                 harvested input before it is stored. Send `null` to detach it.
             output_transformer_id: The id of a transformer that reshapes the
                 harvested output before it is stored. Send `null` to detach it.
+            turns_transformer_id: The id of a transformer that builds a multi-
+                turn golden's `turns` from the harvested item, instead of
+                reading them from its messages. Send `null` to detach it.
             include_input: Populate the golden's `input` from the harvested
-                item. On create it defaults to `true` and every other include
-                flag defaults to `false`; omit it on an update to leave it
-                unchanged.
+                item. On create it and `includeTurns` default to `true` and
+                every other include flag defaults to `false`; omit it on an
+                update to leave it unchanged.
             include_actual_output: Populate the golden's `actualOutput` from the
                 harvested item.
             include_expected_output: Populate the golden's `expectedOutput` from
@@ -353,6 +502,34 @@ class DatasetIngestionTasksOperations:
                 harvested item.
             include_expected_tools: Populate the golden's `expectedTools` from
                 the harvested item.
+            include_turns: Populate a multi-turn golden's `turns` from the
+                harvested thread or trace. Ignored for single-turn datasets.
+            include_user_description: Generate a multi-turn golden's
+                `userDescription` from the harvested thread or trace, alongside
+                its `scenario`. Ignored for single-turn datasets.
+            user_description: The `userDescription` set on every multi-turn
+                golden, instead of generating one. Send `null` to clear it.
+                Ignored for single-turn datasets.
+            persona_id: The id of a persona to simulate every multi-turn golden
+                as. Its characteristics replace `userDescription`, and its
+                interruptions, when it has any, replace the interruption fields.
+                Send `null` to clear it. Ignored for single-turn datasets.
+            journey_id: The id of a journey to assign every multi-turn golden
+                to. Send `null` to clear it. Ignored for single-turn datasets.
+            interruption_frequency: How often the simulated user interrupts on
+                every multi-turn golden. Send `null` to turn interruptions off.
+                Ignored for single-turn datasets.
+            interruption_overlap: What the simulated user does when both sides
+                talk at once on every multi-turn golden. Only used with
+                `interruptionFrequency`, and `ADAPTIVE` when `null`. Ignored for
+                single-turn datasets.
+            tags: Tags added to every golden the task creates. Replaces the
+                stored tags: send `[]` to clear them, or omit to keep them.
+            metadata: Key-value pairs merged into every golden's
+                `additionalMetadata`, alongside the id of the item it came from.
+                Send `null` to clear it.
+            reviewer_emails: The project members harvested goldens are assigned
+                to, following `assignmentStrategy`.
         """
         return self._api.request(
             HttpMethods.PUT,
@@ -366,9 +543,11 @@ class DatasetIngestionTasksOperations:
                 "enabled": enabled,
                 "sampleRate": sample_rate,
                 "filters": filters,
+                "spanType": span_type,
                 "maxGoldens": max_goldens,
                 "inputTransformerId": input_transformer_id,
                 "outputTransformerId": output_transformer_id,
+                "turnsTransformerId": turns_transformer_id,
                 "includeInput": include_input,
                 "includeActualOutput": include_actual_output,
                 "includeExpectedOutput": include_expected_output,
@@ -376,6 +555,17 @@ class DatasetIngestionTasksOperations:
                 "includeContext": include_context,
                 "includeToolsCalled": include_tools_called,
                 "includeExpectedTools": include_expected_tools,
+                "includeTurns": include_turns,
+                "includeUserDescription": include_user_description,
+                "userDescription": user_description,
+                "personaId": persona_id,
+                "journeyId": journey_id,
+                "interruptionFrequency": interruption_frequency,
+                "interruptionOverlap": interruption_overlap,
+                "tags": tags,
+                "metadata": metadata,
+                "assignmentStrategy": assignment_strategy,
+                "reviewerEmails": reviewer_emails,
             },
             path={
                 "datasetId": dataset_id,
@@ -394,16 +584,29 @@ class DatasetIngestionTasksOperations:
         enabled: Optional[bool] = None,
         sample_rate: Optional[float] = None,
         filters: Optional[FilterSet] = None,
+        span_type: Optional[SpanType] = None,
         max_goldens: Optional[int] = None,
         input_transformer_id: Optional[str] = None,
         output_transformer_id: Optional[str] = None,
+        turns_transformer_id: Optional[str] = None,
         include_input: Optional[bool] = None,
         include_actual_output: Optional[bool] = None,
         include_expected_output: Optional[bool] = None,
         include_retrieval_context: Optional[bool] = None,
         include_context: Optional[bool] = None,
         include_tools_called: Optional[bool] = None,
-        include_expected_tools: Optional[bool] = None
+        include_expected_tools: Optional[bool] = None,
+        include_turns: Optional[bool] = None,
+        include_user_description: Optional[bool] = None,
+        user_description: Optional[str] = None,
+        persona_id: Optional[str] = None,
+        journey_id: Optional[str] = None,
+        interruption_frequency: Optional[InterruptionFrequency] = None,
+        interruption_overlap: Optional[InterruptionOverlap] = None,
+        tags: Optional[List[str]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        assignment_strategy: Optional[AssignmentStrategy] = None,
+        reviewer_emails: Optional[List[str]] = None
     ) -> DatasetIngestionTask:
         """Update Dataset Ingestion Task
 
@@ -424,16 +627,23 @@ class DatasetIngestionTasksOperations:
             sample_rate: The fraction of matching items to ingest, between 0 and
                 1. On create it defaults to 1, all of them; omit it on an update
                 to leave it unchanged.
+            span_type: Only harvest spans of this kind. Allowed only when
+                `dataModel` is `SPAN`, and cleared automatically if the task
+                moves off `SPAN`. Send `null` to harvest every span; omit it on
+                an update to leave it unchanged.
             max_goldens: The maximum number of goldens this task will ever
                 create. Send `null` to remove the cap.
             input_transformer_id: The id of a transformer that reshapes the
                 harvested input before it is stored. Send `null` to detach it.
             output_transformer_id: The id of a transformer that reshapes the
                 harvested output before it is stored. Send `null` to detach it.
+            turns_transformer_id: The id of a transformer that builds a multi-
+                turn golden's `turns` from the harvested item, instead of
+                reading them from its messages. Send `null` to detach it.
             include_input: Populate the golden's `input` from the harvested
-                item. On create it defaults to `true` and every other include
-                flag defaults to `false`; omit it on an update to leave it
-                unchanged.
+                item. On create it and `includeTurns` default to `true` and
+                every other include flag defaults to `false`; omit it on an
+                update to leave it unchanged.
             include_actual_output: Populate the golden's `actualOutput` from the
                 harvested item.
             include_expected_output: Populate the golden's `expectedOutput` from
@@ -446,6 +656,34 @@ class DatasetIngestionTasksOperations:
                 harvested item.
             include_expected_tools: Populate the golden's `expectedTools` from
                 the harvested item.
+            include_turns: Populate a multi-turn golden's `turns` from the
+                harvested thread or trace. Ignored for single-turn datasets.
+            include_user_description: Generate a multi-turn golden's
+                `userDescription` from the harvested thread or trace, alongside
+                its `scenario`. Ignored for single-turn datasets.
+            user_description: The `userDescription` set on every multi-turn
+                golden, instead of generating one. Send `null` to clear it.
+                Ignored for single-turn datasets.
+            persona_id: The id of a persona to simulate every multi-turn golden
+                as. Its characteristics replace `userDescription`, and its
+                interruptions, when it has any, replace the interruption fields.
+                Send `null` to clear it. Ignored for single-turn datasets.
+            journey_id: The id of a journey to assign every multi-turn golden
+                to. Send `null` to clear it. Ignored for single-turn datasets.
+            interruption_frequency: How often the simulated user interrupts on
+                every multi-turn golden. Send `null` to turn interruptions off.
+                Ignored for single-turn datasets.
+            interruption_overlap: What the simulated user does when both sides
+                talk at once on every multi-turn golden. Only used with
+                `interruptionFrequency`, and `ADAPTIVE` when `null`. Ignored for
+                single-turn datasets.
+            tags: Tags added to every golden the task creates. Replaces the
+                stored tags: send `[]` to clear them, or omit to keep them.
+            metadata: Key-value pairs merged into every golden's
+                `additionalMetadata`, alongside the id of the item it came from.
+                Send `null` to clear it.
+            reviewer_emails: The project members harvested goldens are assigned
+                to, following `assignmentStrategy`.
         """
         return await self._api.a_request(
             HttpMethods.PUT,
@@ -459,9 +697,11 @@ class DatasetIngestionTasksOperations:
                 "enabled": enabled,
                 "sampleRate": sample_rate,
                 "filters": filters,
+                "spanType": span_type,
                 "maxGoldens": max_goldens,
                 "inputTransformerId": input_transformer_id,
                 "outputTransformerId": output_transformer_id,
+                "turnsTransformerId": turns_transformer_id,
                 "includeInput": include_input,
                 "includeActualOutput": include_actual_output,
                 "includeExpectedOutput": include_expected_output,
@@ -469,6 +709,17 @@ class DatasetIngestionTasksOperations:
                 "includeContext": include_context,
                 "includeToolsCalled": include_tools_called,
                 "includeExpectedTools": include_expected_tools,
+                "includeTurns": include_turns,
+                "includeUserDescription": include_user_description,
+                "userDescription": user_description,
+                "personaId": persona_id,
+                "journeyId": journey_id,
+                "interruptionFrequency": interruption_frequency,
+                "interruptionOverlap": interruption_overlap,
+                "tags": tags,
+                "metadata": metadata,
+                "assignmentStrategy": assignment_strategy,
+                "reviewerEmails": reviewer_emails,
             },
             path={
                 "datasetId": dataset_id,
