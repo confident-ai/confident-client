@@ -4,13 +4,28 @@
 // and regenerate.
 
 import {
+  AssignmentStrategy,
   FilterSet,
   GenerationMode,
   IngestionDataModel,
   MLLMImageInput,
+  SpanType,
   ToolCall,
   Turn,
+  UserReference,
 } from "../common/types";
+
+export enum InterruptionFrequency {
+  RARE = "RARE",
+  NORMAL = "NORMAL",
+  FREQUENT = "FREQUENT",
+}
+
+export enum InterruptionOverlap {
+  YIELD = "YIELD",
+  ADAPTIVE = "ADAPTIVE",
+  INSIST = "INSIST",
+}
 
 export interface CreateDatasetIngestionTaskInput {
   name: string;
@@ -19,9 +34,11 @@ export interface CreateDatasetIngestionTaskInput {
   enabled?: boolean;
   sampleRate?: number;
   filters?: FilterSet;
+  spanType?: SpanType | null;
   maxGoldens?: number | null;
   inputTransformerId?: string | null;
   outputTransformerId?: string | null;
+  turnsTransformerId?: string | null;
   includeInput?: boolean;
   includeActualOutput?: boolean;
   includeExpectedOutput?: boolean;
@@ -29,6 +46,17 @@ export interface CreateDatasetIngestionTaskInput {
   includeContext?: boolean;
   includeToolsCalled?: boolean;
   includeExpectedTools?: boolean;
+  includeTurns?: boolean;
+  includeUserDescription?: boolean;
+  userDescription?: string | null;
+  personaId?: string | null;
+  journeyId?: string | null;
+  interruptionFrequency?: InterruptionFrequency | null;
+  interruptionOverlap?: InterruptionOverlap | null;
+  tags?: string[];
+  metadata?: Record<string, unknown> | null;
+  assignmentStrategy?: AssignmentStrategy;
+  reviewerEmails?: string[];
 }
 
 export interface CreateDatasetVersionResult {
@@ -105,9 +133,11 @@ export interface DatasetIngestionTask {
   sampleRate: number;
   dataModel: IngestionDataModel;
   filters: FilterSet | null;
+  spanType: SpanType | null;
   maxGoldens: number | null;
   inputTransformerId: string | null;
   outputTransformerId: string | null;
+  turnsTransformerId: string | null;
   includeInput: boolean;
   includeActualOutput: boolean;
   includeExpectedOutput: boolean;
@@ -115,6 +145,17 @@ export interface DatasetIngestionTask {
   includeContext: boolean;
   includeToolsCalled: boolean;
   includeExpectedTools: boolean;
+  includeTurns: boolean;
+  includeUserDescription: boolean;
+  userDescription: string | null;
+  personaId: string | null;
+  journeyId: string | null;
+  interruptionFrequency: InterruptionFrequency | null;
+  interruptionOverlap: InterruptionOverlap | null;
+  tags: string[];
+  metadata: Record<string, unknown> | null;
+  assignmentStrategy: AssignmentStrategy;
+  reviewers: UserReference[];
   createdAt: string;
   updatedAt: string;
 }
@@ -174,7 +215,8 @@ export interface QueueDatasetGoldensInput {
 }
 
 export interface RunDatasetEvaluationInput {
-  metricCollection: string;
+  metricCollection?: string;
+  traceMetricCollection?: string;
   identifier?: string;
   version?: string;
   aiConnectionId?: string;
@@ -202,9 +244,11 @@ export interface UpdateDatasetIngestionTaskInput {
   enabled?: boolean;
   sampleRate?: number;
   filters?: FilterSet;
+  spanType?: SpanType | null;
   maxGoldens?: number | null;
   inputTransformerId?: string | null;
   outputTransformerId?: string | null;
+  turnsTransformerId?: string | null;
   includeInput?: boolean;
   includeActualOutput?: boolean;
   includeExpectedOutput?: boolean;
@@ -212,4 +256,15 @@ export interface UpdateDatasetIngestionTaskInput {
   includeContext?: boolean;
   includeToolsCalled?: boolean;
   includeExpectedTools?: boolean;
+  includeTurns?: boolean;
+  includeUserDescription?: boolean;
+  userDescription?: string | null;
+  personaId?: string | null;
+  journeyId?: string | null;
+  interruptionFrequency?: InterruptionFrequency | null;
+  interruptionOverlap?: InterruptionOverlap | null;
+  tags?: string[];
+  metadata?: Record<string, unknown> | null;
+  assignmentStrategy?: AssignmentStrategy;
+  reviewerEmails?: string[];
 }

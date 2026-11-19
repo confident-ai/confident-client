@@ -331,31 +331,50 @@ class Prompt:
         self._load(payload)
         return payload
 
-    def push(self, *, branch: Optional[str] = None) -> PushPromptResult:
+    def push(
+        self,
+        *,
+        branch: Optional[str] = None,
+        commit_message: Optional[str] = None,
+    ) -> PushPromptResult:
         """Push Prompt
 
         Creates a new commit for the prompt with the given `alias`, creating the
         prompt first when it does not exist. Send `text` for a text prompt or
         `messages` for a messages prompt, not both.
         """
-        result = self._client.push(self._push_body(branch=branch))
+        result = self._client.push(
+            self._push_body(branch=branch, commit_message=commit_message)
+        )
         self.prompt_id = result.prompt_id
         self.hash = result.hash
         return result
 
-    async def a_push(self, *, branch: Optional[str] = None) -> PushPromptResult:
+    async def a_push(
+        self,
+        *,
+        branch: Optional[str] = None,
+        commit_message: Optional[str] = None,
+    ) -> PushPromptResult:
         """Push Prompt
 
         Creates a new commit for the prompt with the given `alias`, creating the
         prompt first when it does not exist. Send `text` for a text prompt or
         `messages` for a messages prompt, not both.
         """
-        result = await self._client.a_push(self._push_body(branch=branch))
+        result = await self._client.a_push(
+            self._push_body(branch=branch, commit_message=commit_message)
+        )
         self.prompt_id = result.prompt_id
         self.hash = result.hash
         return result
 
-    def _push_body(self, *, branch: Optional[str] = None) -> PromptInput:
+    def _push_body(
+        self,
+        *,
+        branch: Optional[str] = None,
+        commit_message: Optional[str] = None,
+    ) -> PromptInput:
         if self.alias is None:
             raise ValueError("Set alias before calling push.")
         fields = {
@@ -370,6 +389,7 @@ class Prompt:
                 else [self._tool_input(tool) for tool in self.tools]
             ),
             "branch": branch,
+            "commit_message": commit_message,
         }
         chosen = [
             name

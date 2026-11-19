@@ -28,9 +28,9 @@ class ThreadsClient:
         """List Threads
 
         Lists the threads in your Confident AI project one page at a time, most
-        recently active first by default. Each thread is returned as a summary;
-        retrieve a thread by id for its traces, evaluation results and
-        annotations.
+        recently active first by default. Use `nextCursor` as `cursor` to get
+        the next page. Each thread is returned as a summary; retrieve a thread
+        by id for its traces, evaluation results and annotations.
 
         Args:
             page_size: The number of results per page, at most 100. Defaults to
@@ -80,9 +80,9 @@ class ThreadsClient:
         """List Threads
 
         Lists the threads in your Confident AI project one page at a time, most
-        recently active first by default. Each thread is returned as a summary;
-        retrieve a thread by id for its traces, evaluation results and
-        annotations.
+        recently active first by default. Use `nextCursor` as `cursor` to get
+        the next page. Each thread is returned as a summary; retrieve a thread
+        by id for its traces, evaluation results and annotations.
 
         Args:
             page_size: The number of results per page, at most 100. Defaults to

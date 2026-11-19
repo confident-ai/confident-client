@@ -155,6 +155,7 @@ class MessagesPromptInput(ConfidentBaseModel):
     )
     tools: Optional[List[ToolInput]] = None
     branch: Optional[str] = None
+    commit_message: Optional[str] = Field(default=None, alias="commitMessage")
     images_mapping: Optional[Dict[str, MLLMImageInput]] = Field(
         default=None,
         alias="imagesMapping",
@@ -253,6 +254,7 @@ class TextPromptInput(ConfidentBaseModel):
     )
     tools: Optional[List[ToolInput]] = None
     branch: Optional[str] = None
+    commit_message: Optional[str] = Field(default=None, alias="commitMessage")
     images_mapping: Optional[Dict[str, MLLMImageInput]] = Field(
         default=None,
         alias="imagesMapping",

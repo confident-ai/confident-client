@@ -7,6 +7,7 @@ import { HttpMethods } from "../../api";
 import { Endpoints } from "../../endpoints";
 import { ClassifiersOperations } from "../operations";
 import {
+  ClassifierDataModel,
   ClassifierLabel,
   ClassifierLabelList,
   ClassifierLabelRef,
@@ -55,6 +56,8 @@ export class LabelsOperations extends ClassifiersOperations {
    *   name.
    * @param enabled Whether the label can be applied. Defaults to `true` on
    *   create; omit it on an update to leave it unchanged.
+   * @param dataModels The data models this label can be applied on. Defaults to
+   *   all three on create; omit it on an update to leave it unchanged.
    */
   async createLabel(
     classifierId: string,
@@ -64,14 +67,15 @@ export class LabelsOperations extends ClassifiersOperations {
       enabled?: boolean;
       status?: ClassifierLabelStatus;
       polarity?: SignalPolarity;
+      dataModels?: ClassifierDataModel[];
     } = {},
   ): Promise<ClassifierLabelRef> {
-    const { enabled, status, polarity } = options;
+    const { enabled, status, polarity, dataModels } = options;
     return this.api.sendRequest<ClassifierLabelRef>(
       HttpMethods.POST,
       Endpoints.CLASSIFIER_LABELS_ENDPOINT,
       {
-        body: { name, description, enabled, status, polarity },
+        body: { name, description, enabled, status, polarity, dataModels },
         urlParams: { classifierId },
       },
     );
@@ -110,6 +114,8 @@ export class LabelsOperations extends ClassifiersOperations {
    * @param description When this label applies. It cannot be cleared.
    * @param enabled Whether the label can be applied. Defaults to `true` on
    *   create; omit it on an update to leave it unchanged.
+   * @param dataModels The data models this label can be applied on. Defaults to
+   *   all three on create; omit it on an update to leave it unchanged.
    */
   async updateLabel(
     classifierId: string,
@@ -120,14 +126,16 @@ export class LabelsOperations extends ClassifiersOperations {
       enabled?: boolean;
       status?: ClassifierLabelStatus;
       polarity?: SignalPolarity;
+      dataModels?: ClassifierDataModel[];
     } = {},
   ): Promise<ClassifierLabel> {
-    const { name, description, enabled, status, polarity } = options;
+    const { name, description, enabled, status, polarity, dataModels } =
+      options;
     return this.api.sendRequest<ClassifierLabel>(
       HttpMethods.PUT,
       Endpoints.CLASSIFIER_LABEL_ENDPOINT,
       {
-        body: { name, description, enabled, status, polarity },
+        body: { name, description, enabled, status, polarity, dataModels },
         urlParams: { classifierId, labelId },
       },
     );

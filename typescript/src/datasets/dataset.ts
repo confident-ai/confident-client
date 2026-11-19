@@ -81,7 +81,11 @@ export class Dataset {
    * or `promptAlias`, never both, to generate them first.
    *
    * @param metricCollection The name of the metric collection to evaluate
-   *   against. Names come from the list metric collections endpoint.
+   *   against. Names come from the list metric collections endpoint. Required
+   *   unless `traceMetricCollection` is set.
+   * @param traceMetricCollection The name of a single-turn metric collection to
+   *   score each test case's linked trace with, for runs that call a traced
+   *   voice connection.
    * @param identifier A label for the resulting test run, used to recognise it
    *   in the test runs list.
    * @param version The dataset version to evaluate. Omit this field to evaluate
@@ -121,8 +125,9 @@ export class Dataset {
    *   an MCP tool call rather than a function call.
    */
   async runEvaluation(
-    metricCollection: string,
     options: {
+      metricCollection?: string;
+      traceMetricCollection?: string;
       identifier?: string;
       version?: string;
       aiConnectionId?: string;
@@ -138,11 +143,7 @@ export class Dataset {
       mcpServerIds?: string[];
     } = {},
   ): Promise<RunDatasetEvaluationResult> {
-    return this.client.runEvaluation(
-      this.datasetIdOrThrow(),
-      metricCollection,
-      options,
-    );
+    return this.client.runEvaluation(this.datasetIdOrThrow(), options);
   }
 
   /**

@@ -115,6 +115,15 @@ export interface TestCaseMetricData {
   threshold: number | null;
   strictMode: boolean;
   skipped: boolean;
+  skipReason:
+    | "HOURLY_LIMIT"
+    | "CREDITS"
+    | "BUDGET"
+    | "PLAN_LIMIT"
+    | "PARENT_NOT_RUN"
+    | "CHAIN_EXPIRED"
+    | "RUN_FAILED"
+    | null;
   flaky: boolean;
   evaluationModel: string | null;
   evaluationCost: number | null;

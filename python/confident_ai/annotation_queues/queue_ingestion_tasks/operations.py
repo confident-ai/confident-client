@@ -6,7 +6,6 @@
 from typing import List, Optional
 
 from confident_ai.annotation_queues.types import (
-    AssignmentStrategy,
     CreateQueueIngestionTaskInput,
     QueueIngestionTask,
     QueueIngestionTaskList,
@@ -14,7 +13,12 @@ from confident_ai.annotation_queues.types import (
     UpdateQueueIngestionTaskInput,
 )
 from confident_ai.api import Api, HttpMethods
-from confident_ai.common.types import FilterSet, IngestionDataModel
+from confident_ai.common.types import (
+    AssignmentStrategy,
+    FilterSet,
+    IngestionDataModel,
+    SpanType,
+)
 from confident_ai.endpoints import Endpoints
 
 
@@ -81,6 +85,7 @@ class QueueIngestionTasksOperations:
         enabled: Optional[bool] = None,
         sample_rate: Optional[float] = None,
         filters: Optional[FilterSet] = None,
+        span_type: Optional[SpanType] = None,
         max_items: Optional[int] = None,
         assignment_strategy: Optional[AssignmentStrategy] = None,
         reviewer_emails: Optional[List[str]] = None
@@ -102,6 +107,10 @@ class QueueIngestionTasksOperations:
             sample_rate: The fraction of matching items to queue, between 0 and
                 1. On create it defaults to 1, all of them; omit it on an update
                 to leave it unchanged.
+            span_type: Only queue spans of this kind. Allowed only when
+                `dataModel` is `SPAN`, and cleared automatically if the task
+                moves off `SPAN`. Send `null` to queue every span; omit it on an
+                update to leave it unchanged.
             max_items: The maximum number of items this task will ever queue.
                 Send `null` to remove the cap.
             reviewer_emails: The project members harvested items are assigned
@@ -119,6 +128,7 @@ class QueueIngestionTasksOperations:
                 "enabled": enabled,
                 "sampleRate": sample_rate,
                 "filters": filters,
+                "spanType": span_type,
                 "maxItems": max_items,
                 "assignmentStrategy": assignment_strategy,
                 "reviewerEmails": reviewer_emails,
@@ -136,6 +146,7 @@ class QueueIngestionTasksOperations:
         enabled: Optional[bool] = None,
         sample_rate: Optional[float] = None,
         filters: Optional[FilterSet] = None,
+        span_type: Optional[SpanType] = None,
         max_items: Optional[int] = None,
         assignment_strategy: Optional[AssignmentStrategy] = None,
         reviewer_emails: Optional[List[str]] = None
@@ -157,6 +168,10 @@ class QueueIngestionTasksOperations:
             sample_rate: The fraction of matching items to queue, between 0 and
                 1. On create it defaults to 1, all of them; omit it on an update
                 to leave it unchanged.
+            span_type: Only queue spans of this kind. Allowed only when
+                `dataModel` is `SPAN`, and cleared automatically if the task
+                moves off `SPAN`. Send `null` to queue every span; omit it on an
+                update to leave it unchanged.
             max_items: The maximum number of items this task will ever queue.
                 Send `null` to remove the cap.
             reviewer_emails: The project members harvested items are assigned
@@ -174,6 +189,7 @@ class QueueIngestionTasksOperations:
                 "enabled": enabled,
                 "sampleRate": sample_rate,
                 "filters": filters,
+                "spanType": span_type,
                 "maxItems": max_items,
                 "assignmentStrategy": assignment_strategy,
                 "reviewerEmails": reviewer_emails,
@@ -237,6 +253,7 @@ class QueueIngestionTasksOperations:
         enabled: Optional[bool] = None,
         sample_rate: Optional[float] = None,
         filters: Optional[FilterSet] = None,
+        span_type: Optional[SpanType] = None,
         max_items: Optional[int] = None,
         assignment_strategy: Optional[AssignmentStrategy] = None,
         reviewer_emails: Optional[List[str]] = None
@@ -264,6 +281,10 @@ class QueueIngestionTasksOperations:
             sample_rate: The fraction of matching items to queue, between 0 and
                 1. On create it defaults to 1, all of them; omit it on an update
                 to leave it unchanged.
+            span_type: Only queue spans of this kind. Allowed only when
+                `dataModel` is `SPAN`, and cleared automatically if the task
+                moves off `SPAN`. Send `null` to queue every span; omit it on an
+                update to leave it unchanged.
             max_items: The maximum number of items this task will ever queue.
                 Send `null` to remove the cap.
             reviewer_emails: The project members harvested items are assigned
@@ -282,6 +303,7 @@ class QueueIngestionTasksOperations:
                 "enabled": enabled,
                 "sampleRate": sample_rate,
                 "filters": filters,
+                "spanType": span_type,
                 "maxItems": max_items,
                 "assignmentStrategy": assignment_strategy,
                 "reviewerEmails": reviewer_emails,
@@ -304,6 +326,7 @@ class QueueIngestionTasksOperations:
         enabled: Optional[bool] = None,
         sample_rate: Optional[float] = None,
         filters: Optional[FilterSet] = None,
+        span_type: Optional[SpanType] = None,
         max_items: Optional[int] = None,
         assignment_strategy: Optional[AssignmentStrategy] = None,
         reviewer_emails: Optional[List[str]] = None
@@ -331,6 +354,10 @@ class QueueIngestionTasksOperations:
             sample_rate: The fraction of matching items to queue, between 0 and
                 1. On create it defaults to 1, all of them; omit it on an update
                 to leave it unchanged.
+            span_type: Only queue spans of this kind. Allowed only when
+                `dataModel` is `SPAN`, and cleared automatically if the task
+                moves off `SPAN`. Send `null` to queue every span; omit it on an
+                update to leave it unchanged.
             max_items: The maximum number of items this task will ever queue.
                 Send `null` to remove the cap.
             reviewer_emails: The project members harvested items are assigned
@@ -349,6 +376,7 @@ class QueueIngestionTasksOperations:
                 "enabled": enabled,
                 "sampleRate": sample_rate,
                 "filters": filters,
+                "spanType": span_type,
                 "maxItems": max_items,
                 "assignmentStrategy": assignment_strategy,
                 "reviewerEmails": reviewer_emails,

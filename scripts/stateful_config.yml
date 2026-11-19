@@ -93,7 +93,7 @@ prompts:
   save:
     push:
       operation: pushPrompt
-      call_params: [branch]
+      call_params: [branch, commit_message]
       sent_as:
         tools: ToolInput
       response_mapping:

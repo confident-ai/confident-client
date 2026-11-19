@@ -4,9 +4,11 @@
 // and regenerate.
 
 import {
+  AssignmentStrategy,
   FilterSet,
   IngestionDataModel,
   MLLMImageInput,
+  SpanType,
   UserReference,
 } from "../common/types";
 
@@ -16,12 +18,6 @@ export enum AnnotationQueueType {
   THREAD = "THREAD",
   GOLDEN = "GOLDEN",
   TEST_CASE = "TEST_CASE",
-}
-
-export enum AssignmentStrategy {
-  SINGLE_USER = "SINGLE_USER",
-  ROUND_ROBIN = "ROUND_ROBIN",
-  RANDOM = "RANDOM",
 }
 
 export enum QueueItemStatus {
@@ -174,6 +170,7 @@ export interface CreateQueueIngestionTaskInput {
   enabled?: boolean;
   sampleRate?: number;
   filters?: FilterSet;
+  spanType?: SpanType | null;
   maxItems?: number | null;
   assignmentStrategy?: AssignmentStrategy;
   reviewerEmails?: string[];
@@ -188,6 +185,7 @@ export interface QueueIngestionTask {
   sampleRate: number;
   dataModel: IngestionDataModel;
   filters: FilterSet | null;
+  spanType: SpanType | null;
   maxItems: number | null;
   assignmentStrategy: AssignmentStrategy;
   reviewers: UserReference[];
@@ -236,6 +234,7 @@ export interface UpdateQueueIngestionTaskInput {
   enabled?: boolean;
   sampleRate?: number;
   filters?: FilterSet;
+  spanType?: SpanType | null;
   maxItems?: number | null;
   assignmentStrategy?: AssignmentStrategy;
   reviewerEmails?: string[];

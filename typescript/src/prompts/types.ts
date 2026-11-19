@@ -116,6 +116,7 @@ export interface MessagesPromptInput {
   outputSchema?: Record<string, unknown>;
   tools?: ToolInput[];
   branch?: string;
+  commitMessage?: string;
   imagesMapping?: Record<string, MLLMImageInput>;
 }
 
@@ -191,6 +192,7 @@ export interface TextPromptInput {
   outputSchema?: Record<string, unknown>;
   tools?: ToolInput[];
   branch?: string;
+  commitMessage?: string;
   imagesMapping?: Record<string, MLLMImageInput>;
 }
 

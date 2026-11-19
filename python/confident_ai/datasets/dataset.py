@@ -99,8 +99,9 @@ class Dataset:
 
     def run_evaluation(
         self,
-        metric_collection: str,
         *,
+        metric_collection: Optional[str] = None,
+        trace_metric_collection: Optional[str] = None,
         identifier: Optional[str] = None,
         version: Optional[str] = None,
         ai_connection_id: Optional[str] = None,
@@ -126,6 +127,10 @@ class Dataset:
         Args:
             metric_collection: The name of the metric collection to evaluate
                 against. Names come from the list metric collections endpoint.
+                Required unless `traceMetricCollection` is set.
+            trace_metric_collection: The name of a single-turn metric collection
+                to score each test case's linked trace with, for runs that call
+                a traced voice connection.
             identifier: A label for the resulting test run, used to recognise it
                 in the test runs list.
             version: The dataset version to evaluate. Omit this field to
@@ -168,7 +173,8 @@ class Dataset:
         """
         return self._client.run_evaluation(
             self._dataset_id(),
-            metric_collection,
+            metric_collection=metric_collection,
+            trace_metric_collection=trace_metric_collection,
             identifier=identifier,
             version=version,
             ai_connection_id=ai_connection_id,
@@ -186,8 +192,9 @@ class Dataset:
 
     async def a_run_evaluation(
         self,
-        metric_collection: str,
         *,
+        metric_collection: Optional[str] = None,
+        trace_metric_collection: Optional[str] = None,
         identifier: Optional[str] = None,
         version: Optional[str] = None,
         ai_connection_id: Optional[str] = None,
@@ -213,6 +220,10 @@ class Dataset:
         Args:
             metric_collection: The name of the metric collection to evaluate
                 against. Names come from the list metric collections endpoint.
+                Required unless `traceMetricCollection` is set.
+            trace_metric_collection: The name of a single-turn metric collection
+                to score each test case's linked trace with, for runs that call
+                a traced voice connection.
             identifier: A label for the resulting test run, used to recognise it
                 in the test runs list.
             version: The dataset version to evaluate. Omit this field to
@@ -255,7 +266,8 @@ class Dataset:
         """
         return await self._client.a_run_evaluation(
             self._dataset_id(),
-            metric_collection,
+            metric_collection=metric_collection,
+            trace_metric_collection=trace_metric_collection,
             identifier=identifier,
             version=version,
             ai_connection_id=ai_connection_id,

@@ -4,7 +4,7 @@
 # and regenerate.
 
 from enum import Enum
-from typing import List, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from pydantic import Field
 
@@ -79,6 +79,16 @@ class WebRTCVoiceConfig(ConfidentBaseModel):
     livekit: WebRTCVoiceConfigLivekit
     pipecat: WebRTCVoiceConfigPipecat
     headers: List[VoiceHeader]
+    metadata: Optional[Dict[str, Any]] = None
+    metadata_mode: Optional[Literal["JSON", "CODE"]] = Field(
+        default=None,
+        alias="metadataMode",
+    )
+    metadata_code: Optional[str] = Field(default=None, alias="metadataCode")
+    test_conversational_golden: Optional[Dict[str, Any]] = Field(
+        default=None,
+        alias="testConversationalGolden",
+    )
 
 
 VoiceTransportConfig = Union[
@@ -101,6 +111,7 @@ class VoiceCallSettingsInput(ConfidentBaseModel):
         alias="silenceTimeoutS",
     )
     record_calls: Optional[bool] = Field(default=None, alias="recordCalls")
+    trace_timeout: Optional[int] = Field(default=None, alias="traceTimeout")
 
 
 class CreateVoiceConnectionInput(ConfidentBaseModel):
@@ -127,6 +138,7 @@ class VoiceCallSettings(ConfidentBaseModel):
     max_call_duration_s: int = Field(alias="maxCallDurationS")
     silence_timeout_s: Optional[int] = Field(alias="silenceTimeoutS")
     record_calls: bool = Field(alias="recordCalls")
+    trace_timeout: int = Field(alias="traceTimeout")
 
 
 class VoiceConnection(ConfidentBaseModel):
@@ -162,6 +174,19 @@ class VoiceConnectionLog(ConfidentBaseModel):
     duration_ms: float = Field(alias="durationMs")
     transcript: Optional[str]
     error: Optional[str]
+    end_reason: Optional[
+        Literal[
+            "COMPLETED",
+            "MAX_TURNS",
+            "AGENT_HUNG_UP",
+            "SILENCE_TIMEOUT",
+            "MAX_DURATION",
+            "NO_AGENT_SPEECH",
+            "ERROR",
+        ]
+    ] = Field(
+        alias="endReason",
+    )
     audio_url: Optional[str] = Field(alias="audioUrl")
 
 

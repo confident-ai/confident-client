@@ -3,12 +3,17 @@
 // Do not edit by hand — change the route in confident-cloud
 // and regenerate.
 
-import { FilterSet, UserReference } from "../common/types";
+import { FilterSet, ModelProvider, UserReference } from "../common/types";
 
 export enum ClassifierDataModel {
   TRACE = "TRACE",
   SPAN = "SPAN",
   THREAD = "THREAD",
+}
+
+export enum ClassifierEvalMode {
+  LLM = "LLM",
+  DECISION = "DECISION",
 }
 
 export enum ClassifierLabelStatus {
@@ -31,6 +36,7 @@ export enum SignalPolarity {
 }
 
 export interface ClassifierAutoGenerationConfig {
+  dataModel?: ClassifierDataModel;
   sampleSize?: number;
 }
 
@@ -41,16 +47,33 @@ export interface ClassifierLabel {
   enabled: boolean;
   status: ClassifierLabelStatus;
   polarity: SignalPolarity;
+  dataModels: ClassifierDataModel[];
 }
 
 export interface Classifier {
   id: string;
   name: string;
   description: string | null;
+  traceDescription: string | null;
+  spanDescription: string | null;
+  threadDescription: string | null;
   enabled: boolean;
   autoClassify: boolean;
   includeAudio: boolean;
-  dataModel: ClassifierDataModel;
+  evaluationModelProvider: ModelProvider | null;
+  evaluationModelName: string | null;
+  evaluationModelCredentialId: string | null;
+  decisionModelProvider: ModelProvider | null;
+  decisionModelName: string | null;
+  evalMode: ClassifierEvalMode | null;
+  audioModelProvider: ModelProvider | null;
+  audioModelName: string | null;
+  audioModelCredentialId: string | null;
+  suggestModelProvider: ModelProvider | null;
+  suggestModelName: string | null;
+  suggestModelCredentialId: string | null;
+  issueThreshold: number | null;
+  dataModel: ClassifierDataModel | null;
   filters: FilterSet;
   autoGenerationConfig: ClassifierAutoGenerationConfig | null;
   labels: ClassifierLabel[];
@@ -84,7 +107,7 @@ export interface ClassifierSummary {
   id: string;
   name: string;
   enabled: boolean;
-  dataModel: ClassifierDataModel;
+  dataModel: ClassifierDataModel | null;
 }
 
 export interface ClassifierList {
@@ -101,6 +124,7 @@ export interface ClassifierRef {
 export interface ClassifierVersionLabel {
   name: string;
   description: string;
+  dataModels: ClassifierDataModel[];
 }
 
 export interface ClassifierVersion {
@@ -109,6 +133,9 @@ export interface ClassifierVersion {
   sequence: number;
   version: string;
   description: string | null;
+  traceDescription: string | null;
+  spanDescription: string | null;
+  threadDescription: string | null;
   labels: ClassifierVersionLabel[];
   createdAt: string;
   author: UserReference | null;
@@ -123,12 +150,28 @@ export interface ClassifierVersionList {
 
 export interface CreateClassifierInput {
   name: string;
-  dataModel: ClassifierDataModel;
+  dataModel?: ClassifierDataModel;
   preset?: ClassifierPreset;
   description?: string | null;
+  traceDescription?: string | null;
+  spanDescription?: string | null;
+  threadDescription?: string | null;
   enabled?: boolean;
   autoClassify?: boolean;
   includeAudio?: boolean;
+  evaluationModelProvider?: ModelProvider | null;
+  evaluationModelName?: string | null;
+  evaluationModelCredentialId?: string | null;
+  decisionModelProvider?: ModelProvider | null;
+  decisionModelName?: string | null;
+  evalMode?: ClassifierEvalMode | null;
+  audioModelProvider?: ModelProvider | null;
+  audioModelName?: string | null;
+  audioModelCredentialId?: string | null;
+  suggestModelProvider?: ModelProvider | null;
+  suggestModelName?: string | null;
+  suggestModelCredentialId?: string | null;
+  issueThreshold?: number | null;
   filters?: FilterSet | null;
   autoGenerationConfig?: ClassifierAutoGenerationConfig | null;
 }
@@ -139,14 +182,35 @@ export interface CreateClassifierLabelInput {
   enabled?: boolean;
   status?: ClassifierLabelStatus;
   polarity?: SignalPolarity;
+  dataModels?: ClassifierDataModel[];
+}
+
+export interface GenerateClassifierLabelsInput {
+  dataModel?: ClassifierDataModel;
 }
 
 export interface UpdateClassifierInput {
   name?: string;
   description?: string | null;
+  traceDescription?: string | null;
+  spanDescription?: string | null;
+  threadDescription?: string | null;
   enabled?: boolean;
   autoClassify?: boolean;
   includeAudio?: boolean;
+  evaluationModelProvider?: ModelProvider | null;
+  evaluationModelName?: string | null;
+  evaluationModelCredentialId?: string | null;
+  decisionModelProvider?: ModelProvider | null;
+  decisionModelName?: string | null;
+  evalMode?: ClassifierEvalMode | null;
+  audioModelProvider?: ModelProvider | null;
+  audioModelName?: string | null;
+  audioModelCredentialId?: string | null;
+  suggestModelProvider?: ModelProvider | null;
+  suggestModelName?: string | null;
+  suggestModelCredentialId?: string | null;
+  issueThreshold?: number | null;
   filters?: FilterSet | null;
   autoGenerationConfig?: ClassifierAutoGenerationConfig | null;
 }
@@ -157,4 +221,5 @@ export interface UpdateClassifierLabelInput {
   enabled?: boolean;
   status?: ClassifierLabelStatus;
   polarity?: SignalPolarity;
+  dataModels?: ClassifierDataModel[];
 }

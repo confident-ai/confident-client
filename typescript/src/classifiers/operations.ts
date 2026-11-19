@@ -5,11 +5,12 @@
 
 import { Api, HttpMethods } from "../api";
 import { Endpoints } from "../endpoints";
-import { FilterSet } from "../common/types";
+import { FilterSet, ModelProvider } from "../common/types";
 import {
   Classifier,
   ClassifierAutoGenerationConfig,
   ClassifierDataModel,
+  ClassifierEvalMode,
   ClassifierLabelGeneration,
   ClassifierList,
   ClassifierPreset,
@@ -30,6 +31,7 @@ export class ClassifiersOperations {
    * @param page The page to return. Defaults to 1.
    * @param pageSize The number of results per page, at most 100. Defaults to
    *   25.
+   * @param dataModel Only classifiers with a task on this data model.
    */
   async list(
     options: {
@@ -54,9 +56,14 @@ export class ClassifiersOperations {
    * a generation config, and a starting set of labels; any field you send
    * explicitly overrides what the preset would have set.
    *
-   * @param name The name of the classifier, unique per data model within the
-   *   project.
+   * @param name The name of the classifier, unique within the project.
    * @param description What this classifier is for. Send `null` to clear it.
+   * @param traceDescription What this classifier is for when it classifies
+   *   traces, replacing `description` there. `null` uses `description`.
+   * @param spanDescription What this classifier is for when it classifies
+   *   spans, replacing `description` there. `null` uses `description`.
+   * @param threadDescription What this classifier is for when it classifies
+   *   threads, replacing `description` there. `null` uses `description`.
    * @param enabled Whether the classifier runs at all. Defaults to `true` on
    *   create; omit it on an update to leave it unchanged.
    * @param autoClassify Whether incoming items are classified automatically as
@@ -67,33 +74,110 @@ export class ClassifiersOperations {
    *   can catch issues that only show in the audio or in a mismatch between the
    *   audio and its transcript. Needs an audio-capable platform model. Defaults
    *   to `false` on create; omit it on an update to leave it unchanged.
-   * @param filters Narrows which traces, spans or threads the classifier runs
-   *   on, so it can watch one route rather than the whole project. Only the
-   *   groups are stored, so the set's top-level operator is dropped and the
+   * @param evaluationModelProvider The provider of the model this classifier
+   *   runs with in place of the project's platform model: in `LLM` it
+   *   classifies, and in `DECISION` with `autoClassify` on it proposes new
+   *   labels. Send `null` to use the platform model.
+   * @param evaluationModelName The name of the model this classifier runs with
+   *   in place of the project's platform model. Required whenever
+   *   `evaluationModelProvider` is set to anything other than `CONFIDENT_AI`,
+   *   and has no effect without a provider.
+   * @param evaluationModelCredentialId For `BEDROCK` and `AZURE`, the id of the
+   *   stored credential this classifier runs with. Omit it or send `null` to
+   *   use the provider's default credential.
+   * @param decisionModelProvider The provider of the decision model this
+   *   classifier picks labels with in the `DECISION` eval mode: `CONFIDENT_AI`,
+   *   `TYPE_SAFE` or `OPEN_AI`. `OPEN_AI` calls with the project's only OpenAI
+   *   credential, or the one named `Default`. Send `null` to use the project's
+   *   decision model.
+   * @param decisionModelName The name of the decision model this classifier
+   *   picks labels with in the `DECISION` eval mode. Required whenever
+   *   `decisionModelProvider` is set, and has no effect without a provider.
+   * @param evalMode How this classifier picks a label, or `null` to run as
+   *   `LLM`. With `DECISION` and `autoClassify` on, the evaluation model still
+   *   proposes new labels.
+   * @param audioModelProvider With `includeAudio` on, the provider of the model
+   *   that listens to the audio and describes it. Send `null` to listen with
+   *   the evaluation model in `LLM`, else the project's voice model.
+   * @param audioModelName The name of the audio-capable model that listens.
+   *   Required whenever `audioModelProvider` is set to anything other than
+   *   `CONFIDENT_AI`.
+   * @param audioModelCredentialId The id of the stored credential the audio
+   *   model runs with. Omit it or send `null` to use the provider's default
+   *   credential.
+   * @param suggestModelProvider With `autoClassify` on, the provider of the
+   *   model that suggests a new label when none fits. Send `null` to suggest
+   *   with the evaluation model, or the project's model in the `DECISION` eval
+   *   mode.
+   * @param suggestModelName The name of the model that suggests new labels.
+   *   Required whenever `suggestModelProvider` is set to anything other than
+   *   `CONFIDENT_AI`.
+   * @param suggestModelCredentialId The id of the stored credential the suggest
+   *   model runs with. Omit it or send `null` to use the provider's default
+   *   credential.
+   * @param issueThreshold For an issue classifier, the confidence from 0 to 1 a
+   *   label needs to be kept; every label at or above it is kept. Send `null`
+   *   to use the default.
+   * @param filters Narrows which traces, spans or threads the classifier's task
+   *   runs on, so it can watch one route rather than the whole project. Only
+   *   the groups are stored, so the set's top-level operator is dropped and the
    *   groups are combined by the platform. Send `null` to clear the filters and
-   *   classify everything of this data model.
+   *   classify everything of the task's data model.
    * @param autoGenerationConfig How a generation run samples your traffic to
    *   generate labels. Send `null` to clear it.
    */
   async create(
     name: string,
-    dataModel: ClassifierDataModel,
     options: {
+      dataModel?: ClassifierDataModel;
       preset?: ClassifierPreset;
       description?: string | null;
+      traceDescription?: string | null;
+      spanDescription?: string | null;
+      threadDescription?: string | null;
       enabled?: boolean;
       autoClassify?: boolean;
       includeAudio?: boolean;
+      evaluationModelProvider?: ModelProvider | null;
+      evaluationModelName?: string | null;
+      evaluationModelCredentialId?: string | null;
+      decisionModelProvider?: ModelProvider | null;
+      decisionModelName?: string | null;
+      evalMode?: ClassifierEvalMode | null;
+      audioModelProvider?: ModelProvider | null;
+      audioModelName?: string | null;
+      audioModelCredentialId?: string | null;
+      suggestModelProvider?: ModelProvider | null;
+      suggestModelName?: string | null;
+      suggestModelCredentialId?: string | null;
+      issueThreshold?: number | null;
       filters?: FilterSet | null;
       autoGenerationConfig?: ClassifierAutoGenerationConfig | null;
     } = {},
   ): Promise<ClassifierRef> {
     const {
+      dataModel,
       preset,
       description,
+      traceDescription,
+      spanDescription,
+      threadDescription,
       enabled,
       autoClassify,
       includeAudio,
+      evaluationModelProvider,
+      evaluationModelName,
+      evaluationModelCredentialId,
+      decisionModelProvider,
+      decisionModelName,
+      evalMode,
+      audioModelProvider,
+      audioModelName,
+      audioModelCredentialId,
+      suggestModelProvider,
+      suggestModelName,
+      suggestModelCredentialId,
+      issueThreshold,
       filters,
       autoGenerationConfig,
     } = options;
@@ -106,9 +190,25 @@ export class ClassifiersOperations {
           dataModel,
           preset,
           description,
+          traceDescription,
+          spanDescription,
+          threadDescription,
           enabled,
           autoClassify,
           includeAudio,
+          evaluationModelProvider,
+          evaluationModelName,
+          evaluationModelCredentialId,
+          decisionModelProvider,
+          decisionModelName,
+          evalMode,
+          audioModelProvider,
+          audioModelName,
+          audioModelCredentialId,
+          suggestModelProvider,
+          suggestModelName,
+          suggestModelCredentialId,
+          issueThreshold,
           filters,
           autoGenerationConfig,
         },
@@ -136,14 +236,19 @@ export class ClassifiersOperations {
    * Update Classifier
    *
    * Updates a classifier and returns it. Only the fields you send are changed:
-   * omitting a field leaves it untouched, and sending `null` clears it.
-   * `dataModel` cannot be changed after creation and a preset can only be
-   * applied when creating one; labels are managed through their own endpoints.
+   * omitting a field leaves it untouched, and sending `null` clears it. A
+   * preset can only be applied when creating one; labels are managed through
+   * their own endpoints.
    *
    * @param classifierId The id of the classifier.
-   * @param name The name of the classifier, unique per data model within the
-   *   project.
+   * @param name The name of the classifier, unique within the project.
    * @param description What this classifier is for. Send `null` to clear it.
+   * @param traceDescription What this classifier is for when it classifies
+   *   traces, replacing `description` there. `null` uses `description`.
+   * @param spanDescription What this classifier is for when it classifies
+   *   spans, replacing `description` there. `null` uses `description`.
+   * @param threadDescription What this classifier is for when it classifies
+   *   threads, replacing `description` there. `null` uses `description`.
    * @param enabled Whether the classifier runs at all. Defaults to `true` on
    *   create; omit it on an update to leave it unchanged.
    * @param autoClassify Whether incoming items are classified automatically as
@@ -154,11 +259,55 @@ export class ClassifiersOperations {
    *   can catch issues that only show in the audio or in a mismatch between the
    *   audio and its transcript. Needs an audio-capable platform model. Defaults
    *   to `false` on create; omit it on an update to leave it unchanged.
-   * @param filters Narrows which traces, spans or threads the classifier runs
-   *   on, so it can watch one route rather than the whole project. Only the
-   *   groups are stored, so the set's top-level operator is dropped and the
+   * @param evaluationModelProvider The provider of the model this classifier
+   *   runs with in place of the project's platform model: in `LLM` it
+   *   classifies, and in `DECISION` with `autoClassify` on it proposes new
+   *   labels. Send `null` to use the platform model.
+   * @param evaluationModelName The name of the model this classifier runs with
+   *   in place of the project's platform model. Required whenever
+   *   `evaluationModelProvider` is set to anything other than `CONFIDENT_AI`,
+   *   and has no effect without a provider.
+   * @param evaluationModelCredentialId For `BEDROCK` and `AZURE`, the id of the
+   *   stored credential this classifier runs with. Omit it or send `null` to
+   *   use the provider's default credential.
+   * @param decisionModelProvider The provider of the decision model this
+   *   classifier picks labels with in the `DECISION` eval mode: `CONFIDENT_AI`,
+   *   `TYPE_SAFE` or `OPEN_AI`. `OPEN_AI` calls with the project's only OpenAI
+   *   credential, or the one named `Default`. Send `null` to use the project's
+   *   decision model.
+   * @param decisionModelName The name of the decision model this classifier
+   *   picks labels with in the `DECISION` eval mode. Required whenever
+   *   `decisionModelProvider` is set, and has no effect without a provider.
+   * @param evalMode How this classifier picks a label, or `null` to run as
+   *   `LLM`. With `DECISION` and `autoClassify` on, the evaluation model still
+   *   proposes new labels.
+   * @param audioModelProvider With `includeAudio` on, the provider of the model
+   *   that listens to the audio and describes it. Send `null` to listen with
+   *   the evaluation model in `LLM`, else the project's voice model.
+   * @param audioModelName The name of the audio-capable model that listens.
+   *   Required whenever `audioModelProvider` is set to anything other than
+   *   `CONFIDENT_AI`.
+   * @param audioModelCredentialId The id of the stored credential the audio
+   *   model runs with. Omit it or send `null` to use the provider's default
+   *   credential.
+   * @param suggestModelProvider With `autoClassify` on, the provider of the
+   *   model that suggests a new label when none fits. Send `null` to suggest
+   *   with the evaluation model, or the project's model in the `DECISION` eval
+   *   mode.
+   * @param suggestModelName The name of the model that suggests new labels.
+   *   Required whenever `suggestModelProvider` is set to anything other than
+   *   `CONFIDENT_AI`.
+   * @param suggestModelCredentialId The id of the stored credential the suggest
+   *   model runs with. Omit it or send `null` to use the provider's default
+   *   credential.
+   * @param issueThreshold For an issue classifier, the confidence from 0 to 1 a
+   *   label needs to be kept; every label at or above it is kept. Send `null`
+   *   to use the default.
+   * @param filters Narrows which traces, spans or threads the classifier's task
+   *   runs on, so it can watch one route rather than the whole project. Only
+   *   the groups are stored, so the set's top-level operator is dropped and the
    *   groups are combined by the platform. Send `null` to clear the filters and
-   *   classify everything of this data model.
+   *   classify everything of the task's data model.
    * @param autoGenerationConfig How a generation run samples your traffic to
    *   generate labels. Send `null` to clear it.
    */
@@ -167,9 +316,25 @@ export class ClassifiersOperations {
     options: {
       name?: string;
       description?: string | null;
+      traceDescription?: string | null;
+      spanDescription?: string | null;
+      threadDescription?: string | null;
       enabled?: boolean;
       autoClassify?: boolean;
       includeAudio?: boolean;
+      evaluationModelProvider?: ModelProvider | null;
+      evaluationModelName?: string | null;
+      evaluationModelCredentialId?: string | null;
+      decisionModelProvider?: ModelProvider | null;
+      decisionModelName?: string | null;
+      evalMode?: ClassifierEvalMode | null;
+      audioModelProvider?: ModelProvider | null;
+      audioModelName?: string | null;
+      audioModelCredentialId?: string | null;
+      suggestModelProvider?: ModelProvider | null;
+      suggestModelName?: string | null;
+      suggestModelCredentialId?: string | null;
+      issueThreshold?: number | null;
       filters?: FilterSet | null;
       autoGenerationConfig?: ClassifierAutoGenerationConfig | null;
     } = {},
@@ -177,9 +342,25 @@ export class ClassifiersOperations {
     const {
       name,
       description,
+      traceDescription,
+      spanDescription,
+      threadDescription,
       enabled,
       autoClassify,
       includeAudio,
+      evaluationModelProvider,
+      evaluationModelName,
+      evaluationModelCredentialId,
+      decisionModelProvider,
+      decisionModelName,
+      evalMode,
+      audioModelProvider,
+      audioModelName,
+      audioModelCredentialId,
+      suggestModelProvider,
+      suggestModelName,
+      suggestModelCredentialId,
+      issueThreshold,
       filters,
       autoGenerationConfig,
     } = options;
@@ -190,9 +371,25 @@ export class ClassifiersOperations {
         body: {
           name,
           description,
+          traceDescription,
+          spanDescription,
+          threadDescription,
           enabled,
           autoClassify,
           includeAudio,
+          evaluationModelProvider,
+          evaluationModelName,
+          evaluationModelCredentialId,
+          decisionModelProvider,
+          decisionModelName,
+          evalMode,
+          audioModelProvider,
+          audioModelName,
+          audioModelCredentialId,
+          suggestModelProvider,
+          suggestModelName,
+          suggestModelCredentialId,
+          issueThreshold,
           filters,
           autoGenerationConfig,
         },
@@ -222,23 +419,25 @@ export class ClassifiersOperations {
    * Generate Classifier Labels
    *
    * Generates labels for a classifier from your project's real traffic: it
-   * samples recent traces, spans or threads and runs them through the
-   * classifier's normal auto-classification pipeline. Repeated proposals are
-   * merged and written back as `RECOMMENDED` labels for a human to review. The
-   * run is asynchronous, so poll the labels endpoint for results. Existing
-   * labels are retained, and the sampled entities receive ordinary
-   * classification results. Auto Classify must be enabled. Reading traffic and
-   * running the model consumes usage.
+   * samples recent traces, spans or threads (`dataModel`, else the generation
+   * config's, else that of the task created with the classifier, else traces)
+   * and runs them through the classifier's normal auto-classification pipeline.
+   * Repeated proposals are merged and written back as `RECOMMENDED` labels for
+   * a human to review. The run is asynchronous, so poll the labels endpoint for
+   * results. Existing labels are retained, and the sampled entities receive
+   * ordinary classification results. Auto Classify must be enabled. Reading
+   * traffic and running the model consumes usage.
    *
    * @param classifierId The id of the classifier.
    */
   async generateLabels(
     classifierId: string,
+    dataModel?: ClassifierDataModel,
   ): Promise<ClassifierLabelGeneration> {
     return this.api.sendRequest<ClassifierLabelGeneration>(
       HttpMethods.POST,
       Endpoints.CLASSIFIER_GENERATE_ENDPOINT,
-      { urlParams: { classifierId } },
+      { body: { dataModel }, urlParams: { classifierId } },
     );
   }
 

@@ -19,8 +19,9 @@ export class VulnerabilitiesClient {
    * List Vulnerabilities
    *
    * Lists the vulnerabilities available to your Confident AI project one page
-   * at a time, both the ones Confident AI ships and your project's own. Filter
-   * by catalog category or by whether a vulnerability is built in.
+   * at a time, both the ones Confident AI ships and the ones your organization
+   * defined. Filter by catalog category or by whether a vulnerability is built
+   * in.
    *
    * @param page The page of vulnerabilities to return. Defaults to 1.
    * @param pageSize The number of vulnerabilities per page, at most 100.
@@ -28,8 +29,8 @@ export class VulnerabilitiesClient {
    * @param category Returns only vulnerabilities in this catalog category. An
    *   unknown category is rejected with the list of valid ones.
    * @param builtIn When `true`, returns only the vulnerabilities Confident AI
-   *   ships; when `false`, only the ones your project defined. Omit to return
-   *   both.
+   *   ships; when `false`, only the ones your organization defined. Omit to
+   *   return both.
    */
   async list(
     options: {
@@ -50,12 +51,12 @@ export class VulnerabilitiesClient {
   /**
    * Create Vulnerability
    *
-   * Creates a vulnerability in your Confident AI project and returns its id.
-   * Give it at least one type: a risk category selects types, not
-   * vulnerabilities. The name cannot match one Confident AI ships — update that
-   * one instead to customise it for this project.
+   * Creates a vulnerability in your Confident AI organization and returns its
+   * id. Give it at least one type: a risk category selects types, not
+   * vulnerabilities. The name cannot match one Confident AI ships. Update that
+   * one instead to customise it for your organization.
    *
-   * @param name The name of the vulnerability, unique within the project.
+   * @param name The name of the vulnerability, unique within the organization.
    * @param criteria The rule the evaluator applies to decide whether a reply is
    *   vulnerable.
    * @param vulnerabilityTypes The names of the types this vulnerability breaks
@@ -114,12 +115,12 @@ export class VulnerabilitiesClient {
    * Update Vulnerability
    *
    * Updates a vulnerability and returns it. Updating one Confident AI ships
-   * makes this project its own copy of it, leaving every other project
-   * untouched, and a built-in cannot be renamed.
+   * makes your organization its own copy of it, shared by every project in the
+   * organization, and a built-in cannot be renamed.
    *
    * @param vulnerabilityId The id of the vulnerability, as the list returns it.
    *   A built-in's catalog name also resolves.
-   * @param name The name of the vulnerability, unique within the project.
+   * @param name The name of the vulnerability, unique within the organization.
    * @param description What the vulnerability covers.
    * @param criteria The rule the evaluator applies to decide whether a reply is
    *   vulnerable.
@@ -169,9 +170,9 @@ export class VulnerabilitiesClient {
   /**
    * Delete Vulnerability
    *
-   * Permanently deletes a vulnerability your project defined, along with its
-   * types. A vulnerability Confident AI ships that this project has never
-   * customised has nothing to delete, and is rejected.
+   * Permanently deletes a vulnerability your organization defined, along with
+   * its types. A vulnerability Confident AI ships that your organization has
+   * never customised has nothing to delete, and is rejected.
    *
    * @param vulnerabilityId The id of the vulnerability, as the list returns it.
    *   A built-in's catalog name also resolves.

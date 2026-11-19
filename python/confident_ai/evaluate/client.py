@@ -269,8 +269,10 @@ class EvaluateClient:
 
         Args:
             trace_uuid: The unique identifier of the trace.
-            metric_collection: The name of the single-turn metric collection you
-                wish to use for evaluation.
+            metric_collection: The name of the metric collection you wish to use
+                for evaluation. A single-turn collection scores the trace's
+                input and output, and a multi-turn collection scores the
+                conversation inside the trace.
             overwrite_metrics: Set this to `true` to re-run every metric in the
                 collection and replace the results already stored, and omit this
                 field to keep those results and only run the metrics that have
@@ -304,8 +306,10 @@ class EvaluateClient:
 
         Args:
             trace_uuid: The unique identifier of the trace.
-            metric_collection: The name of the single-turn metric collection you
-                wish to use for evaluation.
+            metric_collection: The name of the metric collection you wish to use
+                for evaluation. A single-turn collection scores the trace's
+                input and output, and a multi-turn collection scores the
+                conversation inside the trace.
             overwrite_metrics: Set this to `true` to re-run every metric in the
                 collection and replace the results already stored, and omit this
                 field to keep those results and only run the metrics that have

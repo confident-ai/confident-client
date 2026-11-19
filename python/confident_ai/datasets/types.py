@@ -3,19 +3,35 @@
 # Do not edit by hand — change the route in confident-cloud
 # and regenerate.
 
+from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import Field
 
 from confident_ai.common.types import (
+    AssignmentStrategy,
     FilterSet,
     GenerationMode,
     IngestionDataModel,
     MLLMImageInput,
+    SpanType,
     ToolCall,
     Turn,
+    UserReference,
 )
 from confident_ai.types import ConfidentBaseModel
+
+
+class InterruptionFrequency(Enum):
+    RARE = "RARE"
+    NORMAL = "NORMAL"
+    FREQUENT = "FREQUENT"
+
+
+class InterruptionOverlap(Enum):
+    YIELD = "YIELD"
+    ADAPTIVE = "ADAPTIVE"
+    INSIST = "INSIST"
 
 
 class CreateDatasetIngestionTaskInput(ConfidentBaseModel):
@@ -25,6 +41,7 @@ class CreateDatasetIngestionTaskInput(ConfidentBaseModel):
     enabled: Optional[bool] = None
     sample_rate: Optional[float] = Field(default=None, alias="sampleRate")
     filters: Optional[FilterSet] = None
+    span_type: Optional[SpanType] = Field(default=None, alias="spanType")
     max_goldens: Optional[int] = Field(default=None, alias="maxGoldens")
     input_transformer_id: Optional[str] = Field(
         default=None,
@@ -33,6 +50,10 @@ class CreateDatasetIngestionTaskInput(ConfidentBaseModel):
     output_transformer_id: Optional[str] = Field(
         default=None,
         alias="outputTransformerId",
+    )
+    turns_transformer_id: Optional[str] = Field(
+        default=None,
+        alias="turnsTransformerId",
     )
     include_input: Optional[bool] = Field(default=None, alias="includeInput")
     include_actual_output: Optional[bool] = Field(
@@ -58,6 +79,35 @@ class CreateDatasetIngestionTaskInput(ConfidentBaseModel):
     include_expected_tools: Optional[bool] = Field(
         default=None,
         alias="includeExpectedTools",
+    )
+    include_turns: Optional[bool] = Field(default=None, alias="includeTurns")
+    include_user_description: Optional[bool] = Field(
+        default=None,
+        alias="includeUserDescription",
+    )
+    user_description: Optional[str] = Field(
+        default=None,
+        alias="userDescription",
+    )
+    persona_id: Optional[str] = Field(default=None, alias="personaId")
+    journey_id: Optional[str] = Field(default=None, alias="journeyId")
+    interruption_frequency: Optional[InterruptionFrequency] = Field(
+        default=None,
+        alias="interruptionFrequency",
+    )
+    interruption_overlap: Optional[InterruptionOverlap] = Field(
+        default=None,
+        alias="interruptionOverlap",
+    )
+    tags: Optional[List[str]] = None
+    metadata: Optional[Dict[str, Any]] = None
+    assignment_strategy: Optional[AssignmentStrategy] = Field(
+        default=None,
+        alias="assignmentStrategy",
+    )
+    reviewer_emails: Optional[List[str]] = Field(
+        default=None,
+        alias="reviewerEmails",
     )
 
 
@@ -175,9 +225,11 @@ class DatasetIngestionTask(ConfidentBaseModel):
     sample_rate: float = Field(alias="sampleRate")
     data_model: IngestionDataModel = Field(alias="dataModel")
     filters: Optional[FilterSet]
+    span_type: Optional[SpanType] = Field(alias="spanType")
     max_goldens: Optional[int] = Field(alias="maxGoldens")
     input_transformer_id: Optional[str] = Field(alias="inputTransformerId")
     output_transformer_id: Optional[str] = Field(alias="outputTransformerId")
+    turns_transformer_id: Optional[str] = Field(alias="turnsTransformerId")
     include_input: bool = Field(alias="includeInput")
     include_actual_output: bool = Field(alias="includeActualOutput")
     include_expected_output: bool = Field(alias="includeExpectedOutput")
@@ -185,6 +237,21 @@ class DatasetIngestionTask(ConfidentBaseModel):
     include_context: bool = Field(alias="includeContext")
     include_tools_called: bool = Field(alias="includeToolsCalled")
     include_expected_tools: bool = Field(alias="includeExpectedTools")
+    include_turns: bool = Field(alias="includeTurns")
+    include_user_description: bool = Field(alias="includeUserDescription")
+    user_description: Optional[str] = Field(alias="userDescription")
+    persona_id: Optional[str] = Field(alias="personaId")
+    journey_id: Optional[str] = Field(alias="journeyId")
+    interruption_frequency: Optional[InterruptionFrequency] = Field(
+        alias="interruptionFrequency",
+    )
+    interruption_overlap: Optional[InterruptionOverlap] = Field(
+        alias="interruptionOverlap",
+    )
+    tags: List[str]
+    metadata: Optional[Dict[str, Any]]
+    assignment_strategy: AssignmentStrategy = Field(alias="assignmentStrategy")
+    reviewers: List[UserReference]
     created_at: str = Field(alias="createdAt")
     updated_at: str = Field(alias="updatedAt")
 
@@ -246,7 +313,14 @@ class QueueDatasetGoldensInput(ConfidentBaseModel):
 
 
 class RunDatasetEvaluationInput(ConfidentBaseModel):
-    metric_collection: str = Field(alias="metricCollection")
+    metric_collection: Optional[str] = Field(
+        default=None,
+        alias="metricCollection",
+    )
+    trace_metric_collection: Optional[str] = Field(
+        default=None,
+        alias="traceMetricCollection",
+    )
     identifier: Optional[str] = None
     version: Optional[str] = None
     ai_connection_id: Optional[str] = Field(
@@ -301,6 +375,7 @@ class UpdateDatasetIngestionTaskInput(ConfidentBaseModel):
     enabled: Optional[bool] = None
     sample_rate: Optional[float] = Field(default=None, alias="sampleRate")
     filters: Optional[FilterSet] = None
+    span_type: Optional[SpanType] = Field(default=None, alias="spanType")
     max_goldens: Optional[int] = Field(default=None, alias="maxGoldens")
     input_transformer_id: Optional[str] = Field(
         default=None,
@@ -309,6 +384,10 @@ class UpdateDatasetIngestionTaskInput(ConfidentBaseModel):
     output_transformer_id: Optional[str] = Field(
         default=None,
         alias="outputTransformerId",
+    )
+    turns_transformer_id: Optional[str] = Field(
+        default=None,
+        alias="turnsTransformerId",
     )
     include_input: Optional[bool] = Field(default=None, alias="includeInput")
     include_actual_output: Optional[bool] = Field(
@@ -334,4 +413,33 @@ class UpdateDatasetIngestionTaskInput(ConfidentBaseModel):
     include_expected_tools: Optional[bool] = Field(
         default=None,
         alias="includeExpectedTools",
+    )
+    include_turns: Optional[bool] = Field(default=None, alias="includeTurns")
+    include_user_description: Optional[bool] = Field(
+        default=None,
+        alias="includeUserDescription",
+    )
+    user_description: Optional[str] = Field(
+        default=None,
+        alias="userDescription",
+    )
+    persona_id: Optional[str] = Field(default=None, alias="personaId")
+    journey_id: Optional[str] = Field(default=None, alias="journeyId")
+    interruption_frequency: Optional[InterruptionFrequency] = Field(
+        default=None,
+        alias="interruptionFrequency",
+    )
+    interruption_overlap: Optional[InterruptionOverlap] = Field(
+        default=None,
+        alias="interruptionOverlap",
+    )
+    tags: Optional[List[str]] = None
+    metadata: Optional[Dict[str, Any]] = None
+    assignment_strategy: Optional[AssignmentStrategy] = Field(
+        default=None,
+        alias="assignmentStrategy",
+    )
+    reviewer_emails: Optional[List[str]] = Field(
+        default=None,
+        alias="reviewerEmails",
     )

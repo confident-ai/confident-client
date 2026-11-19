@@ -9,9 +9,11 @@ from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import Field
 
 from confident_ai.common.types import (
+    AssignmentStrategy,
     FilterSet,
     IngestionDataModel,
     MLLMImageInput,
+    SpanType,
     UserReference,
 )
 from confident_ai.types import ConfidentBaseModel
@@ -23,12 +25,6 @@ class AnnotationQueueType(Enum):
     THREAD = "THREAD"
     GOLDEN = "GOLDEN"
     TEST_CASE = "TEST_CASE"
-
-
-class AssignmentStrategy(Enum):
-    SINGLE_USER = "SINGLE_USER"
-    ROUND_ROBIN = "ROUND_ROBIN"
-    RANDOM = "RANDOM"
 
 
 class QueueItemStatus(Enum):
@@ -209,6 +205,7 @@ class CreateQueueIngestionTaskInput(ConfidentBaseModel):
     enabled: Optional[bool] = None
     sample_rate: Optional[float] = Field(default=None, alias="sampleRate")
     filters: Optional[FilterSet] = None
+    span_type: Optional[SpanType] = Field(default=None, alias="spanType")
     max_items: Optional[int] = Field(default=None, alias="maxItems")
     assignment_strategy: Optional[AssignmentStrategy] = Field(
         default=None,
@@ -229,6 +226,7 @@ class QueueIngestionTask(ConfidentBaseModel):
     sample_rate: float = Field(alias="sampleRate")
     data_model: IngestionDataModel = Field(alias="dataModel")
     filters: Optional[FilterSet]
+    span_type: Optional[SpanType] = Field(alias="spanType")
     max_items: Optional[int] = Field(alias="maxItems")
     assignment_strategy: AssignmentStrategy = Field(alias="assignmentStrategy")
     reviewers: List[UserReference]
@@ -285,6 +283,7 @@ class UpdateQueueIngestionTaskInput(ConfidentBaseModel):
     enabled: Optional[bool] = None
     sample_rate: Optional[float] = Field(default=None, alias="sampleRate")
     filters: Optional[FilterSet] = None
+    span_type: Optional[SpanType] = Field(default=None, alias="spanType")
     max_items: Optional[int] = Field(default=None, alias="maxItems")
     assignment_strategy: Optional[AssignmentStrategy] = Field(
         default=None,

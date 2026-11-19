@@ -30,6 +30,7 @@ export interface CreateJourneyInput {
 export interface CreateJourneyStateInput {
   name: string;
   instructions: string;
+  userMessage?: string | null;
   fromStateId?: string;
   when?: string;
 }
@@ -63,6 +64,7 @@ export interface JourneyState {
   id: string;
   name: string;
   instructions: string;
+  userMessage: string | null;
   goldenCount: number;
   createdAt: string;
   updatedAt: string;
@@ -166,4 +168,5 @@ export interface UpdateJourneyInput {
 export interface UpdateJourneyStateInput {
   name?: string;
   instructions?: string;
+  userMessage?: string | null;
 }

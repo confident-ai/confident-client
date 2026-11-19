@@ -4,7 +4,7 @@
 # and regenerate.
 
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from pydantic import Field
 
@@ -140,6 +140,19 @@ class TestCaseMetricData(ConfidentBaseModel):
     threshold: Optional[float]
     strict_mode: bool = Field(alias="strictMode")
     skipped: bool
+    skip_reason: Optional[
+        Literal[
+            "HOURLY_LIMIT",
+            "CREDITS",
+            "BUDGET",
+            "PLAN_LIMIT",
+            "PARENT_NOT_RUN",
+            "CHAIN_EXPIRED",
+            "RUN_FAILED",
+        ]
+    ] = Field(
+        alias="skipReason",
+    )
     flaky: bool
     evaluation_model: Optional[str] = Field(alias="evaluationModel")
     evaluation_cost: Optional[float] = Field(alias="evaluationCost")

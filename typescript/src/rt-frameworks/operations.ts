@@ -43,7 +43,7 @@ export class RTFrameworksOperations {
    * its id. Send `template` to fill it from a Confident AI template rather than
    * starting empty.
    *
-   * @param name The name of the framework, unique within the project.
+   * @param name The name of the framework, unique within the organization.
    * @param description What the framework covers. Send `null` to leave it
    *   unset.
    * @param template A Confident AI template to fill the framework from, which
@@ -86,7 +86,7 @@ export class RTFrameworksOperations {
    * Its risk categories are managed through their own endpoints.
    *
    * @param rtFrameworkId The id of the red teaming framework.
-   * @param name The name of the framework, unique within the project.
+   * @param name The name of the framework, unique within the organization.
    * @param description What the framework covers. Send `null` to clear it.
    */
   async update(

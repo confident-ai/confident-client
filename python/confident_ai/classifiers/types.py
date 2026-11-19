@@ -8,7 +8,7 @@ from typing import List, Optional
 
 from pydantic import Field
 
-from confident_ai.common.types import FilterSet, UserReference
+from confident_ai.common.types import FilterSet, ModelProvider, UserReference
 from confident_ai.types import ConfidentBaseModel
 
 
@@ -16,6 +16,11 @@ class ClassifierDataModel(Enum):
     TRACE = "TRACE"
     SPAN = "SPAN"
     THREAD = "THREAD"
+
+
+class ClassifierEvalMode(Enum):
+    LLM = "LLM"
+    DECISION = "DECISION"
 
 
 class ClassifierLabelStatus(Enum):
@@ -38,6 +43,10 @@ class SignalPolarity(Enum):
 
 
 class ClassifierAutoGenerationConfig(ConfidentBaseModel):
+    data_model: Optional[ClassifierDataModel] = Field(
+        default=None,
+        alias="dataModel",
+    )
     sample_size: Optional[int] = Field(default=None, alias="sampleSize")
 
 
@@ -48,16 +57,47 @@ class ClassifierLabel(ConfidentBaseModel):
     enabled: bool
     status: ClassifierLabelStatus
     polarity: SignalPolarity
+    data_models: List[ClassifierDataModel] = Field(alias="dataModels")
 
 
 class Classifier(ConfidentBaseModel):
     id: str
     name: str
     description: Optional[str]
+    trace_description: Optional[str] = Field(alias="traceDescription")
+    span_description: Optional[str] = Field(alias="spanDescription")
+    thread_description: Optional[str] = Field(alias="threadDescription")
     enabled: bool
     auto_classify: bool = Field(alias="autoClassify")
     include_audio: bool = Field(alias="includeAudio")
-    data_model: ClassifierDataModel = Field(alias="dataModel")
+    evaluation_model_provider: Optional[ModelProvider] = Field(
+        alias="evaluationModelProvider",
+    )
+    evaluation_model_name: Optional[str] = Field(alias="evaluationModelName")
+    evaluation_model_credential_id: Optional[str] = Field(
+        alias="evaluationModelCredentialId",
+    )
+    decision_model_provider: Optional[ModelProvider] = Field(
+        alias="decisionModelProvider",
+    )
+    decision_model_name: Optional[str] = Field(alias="decisionModelName")
+    eval_mode: Optional[ClassifierEvalMode] = Field(alias="evalMode")
+    audio_model_provider: Optional[ModelProvider] = Field(
+        alias="audioModelProvider",
+    )
+    audio_model_name: Optional[str] = Field(alias="audioModelName")
+    audio_model_credential_id: Optional[str] = Field(
+        alias="audioModelCredentialId",
+    )
+    suggest_model_provider: Optional[ModelProvider] = Field(
+        alias="suggestModelProvider",
+    )
+    suggest_model_name: Optional[str] = Field(alias="suggestModelName")
+    suggest_model_credential_id: Optional[str] = Field(
+        alias="suggestModelCredentialId",
+    )
+    issue_threshold: Optional[float] = Field(alias="issueThreshold")
+    data_model: Optional[ClassifierDataModel] = Field(alias="dataModel")
     filters: FilterSet
     auto_generation_config: Optional[ClassifierAutoGenerationConfig] = Field(
         alias="autoGenerationConfig",
@@ -93,7 +133,7 @@ class ClassifierSummary(ConfidentBaseModel):
     id: str
     name: str
     enabled: bool
-    data_model: ClassifierDataModel = Field(alias="dataModel")
+    data_model: Optional[ClassifierDataModel] = Field(alias="dataModel")
 
 
 class ClassifierList(ConfidentBaseModel):
@@ -110,6 +150,7 @@ class ClassifierRef(ConfidentBaseModel):
 class ClassifierVersionLabel(ConfidentBaseModel):
     name: str
     description: str
+    data_models: List[ClassifierDataModel] = Field(alias="dataModels")
 
 
 class ClassifierVersion(ConfidentBaseModel):
@@ -118,6 +159,9 @@ class ClassifierVersion(ConfidentBaseModel):
     sequence: int
     version: str
     description: Optional[str]
+    trace_description: Optional[str] = Field(alias="traceDescription")
+    span_description: Optional[str] = Field(alias="spanDescription")
+    thread_description: Optional[str] = Field(alias="threadDescription")
     labels: List[ClassifierVersionLabel]
     created_at: str = Field(alias="createdAt")
     author: Optional[UserReference]
@@ -132,12 +176,79 @@ class ClassifierVersionList(ConfidentBaseModel):
 
 class CreateClassifierInput(ConfidentBaseModel):
     name: str
-    data_model: ClassifierDataModel = Field(alias="dataModel")
+    data_model: Optional[ClassifierDataModel] = Field(
+        default=None,
+        alias="dataModel",
+    )
     preset: Optional[ClassifierPreset] = None
     description: Optional[str] = None
+    trace_description: Optional[str] = Field(
+        default=None,
+        alias="traceDescription",
+    )
+    span_description: Optional[str] = Field(
+        default=None,
+        alias="spanDescription",
+    )
+    thread_description: Optional[str] = Field(
+        default=None,
+        alias="threadDescription",
+    )
     enabled: Optional[bool] = None
     auto_classify: Optional[bool] = Field(default=None, alias="autoClassify")
     include_audio: Optional[bool] = Field(default=None, alias="includeAudio")
+    evaluation_model_provider: Optional[ModelProvider] = Field(
+        default=None,
+        alias="evaluationModelProvider",
+    )
+    evaluation_model_name: Optional[str] = Field(
+        default=None,
+        alias="evaluationModelName",
+    )
+    evaluation_model_credential_id: Optional[str] = Field(
+        default=None,
+        alias="evaluationModelCredentialId",
+    )
+    decision_model_provider: Optional[ModelProvider] = Field(
+        default=None,
+        alias="decisionModelProvider",
+    )
+    decision_model_name: Optional[str] = Field(
+        default=None,
+        alias="decisionModelName",
+    )
+    eval_mode: Optional[ClassifierEvalMode] = Field(
+        default=None,
+        alias="evalMode",
+    )
+    audio_model_provider: Optional[ModelProvider] = Field(
+        default=None,
+        alias="audioModelProvider",
+    )
+    audio_model_name: Optional[str] = Field(
+        default=None,
+        alias="audioModelName",
+    )
+    audio_model_credential_id: Optional[str] = Field(
+        default=None,
+        alias="audioModelCredentialId",
+    )
+    suggest_model_provider: Optional[ModelProvider] = Field(
+        default=None,
+        alias="suggestModelProvider",
+    )
+    suggest_model_name: Optional[str] = Field(
+        default=None,
+        alias="suggestModelName",
+    )
+    suggest_model_credential_id: Optional[str] = Field(
+        default=None,
+        alias="suggestModelCredentialId",
+    )
+    issue_threshold: Optional[float] = Field(
+        default=None,
+        alias="issueThreshold",
+    )
     filters: Optional[FilterSet] = None
     auto_generation_config: Optional[ClassifierAutoGenerationConfig] = Field(
         default=None,
@@ -151,14 +262,89 @@ class CreateClassifierLabelInput(ConfidentBaseModel):
     enabled: Optional[bool] = None
     status: Optional[ClassifierLabelStatus] = None
     polarity: Optional[SignalPolarity] = None
+    data_models: Optional[List[ClassifierDataModel]] = Field(
+        default=None,
+        alias="dataModels",
+    )
+
+
+class GenerateClassifierLabelsInput(ConfidentBaseModel):
+    data_model: Optional[ClassifierDataModel] = Field(
+        default=None,
+        alias="dataModel",
+    )
 
 
 class UpdateClassifierInput(ConfidentBaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
+    trace_description: Optional[str] = Field(
+        default=None,
+        alias="traceDescription",
+    )
+    span_description: Optional[str] = Field(
+        default=None,
+        alias="spanDescription",
+    )
+    thread_description: Optional[str] = Field(
+        default=None,
+        alias="threadDescription",
+    )
     enabled: Optional[bool] = None
     auto_classify: Optional[bool] = Field(default=None, alias="autoClassify")
     include_audio: Optional[bool] = Field(default=None, alias="includeAudio")
+    evaluation_model_provider: Optional[ModelProvider] = Field(
+        default=None,
+        alias="evaluationModelProvider",
+    )
+    evaluation_model_name: Optional[str] = Field(
+        default=None,
+        alias="evaluationModelName",
+    )
+    evaluation_model_credential_id: Optional[str] = Field(
+        default=None,
+        alias="evaluationModelCredentialId",
+    )
+    decision_model_provider: Optional[ModelProvider] = Field(
+        default=None,
+        alias="decisionModelProvider",
+    )
+    decision_model_name: Optional[str] = Field(
+        default=None,
+        alias="decisionModelName",
+    )
+    eval_mode: Optional[ClassifierEvalMode] = Field(
+        default=None,
+        alias="evalMode",
+    )
+    audio_model_provider: Optional[ModelProvider] = Field(
+        default=None,
+        alias="audioModelProvider",
+    )
+    audio_model_name: Optional[str] = Field(
+        default=None,
+        alias="audioModelName",
+    )
+    audio_model_credential_id: Optional[str] = Field(
+        default=None,
+        alias="audioModelCredentialId",
+    )
+    suggest_model_provider: Optional[ModelProvider] = Field(
+        default=None,
+        alias="suggestModelProvider",
+    )
+    suggest_model_name: Optional[str] = Field(
+        default=None,
+        alias="suggestModelName",
+    )
+    suggest_model_credential_id: Optional[str] = Field(
+        default=None,
+        alias="suggestModelCredentialId",
+    )
+    issue_threshold: Optional[float] = Field(
+        default=None,
+        alias="issueThreshold",
+    )
     filters: Optional[FilterSet] = None
     auto_generation_config: Optional[ClassifierAutoGenerationConfig] = Field(
         default=None,
@@ -172,3 +358,7 @@ class UpdateClassifierLabelInput(ConfidentBaseModel):
     enabled: Optional[bool] = None
     status: Optional[ClassifierLabelStatus] = None
     polarity: Optional[SignalPolarity] = None
+    data_models: Optional[List[ClassifierDataModel]] = Field(
+        default=None,
+        alias="dataModels",
+    )

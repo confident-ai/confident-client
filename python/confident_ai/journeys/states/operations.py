@@ -25,6 +25,7 @@ class StatesOperations:
         name: str,
         instructions: str,
         *,
+        user_message: Optional[str] = None,
         from_state_id: Optional[str] = None,
         when: Optional[str] = None
     ) -> JourneyStateRef:
@@ -42,6 +43,11 @@ class StatesOperations:
             instructions: What the simulated user says or does in this state,
                 written to them in the second person. They keep acting it out
                 until the app's reply matches an edge leaving the state.
+            user_message: A message the simulated user sends word for word on
+                entering this state, instead of one written from `instructions`.
+                Any further messages while still in the state follow
+                `instructions`. Omit it or send `null` to write every message
+                from `instructions`.
             from_state_id: The id of an existing state in this journey to
                 connect the new state from. An edge from that state to the new
                 one is created alongside it, and `when` is then required. Omit
@@ -60,6 +66,7 @@ class StatesOperations:
             body={
                 "name": name,
                 "instructions": instructions,
+                "userMessage": user_message,
                 "fromStateId": from_state_id,
                 "when": when,
             },
@@ -72,6 +79,7 @@ class StatesOperations:
         name: str,
         instructions: str,
         *,
+        user_message: Optional[str] = None,
         from_state_id: Optional[str] = None,
         when: Optional[str] = None
     ) -> JourneyStateRef:
@@ -89,6 +97,11 @@ class StatesOperations:
             instructions: What the simulated user says or does in this state,
                 written to them in the second person. They keep acting it out
                 until the app's reply matches an edge leaving the state.
+            user_message: A message the simulated user sends word for word on
+                entering this state, instead of one written from `instructions`.
+                Any further messages while still in the state follow
+                `instructions`. Omit it or send `null` to write every message
+                from `instructions`.
             from_state_id: The id of an existing state in this journey to
                 connect the new state from. An edge from that state to the new
                 one is created alongside it, and `when` is then required. Omit
@@ -107,6 +120,7 @@ class StatesOperations:
             body={
                 "name": name,
                 "instructions": instructions,
+                "userMessage": user_message,
                 "fromStateId": from_state_id,
                 "when": when,
             },
@@ -119,13 +133,14 @@ class StatesOperations:
         state_id: str,
         *,
         name: Optional[str] = None,
-        instructions: Optional[str] = None
+        instructions: Optional[str] = None,
+        user_message: Optional[str] = None
     ) -> JourneyState:
         """Update Journey State
 
-        Renames a state or rewrites its instructions, and returns it. State
-        names are unique within a journey; taking another state's name returns a
-        409.
+        Renames a state or rewrites its `instructions` or `userMessage`, and
+        returns it. State names are unique within a journey; taking another
+        state's name returns a 409.
 
         Args:
             journey_id: The id of the journey the state belongs to.
@@ -136,13 +151,20 @@ class StatesOperations:
                 written to them in the second person. The text replaces the
                 stored one outright, so send the whole of it. Omit it to keep
                 the current instructions.
+            user_message: A message the simulated user sends word for word on
+                entering this state, instead of one written from `instructions`.
+                Send `null` to remove it, or omit it to keep the current one.
         """
         return self._api.request(
             HttpMethods.PUT,
             Endpoints.JOURNEY_STATE_ENDPOINT,
             response_schema=JourneyState,
             request_schema=UpdateJourneyStateInput,
-            body={"name": name, "instructions": instructions},
+            body={
+                "name": name,
+                "instructions": instructions,
+                "userMessage": user_message,
+            },
             path={"journeyId": journey_id, "stateId": state_id},
         )
 
@@ -152,13 +174,14 @@ class StatesOperations:
         state_id: str,
         *,
         name: Optional[str] = None,
-        instructions: Optional[str] = None
+        instructions: Optional[str] = None,
+        user_message: Optional[str] = None
     ) -> JourneyState:
         """Update Journey State
 
-        Renames a state or rewrites its instructions, and returns it. State
-        names are unique within a journey; taking another state's name returns a
-        409.
+        Renames a state or rewrites its `instructions` or `userMessage`, and
+        returns it. State names are unique within a journey; taking another
+        state's name returns a 409.
 
         Args:
             journey_id: The id of the journey the state belongs to.
@@ -169,13 +192,20 @@ class StatesOperations:
                 written to them in the second person. The text replaces the
                 stored one outright, so send the whole of it. Omit it to keep
                 the current instructions.
+            user_message: A message the simulated user sends word for word on
+                entering this state, instead of one written from `instructions`.
+                Send `null` to remove it, or omit it to keep the current one.
         """
         return await self._api.a_request(
             HttpMethods.PUT,
             Endpoints.JOURNEY_STATE_ENDPOINT,
             response_schema=JourneyState,
             request_schema=UpdateJourneyStateInput,
-            body={"name": name, "instructions": instructions},
+            body={
+                "name": name,
+                "instructions": instructions,
+                "userMessage": user_message,
+            },
             path={"journeyId": journey_id, "stateId": state_id},
         )
 

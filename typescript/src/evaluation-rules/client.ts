@@ -53,8 +53,10 @@ export class EvaluationRulesClient {
    *
    * @param name A name for the rule, unique within the project.
    * @param metricCollectionId The id of the metric collection to run. It must
-   *   be multi-turn for `THREAD` rules and single-turn for `TRACE` and `SPAN`
-   *   rules.
+   *   be multi-turn for `THREAD` rules and single-turn for `SPAN` rules. A
+   *   `TRACE` rule takes either: a single-turn collection scores the trace's
+   *   input and output, and a multi-turn one scores the conversation inside the
+   *   trace.
    * @param enabled Whether the rule evaluates matching items as they arrive.
    *   Defaults to `true`.
    * @param description A note about what the rule checks. Send `null` to clear
@@ -69,9 +71,15 @@ export class EvaluationRulesClient {
    *   evaluate every item the rule's `dataModel` covers.
    * @param threadTimelimit For `THREAD` rules, the seconds of inactivity to
    *   wait before evaluating a thread, so an in-progress conversation is not
-   *   scored halfway. The minimum is 120, which leaves time for the last traces
-   *   to be stored. Send `null` to use the project's thread timelimit, which
-   *   defaults to 300.
+   *   scored halfway. For `TRACE` rules with a multi-turn metric collection,
+   *   the seconds to wait before scoring the conversation inside a trace, and a
+   *   voice call still in progress waits until it ends. For other `TRACE`
+   *   rules, the seconds to wait after the last piece of a trace still arriving
+   *   in pieces, such as a long agent run; complete traces are scored right
+   *   away. The minimum is 120, which leaves time for the last traces and spans
+   *   to be stored. Send `null` to use the project's thread idle time for
+   *   `THREAD` rules or trace idle time for `TRACE` rules, both of which
+   *   default to 300.
    * @param overwriteEvals Re-evaluate items that already have results for this
    *   metric collection instead of skipping them. Defaults to `false` on
    *   create; omit it on an update to leave it unchanged.
@@ -160,9 +168,15 @@ export class EvaluationRulesClient {
    *   evaluate every item the rule's `dataModel` covers.
    * @param threadTimelimit For `THREAD` rules, the seconds of inactivity to
    *   wait before evaluating a thread, so an in-progress conversation is not
-   *   scored halfway. The minimum is 120, which leaves time for the last traces
-   *   to be stored. Send `null` to use the project's thread timelimit, which
-   *   defaults to 300.
+   *   scored halfway. For `TRACE` rules with a multi-turn metric collection,
+   *   the seconds to wait before scoring the conversation inside a trace, and a
+   *   voice call still in progress waits until it ends. For other `TRACE`
+   *   rules, the seconds to wait after the last piece of a trace still arriving
+   *   in pieces, such as a long agent run; complete traces are scored right
+   *   away. The minimum is 120, which leaves time for the last traces and spans
+   *   to be stored. Send `null` to use the project's thread idle time for
+   *   `THREAD` rules or trace idle time for `TRACE` rules, both of which
+   *   default to 300.
    * @param overwriteEvals Re-evaluate items that already have results for this
    *   metric collection instead of skipping them. Defaults to `false` on
    *   create; omit it on an update to leave it unchanged.

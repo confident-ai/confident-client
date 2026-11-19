@@ -14,6 +14,12 @@ export enum AnnotationFieldType {
   THUMBS_RATING = "THUMBS_RATING",
 }
 
+export enum AssignmentStrategy {
+  SINGLE_USER = "SINGLE_USER",
+  ROUND_ROBIN = "ROUND_ROBIN",
+  RANDOM = "RANDOM",
+}
+
 export enum AuditLogExportStatus {
   IN_PROGRESS = "IN_PROGRESS",
   COMPLETED = "COMPLETED",
@@ -101,6 +107,10 @@ export enum ModelProvider {
   TYPE_SAFE = "TYPE_SAFE",
   FAL = "FAL",
   Z_AI = "Z_AI",
+  DEEPGRAM = "DEEPGRAM",
+  ASSEMBLY_AI = "ASSEMBLY_AI",
+  ELEVEN_LABS = "ELEVEN_LABS",
+  CARTESIA = "CARTESIA",
 }
 
 export enum ModelType {
@@ -432,6 +442,18 @@ export interface FilterSetGroupFilter {
     | "Model"
     | "Provider"
     | "Integration"
+    | "Temperature"
+    | "Top-P"
+    | "Max tokens"
+    | "Reasoning effort"
+    | "Output type"
+    | "Streaming"
+    | "Finish reason"
+    | "Time to first token"
+    | "Cache read tokens"
+    | "Cache write tokens"
+    | "Reasoning tokens"
+    | "Image tokens"
     | "Input argument"
     | "Embedder"
     | "Chunk Size"
@@ -443,6 +465,7 @@ export interface FilterSetGroupFilter {
     | "Identifier"
     | "Test File"
     | "Status"
+    | "AI connection"
     | "Official"
     | "Evals Mode"
     | "Tests Passed"
@@ -473,9 +496,13 @@ export interface FilterSetGroupFilter {
     | "Metric"
     | "Metric Name"
     | "Trace Count"
+    | "Call Duration"
+    | "Call Audio"
     | "Test Case ID"
     | "Requested review from"
     | "Assigned to"
+    | "Queue Item Status"
+    | "Added at"
     | "Tags"
     | "Labels"
     | "Tools Called"
@@ -485,6 +512,7 @@ export interface FilterSetGroupFilter {
     | "Latency"
     | "Environment"
     | "Review flag"
+    | "Annotation Queue"
     | "Vulnerability"
     | "Vulnerability Type"
     | "Attack Method"
@@ -499,6 +527,7 @@ export interface FilterSetGroupFilter {
     | "Annotations"
     | "Failure Mode"
     | "Recommended"
+    | "Source Queue"
     | "Sub-mode Name"
     | "Sub-mode Recommended"
     | "Sub-mode Certainty"
@@ -528,7 +557,7 @@ export interface FilterSetGroupFilter {
     | "Has increased by less than"
     | "Has changed from"
     | "Is between";
-  value: string | number | string[];
+  value?: string | number | string[];
   key?: string;
 }
 
@@ -653,6 +682,15 @@ export interface MetricData {
   threshold: number | null;
   strictMode: boolean;
   skipped: boolean;
+  skipReason:
+    | "HOURLY_LIMIT"
+    | "CREDITS"
+    | "BUDGET"
+    | "PLAN_LIMIT"
+    | "PARENT_NOT_RUN"
+    | "CHAIN_EXPIRED"
+    | "RUN_FAILED"
+    | null;
   flaky: boolean;
   evaluationModel: string | null;
   evaluationCost: number | null;
@@ -806,6 +844,18 @@ export interface Span {
   costPerOutputToken: number | null;
   inputTokenCount: number | null;
   outputTokenCount: number | null;
+  temperature: number | null;
+  maxTokens: number | null;
+  streaming: boolean | null;
+  topP: number | null;
+  reasoningEffort: string | null;
+  outputType: string | null;
+  timeToFirstToken: number | null;
+  finishReasons: string[] | null;
+  cacheReadTokenCount: number | null;
+  cacheWriteTokenCount: number | null;
+  reasoningTokenCount: number | null;
+  imageTokenCount: number | null;
   promptAlias: string | null;
   promptVersion: string | null;
   promptLabel: string | null;
@@ -828,6 +878,7 @@ export interface Span {
   labels: Record<string, Classification>;
   metricsData: MetricData[];
   annotations: AnnotationSummary[];
+  otel?: Record<string, unknown> | null;
 }
 
 export interface Tool {

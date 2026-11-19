@@ -4,6 +4,7 @@
 // and regenerate.
 
 import {
+  Classification,
   EvaluationErrorType,
   ToolCall,
   TraceSpanStatus,
@@ -118,6 +119,19 @@ export interface LlmSpanInput {
   costPerOutputToken?: number;
   inputTokenCount?: number;
   outputTokenCount?: number;
+  temperature?: number;
+  maxTokens?: number;
+  streaming?: boolean;
+  topP?: number;
+  topK?: number;
+  reasoningEffort?: string;
+  outputType?: string;
+  timeToFirstToken?: number;
+  finishReasons?: string[];
+  cacheReadTokenCount?: number;
+  cacheWriteTokenCount?: number;
+  reasoningTokenCount?: number;
+  imageTokenCount?: number;
   promptAlias?: string;
   promptVersion?: string;
   promptLabel?: string;
@@ -232,6 +246,7 @@ export interface TraceSummary {
   metadata: Record<string, unknown> | null;
   inputPreview: string | null;
   outputPreview: string | null;
+  labels?: Record<string, Classification>;
 }
 
 export interface TraceList {

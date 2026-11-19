@@ -25,8 +25,8 @@ export class TracesClient {
    * List Traces
    *
    * Lists the traces in your Confident AI project one page at a time, newest
-   * first by default, as summary rows. Retrieve a trace by uuid for its full
-   * detail.
+   * first by default, as summary rows. Use `nextCursor` as `cursor` to get the
+   * next page. Retrieve a trace by uuid for its full detail.
    *
    * @param pageSize The number of results per page, at most 100. Defaults to
    *   25.
@@ -253,12 +253,14 @@ export class TracesClient {
    * annotations.
    *
    * @param traceUuid The unique identifier of the trace.
+   * @param includeOtel Whether to return `otel` on each span, the raw
+   *   OpenTelemetry data it was ingested from. Defaults to `false`.
    */
-  async get(traceUuid: string): Promise<Trace> {
+  async get(traceUuid: string, includeOtel?: "true" | "false"): Promise<Trace> {
     return this.api.sendRequest<Trace>(
       HttpMethods.GET,
       Endpoints.TRACE_ENDPOINT,
-      { urlParams: { traceUuid } },
+      { urlParams: { traceUuid }, params: { includeOtel } },
     );
   }
 }

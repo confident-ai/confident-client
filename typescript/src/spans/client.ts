@@ -15,8 +15,8 @@ export class SpansClient {
    * List Spans
    *
    * Lists the spans in your Confident AI project one page at a time, newest
-   * first by default, as summary rows. Retrieve a span by id for its full
-   * detail.
+   * first by default, as summary rows. Use `nextCursor` as `cursor` to get the
+   * next page. Retrieve a span by id for its full detail.
    *
    * @param pageSize The number of results per page, at most 100. Defaults to
    *   25.
@@ -47,8 +47,42 @@ export class SpansClient {
    * @param promptCommitHash This filters the spans by the exact prompt commit
    *   hash used.
    * @param embedder Filter retriever spans by the embedder model used.
-   * @param topK Filter retriever spans by the `topK` value.
+   * @param topK Filter LLM and retriever spans by their `topK`: the sampling
+   *   top-k on an LLM span, or how many chunks a retriever span returned.
    * @param chunkSize Filter retriever spans by the chunk size.
+   * @param temperature Filter LLM spans by the exact sampling temperature
+   *   requested.
+   * @param topP Filter LLM spans by the exact `topP` requested.
+   * @param maxTokens Filter LLM spans by the exact output token limit
+   *   requested.
+   * @param reasoningEffort Filter LLM spans by the reasoning effort requested,
+   *   such as `low` or `high`.
+   * @param outputType Filter LLM spans by the type of output requested, such as
+   *   `text` or `json`.
+   * @param streaming Filter for LLM spans whose response was streamed (`true`)
+   *   or returned whole (`false`).
+   * @param finishReason Filter LLM spans to those whose finish reasons include
+   *   this one, such as `stop` or `length`.
+   * @param minTimeToFirstToken Filter LLM spans to those whose first streamed
+   *   chunk arrived at least this many seconds after the request.
+   * @param maxTimeToFirstToken Filter LLM spans to those whose first streamed
+   *   chunk arrived at most this many seconds after the request.
+   * @param minCacheReadTokenCount Filter LLM spans to those that read at least
+   *   this many input tokens from the prompt cache.
+   * @param maxCacheReadTokenCount Filter LLM spans to those that read at most
+   *   this many input tokens from the prompt cache.
+   * @param minCacheWriteTokenCount Filter LLM spans to those that wrote at
+   *   least this many input tokens to the prompt cache.
+   * @param maxCacheWriteTokenCount Filter LLM spans to those that wrote at most
+   *   this many input tokens to the prompt cache.
+   * @param minReasoningTokenCount Filter LLM spans to those that spent at least
+   *   this many output tokens on reasoning.
+   * @param maxReasoningTokenCount Filter LLM spans to those that spent at most
+   *   this many output tokens on reasoning.
+   * @param minImageTokenCount Filter LLM spans to those that used at least this
+   *   many image tokens.
+   * @param maxImageTokenCount Filter LLM spans to those that used at most this
+   *   many image tokens.
    */
   async list(
     options: {
@@ -71,6 +105,23 @@ export class SpansClient {
       embedder?: string;
       topK?: number | null;
       chunkSize?: number | null;
+      temperature?: number | null;
+      topP?: number | null;
+      maxTokens?: number | null;
+      reasoningEffort?: string;
+      outputType?: string;
+      streaming?: "true" | "false";
+      finishReason?: string;
+      minTimeToFirstToken?: number | null;
+      maxTimeToFirstToken?: number | null;
+      minCacheReadTokenCount?: number | null;
+      maxCacheReadTokenCount?: number | null;
+      minCacheWriteTokenCount?: number | null;
+      maxCacheWriteTokenCount?: number | null;
+      minReasoningTokenCount?: number | null;
+      maxReasoningTokenCount?: number | null;
+      minImageTokenCount?: number | null;
+      maxImageTokenCount?: number | null;
     } = {},
   ): Promise<SpanList> {
     const {
@@ -93,6 +144,23 @@ export class SpansClient {
       embedder,
       topK,
       chunkSize,
+      temperature,
+      topP,
+      maxTokens,
+      reasoningEffort,
+      outputType,
+      streaming,
+      finishReason,
+      minTimeToFirstToken,
+      maxTimeToFirstToken,
+      minCacheReadTokenCount,
+      maxCacheReadTokenCount,
+      minCacheWriteTokenCount,
+      maxCacheWriteTokenCount,
+      minReasoningTokenCount,
+      maxReasoningTokenCount,
+      minImageTokenCount,
+      maxImageTokenCount,
     } = options;
     return this.api.sendRequest<SpanList>(
       HttpMethods.GET,
@@ -118,6 +186,23 @@ export class SpansClient {
           embedder,
           topK,
           chunkSize,
+          temperature,
+          topP,
+          maxTokens,
+          reasoningEffort,
+          outputType,
+          streaming,
+          finishReason,
+          minTimeToFirstToken,
+          maxTimeToFirstToken,
+          minCacheReadTokenCount,
+          maxCacheReadTokenCount,
+          minCacheWriteTokenCount,
+          maxCacheWriteTokenCount,
+          minReasoningTokenCount,
+          maxReasoningTokenCount,
+          minImageTokenCount,
+          maxImageTokenCount,
         },
       },
     );
@@ -130,12 +215,14 @@ export class SpansClient {
    * input and output, evaluation fields, results and annotations.
    *
    * @param spanUuid The unique identifier of the span.
+   * @param includeOtel Whether to return `otel`, the raw OpenTelemetry data the
+   *   span was ingested from. Defaults to `false`.
    */
-  async get(spanUuid: string): Promise<Span> {
+  async get(spanUuid: string, includeOtel?: "true" | "false"): Promise<Span> {
     return this.api.sendRequest<Span>(
       HttpMethods.GET,
       Endpoints.SPAN_ENDPOINT,
-      { urlParams: { spanUuid } },
+      { urlParams: { spanUuid }, params: { includeOtel } },
     );
   }
 }
